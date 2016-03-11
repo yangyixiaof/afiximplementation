@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
@@ -12,7 +14,10 @@ import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.impl.Everywhere;
 import com.ibm.wala.ipa.cha.ClassHierarchy;
+import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
+import com.ibm.wala.ssa.ISSABasicBlock;
+import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.util.config.AnalysisScopeReader;
@@ -20,6 +25,7 @@ import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.io.FileProvider;
 import com.ibm.wala.util.strings.StringStuff;
 
+import cn.yyx.labtask.afix.codemap.SearchUtil;
 import cn.yyx.labtask.afix.controlflow.AFixCallGraph;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
@@ -138,22 +144,73 @@ public class OnePatchGenerator {
 	/**
 	 * 
 	 * @return if generated once, following invocations will only return the same patch.
+	 * @throws InvalidClassFileException 
 	 */
-	public List<OnePatch> GeneratePatch()
+	public List<OnePatch> GeneratePatch() throws InvalidClassFileException
 	{
 		ops = new LinkedList<OnePatch>();
 		
 		if (!overlap)
 		{
+			// handle this.r
 			OnePatch op = new OnePatch(this.r.getSig());
 			op.AddInsertBeforeIndex(this.r.getBytecodel());
 			op.AddInsertAfterIndex(this.r.getBytecodel());
 			ops.add(op);
 		}
 		
+		// handle this.p this.c
+		String methodSig = this.p.getSig();
+		int pidx = this.p.getBytecodel();
+		int cidx = this.c.getBytecodel();
 		IR ir = GetMethodIR(methodSig);
-		
+		SSACFG cfg = ir.getControlFlowGraph();
+		ISSABasicBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(pidx, ir);
+		ISSABasicBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(cidx, ir);
+		Set<ISSABasicBlock> pset = new TreeSet<ISSABasicBlock>();
+		pset.add(pbk);
+		pset.add(cbk);
+		GetSearchSet(pbk, cfg, true, pset, cbk);
+		Set<ISSABasicBlock> cset = new TreeSet<ISSABasicBlock>();
+		cset.add(pbk);
+		cset.add(cbk);
+		GetSearchSet(cbk, cfg, false, cset, pbk);
 		return ops;
+	}
+	
+	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest)
+	{
+		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
+		while (itr.hasNext())
+		{
+			ISSABasicBlock ibb = itr.next();
+			if (ibb.equals(dest))
+			{
+				return true;
+			}
+			if (pset.contains(ibb))
+			{
+				return true;
+			}
+			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest);
+			if (istodest)
+			{
+				pset.add(ibb);
+			}
+		}
+		return false;
+	}
+	
+	private Iterator<ISSABasicBlock> GetBlocks(ISSABasicBlock pbk, SSACFG cfg, boolean forward)
+	{
+		if (forward)
+		{
+			return cfg.getSuccNodes(pbk);
+		}
+		else
+		{
+			return cfg.getPredNodes(pbk);
+		}
 	}
 	
 	/**
