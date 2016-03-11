@@ -27,4 +27,25 @@ public class ErrorLocation {
 		this.bytecodel = bytecodel;
 	}
 	
+	public boolean InSameMethod(ErrorLocation el)
+	{
+		if (sig.equals(el.sig))
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean equals(Object el) {
+		if (el instanceof ErrorLocation)
+		{
+			if (sig.equals(((ErrorLocation)el).sig) && (bytecodel == ((ErrorLocation)el).bytecodel))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }
