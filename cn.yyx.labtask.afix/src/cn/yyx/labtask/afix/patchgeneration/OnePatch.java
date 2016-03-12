@@ -14,12 +14,12 @@ public class OnePatch {
 		this.methodsig = methodsig;
 	}
 	
-	public void AddInsertBeforeIndex(Integer idx)
+	public void AddLockBeforeIndex(Integer idx)
 	{
 		insertbeginidxs.add(idx);
 	}
 	
-	public void AddInsertAfterIndex(Integer idx)
+	public void AddUnlockAfterIndex(Integer idx)
 	{
 		insertendidxs.add(idx);
 	}

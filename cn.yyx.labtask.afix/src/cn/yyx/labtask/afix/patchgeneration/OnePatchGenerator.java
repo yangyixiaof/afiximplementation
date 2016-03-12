@@ -1,12 +1,13 @@
 package cn.yyx.labtask.afix.patchgeneration;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
+import com.ibm.wala.classLoader.IBytecodeMethod;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
@@ -18,6 +19,7 @@ import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSACFG;
+import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.util.config.AnalysisScopeReader;
@@ -154,8 +156,8 @@ public class OnePatchGenerator {
 		{
 			// handle this.r
 			OnePatch op = new OnePatch(this.r.getSig());
-			op.AddInsertBeforeIndex(this.r.getBytecodel());
-			op.AddInsertAfterIndex(this.r.getBytecodel());
+			op.AddLockBeforeIndex(this.r.getBytecodel());
+			op.AddUnlockAfterIndex(this.r.getBytecodel());
 			ops.add(op);
 		}
 		
@@ -167,17 +169,83 @@ public class OnePatchGenerator {
 		SSACFG cfg = ir.getControlFlowGraph();
 		ISSABasicBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(pidx, ir);
 		ISSABasicBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(cidx, ir);
-		Set<ISSABasicBlock> pset = new TreeSet<ISSABasicBlock>();
+		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		pset.add(pbk);
 		pset.add(cbk);
 		GetSearchSet(pbk, cfg, true, pset, cbk);
-		Set<ISSABasicBlock> cset = new TreeSet<ISSABasicBlock>();
+		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
 		cset.add(pbk);
 		cset.add(cbk);
 		GetSearchSet(cbk, cfg, false, cset, pbk);
+		cset.retainAll(pset);
+		Set<ISSABasicBlock> protectnodes = cset;
+		OnePatch op = new OnePatch(methodSig);
+		ops.add(op);
+		
+		BasicBlock ent = cfg.entry();
+		if (protectnodes.contains(ent))
+		{
+			op.AddLockBeforeIndex(GetBasicBlockBeforePosition(ent, ir));
+		}
+		BasicBlock ext = cfg.exit();
+		if (protectnodes.contains(ext))
+		{
+			op.AddUnlockAfterIndex(GetBasicBlockAfterPosition(ext, ir));
+		}
+		Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
+		visited.add(ent);
+		visited.add(ext);
+		Set<ISSABasicBlock> blockprelock = new HashSet<ISSABasicBlock>();
+		Set<ISSABasicBlock> blockafterunlock = new HashSet<ISSABasicBlock>();
+		IterateBlockToAddLockAndUnlock(ent, cfg, protectnodes, visited, blockprelock, blockafterunlock, op, ir);
 		return ops;
 	}
 	
+	private void IterateBlockToAddLockAndUnlock(ISSABasicBlock now, SSACFG cfg, Set<ISSABasicBlock> protectnodes, Set<ISSABasicBlock> visited, Set<ISSABasicBlock> blockprelock, Set<ISSABasicBlock> blockafterunlock, OnePatch op, IR ir) throws InvalidClassFileException
+	{
+		if (visited.contains(now))
+		{
+			return;
+		}
+		visited.add(now);
+		Iterator<ISSABasicBlock> itr = cfg.getSuccNodes(now);
+		while (itr.hasNext())
+		{
+			ISSABasicBlock ibb = itr.next();
+			if ((protectnodes.contains(now)) && (!protectnodes.contains(ibb)))
+			{
+				if (!blockafterunlock.contains(now))
+				{
+					op.AddUnlockAfterIndex(GetBasicBlockAfterPosition(now, ir));
+					blockafterunlock.add(now);
+				}
+			}
+			if ((!protectnodes.contains(now)) && (protectnodes.contains(ibb)))
+			{
+				if (!blockprelock.contains(ibb))
+				{
+					op.AddLockBeforeIndex(GetBasicBlockBeforePosition(ibb, ir));
+					blockprelock.add(ibb);
+				}
+			}
+			IterateBlockToAddLockAndUnlock(ibb, cfg, protectnodes, visited, blockprelock, blockafterunlock, op, ir);
+		}
+	}
+
+	private Integer GetBasicBlockBeforePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getFirstInstructionIndex();
+		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
+		int bytecodeIndex = method.getBytecodeIndex(iidx);
+		return bytecodeIndex;
+	}
+	
+	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getLastInstructionIndex();
+		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
+		int bytecodeIndex = method.getBytecodeIndex(iidx);
+		return bytecodeIndex;
+	}
+
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest)
 	{
 		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
