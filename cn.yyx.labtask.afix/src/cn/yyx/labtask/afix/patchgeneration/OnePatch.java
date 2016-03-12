@@ -13,6 +13,8 @@ import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSACFG.BasicBlock;
 
+import cn.yyx.labtask.afix.codemap.SearchUtil;
+import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
 public class OnePatch {
@@ -129,8 +131,9 @@ public class OnePatch {
 	 * 
 	 * @param iop
 	 * @return true intersected and merged; false un_intersected and un_merged.
+	 * @throws InvalidClassFileException 
 	 */
-	public boolean JudgeIntersectAndMerge(OnePatch iop) {
+	public OnePatch JudgeIntersectAndMerge(OnePatch iop) throws InvalidClassFileException {
 		boolean intersected = false;
 		// situation1: in same method and intersected.
 		if (methodsig.equals(iop.methodsig))
@@ -153,17 +156,57 @@ public class OnePatch {
 					ISSABasicBlock ibb = itr.next();
 					protectednodes.add(ibb);
 				}
+				return this;
 			}
 		}
 		// situation2: in different method and be wrapped.
 		if (!(methodsig.equals(iop.methodsig)))
 		{
-			// sub_situation1:
-			
-			// sub_situation2:
-			
+			// sub_situation1: this may in upper
+			ErrorTrace tet = iop.et;
+			Iterator<ErrorLocation> itr = tet.GetNegativeOrderIterator();
+			while (itr.hasNext())
+			{
+				ErrorLocation tel = itr.next();
+				if (methodsig.equals(tel.getSig()))
+				{
+					ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), ir);
+					if (protectednodes.contains(tbk))
+					{
+						intersected = true;
+						return this;
+					}
+					break;
+				}
+			}
+			// sub_situation2: this may in lower
+			if (!intersected)
+			{
+				String tmsig = iop.methodsig;
+				itr = et.GetNegativeOrderIterator();
+				while (itr.hasNext())
+				{
+					ErrorLocation tel = itr.next();
+					if (tmsig.equals(tel.getSig()))
+					{
+						ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), iop.ir);
+						if (iop.protectednodes.contains(tbk))
+						{
+							intersected = true;
+							return iop;
+						}
+						break;
+					}
+				}
+			}
 		}
-		return intersected;
+		if (intersected != false)
+		{
+			System.err.println("intersected must be false at this place, serious error the system will exit.");
+			new Exception().printStackTrace();
+			System.exit(1);
+		}
+		return null;
 	}
 	
 }
