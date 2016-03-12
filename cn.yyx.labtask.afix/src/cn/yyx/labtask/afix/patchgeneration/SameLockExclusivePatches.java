@@ -21,4 +21,30 @@ public class SameLockExclusivePatches {
 		return patches.iterator();
 	}
 	
+	/**
+	 * 
+	 * @param slep
+	 * @return true means has merged; false means can not merge.
+	 */
+	public boolean Merge(SameLockExclusivePatches slep)
+	{
+		boolean intersected = false;
+		Iterator<OnePatch> itr = patches.iterator();
+		while (itr.hasNext())
+		{
+			OnePatch op = itr.next();
+			Iterator<OnePatch> iitr = slep.patches.iterator();
+			while (iitr.hasNext())
+			{
+				OnePatch iop = iitr.next();
+				boolean ifmerged = op.JudgeIntersectAndMerge(iop);
+				if (ifmerged)
+				{
+					intersected = true;
+				}
+			}
+		}
+		return intersected;
+	}
+	
 }

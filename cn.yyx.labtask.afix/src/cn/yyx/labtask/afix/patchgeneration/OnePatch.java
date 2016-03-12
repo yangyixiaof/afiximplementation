@@ -40,13 +40,14 @@ public class OnePatch {
 	
 	/**
 	 * 
-	 * @param op
-	 * @return is un-merged patch
+	 * @param iop
+	 * @return true merged; false un_merged.
 	 */
-	public OnePatch Merge(OnePatch op)
-	{
-		// TODO
-		return null;
+	public boolean JudgeIntersectAndMerge(OnePatch iop) {
+		
+		
+		
+		return false;
 	}
 	
 }
