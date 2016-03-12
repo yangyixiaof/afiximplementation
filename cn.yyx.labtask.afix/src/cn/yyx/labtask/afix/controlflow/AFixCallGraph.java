@@ -116,7 +116,12 @@ public class AFixCallGraph {
 					(new FileProvider()).getFile(CallGraphTestUtil.REGRESSION_EXCLUSIONS));
 			ClassHierarchy cha = ClassHierarchy.make(scope);
 			
+			Graph<CGNode> g1 = buildPrunedCallGraph(appJar, (new FileProvider()).getFile(exclusionFile));
+			
 			Graph<CGNode> g = buildPrunedCallGraph(appJar, (new FileProvider()).getFile(exclusionFile));
+			
+			System.out.println("g and g1 equals?" + g.equals(g1));
+			
 			Iterator<CGNode> itr = g.iterator();
 			while (itr.hasNext()) {
 				CGNode cgn = itr.next();

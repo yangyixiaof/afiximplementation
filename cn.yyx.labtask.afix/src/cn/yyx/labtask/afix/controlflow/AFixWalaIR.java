@@ -14,11 +14,11 @@ import java.io.IOException;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
-import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.impl.Everywhere;
 import com.ibm.wala.ipa.cha.ClassHierarchy;
+import com.ibm.wala.ssa.DefaultIRFactory;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.types.MethodReference;
@@ -100,15 +100,22 @@ public class AFixWalaIR {
 
 			// Create an object which caches IRs and related information,
 			// reconstructing them lazily on demand.
-			AnalysisCache cache = new AnalysisCache();
+			// AnalysisCache cache = new AnalysisCache();
 
+			DefaultIRFactory fact = new DefaultIRFactory();
+			IR ir = fact.makeIR(m, Everywhere.EVERYWHERE, options.getSSAOptions());
+			
+			IR ir2 = fact.makeIR(m, Everywhere.EVERYWHERE, options.getSSAOptions());
+			
 			// Build the IR and cache it.
-			IR ir = cache.getSSACache().findOrCreateIR(m, Everywhere.EVERYWHERE, options.getSSAOptions());
+			// IR ir = cache.getSSACache().findOrCreateIR(m, Everywhere.EVERYWHERE, options.getSSAOptions());
 
 			if (ir == null) {
 				Assertions.UNREACHABLE("Null IR for " + m);
 			}
-
+			
+			System.out.println("ir's ent and ir2's ent equals?" + ir.getControlFlowGraph().entry().equals(ir2.getControlFlowGraph().entry()));
+			
 			System.err.println(ir.toString());
 			return PrintUtil.PrintIR(cha, ir);
 		} catch (WalaException e) {

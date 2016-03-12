@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.ibm.wala.classLoader.IBytecodeMethod;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
@@ -17,7 +16,6 @@ import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSACFG;
-import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.util.config.AnalysisScopeReader;
@@ -41,7 +39,7 @@ public class OnePatchGenerator {
 	ErrorLocation r = null;
 	SameLockExclusivePatches ops = null;
 	boolean overlap = false;
-	int overlapflag = 0; // 0:at the same level. 1:r is lower level. 2:r is upper level.
+	int overlapflag = 0; // 0:at the same level. 1:r is lower level. 2:r is upper level and this situation should not be considered.
 	
 	public OnePatchGenerator(String jar, ErrorTrace p, ErrorTrace c, ErrorTrace r) throws Exception
 	{
@@ -167,9 +165,16 @@ public class OnePatchGenerator {
 		if (!overlap)
 		{
 			// handle this.r
-			OnePatch op = new OnePatch(rt, this.r.getSig());
-			op.AddLockBeforeIndex(this.r.getBytecodel());
-			op.AddUnlockAfterIndex(this.r.getBytecodel());
+			String methodSig = this.r.getSig();
+			int ridx = this.r.getBytecodel();
+			IR ir = GetMethodIR(methodSig);
+			SSACFG cfg = ir.getControlFlowGraph();
+			ISSABasicBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(ridx, ir);
+			Set<ISSABasicBlock> protectednodes = new HashSet<ISSABasicBlock>();
+			protectednodes.add(rbk);
+			OnePatch op = new OnePatch(rt, this.r.getSig(), protectednodes, ir, cfg);
+			// op.AddLockBeforeIndex(this.r.getBytecodel());
+			// op.AddUnlockAfterIndex(this.r.getBytecodel());
 			ops.AddPatches(op);
 		}
 		
@@ -190,74 +195,12 @@ public class OnePatchGenerator {
 		cset.add(cbk);
 		GetSearchSet(cbk, cfg, false, cset, pbk);
 		cset.retainAll(pset);
-		Set<ISSABasicBlock> protectnodes = cset;
-		OnePatch op = new OnePatch(pct, methodSig);
+		Set<ISSABasicBlock> protectednodes = cset;
+		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg);
 		ops.AddPatches(op);
-		
-		BasicBlock ent = cfg.entry();
-		if (protectnodes.contains(ent))
-		{
-			op.AddLockBeforeIndex(GetBasicBlockBeforePosition(ent, ir));
-		}
-		BasicBlock ext = cfg.exit();
-		if (protectnodes.contains(ext))
-		{
-			op.AddUnlockAfterIndex(GetBasicBlockAfterPosition(ext, ir));
-		}
-		Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
-		visited.add(ent);
-		visited.add(ext);
-		Set<ISSABasicBlock> blockprelock = new HashSet<ISSABasicBlock>();
-		Set<ISSABasicBlock> blockafterunlock = new HashSet<ISSABasicBlock>();
-		IterateBlockToAddLockAndUnlock(ent, cfg, protectnodes, visited, blockprelock, blockafterunlock, op, ir);
 		return ops;
 	}
 	
-	private void IterateBlockToAddLockAndUnlock(ISSABasicBlock now, SSACFG cfg, Set<ISSABasicBlock> protectnodes, Set<ISSABasicBlock> visited, Set<ISSABasicBlock> blockprelock, Set<ISSABasicBlock> blockafterunlock, OnePatch op, IR ir) throws InvalidClassFileException
-	{
-		if (visited.contains(now))
-		{
-			return;
-		}
-		visited.add(now);
-		Iterator<ISSABasicBlock> itr = cfg.getSuccNodes(now);
-		while (itr.hasNext())
-		{
-			ISSABasicBlock ibb = itr.next();
-			if ((protectnodes.contains(now)) && (!protectnodes.contains(ibb)))
-			{
-				if (!blockafterunlock.contains(now))
-				{
-					op.AddUnlockAfterIndex(GetBasicBlockAfterPosition(now, ir));
-					blockafterunlock.add(now);
-				}
-			}
-			if ((!protectnodes.contains(now)) && (protectnodes.contains(ibb)))
-			{
-				if (!blockprelock.contains(ibb))
-				{
-					op.AddLockBeforeIndex(GetBasicBlockBeforePosition(ibb, ir));
-					blockprelock.add(ibb);
-				}
-			}
-			IterateBlockToAddLockAndUnlock(ibb, cfg, protectnodes, visited, blockprelock, blockafterunlock, op, ir);
-		}
-	}
-
-	private Integer GetBasicBlockBeforePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
-		int iidx = bbk.getFirstInstructionIndex();
-		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		int bytecodeIndex = method.getBytecodeIndex(iidx);
-		return bytecodeIndex;
-	}
-	
-	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
-		int iidx = bbk.getLastInstructionIndex();
-		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		int bytecodeIndex = method.getBytecodeIndex(iidx);
-		return bytecodeIndex;
-	}
-
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest)
 	{
 		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
