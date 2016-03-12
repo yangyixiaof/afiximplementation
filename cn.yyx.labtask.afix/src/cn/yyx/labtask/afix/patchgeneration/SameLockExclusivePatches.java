@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 
-public class SameLockExclusivePatches {
+public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatches>{
 	
 	List<OnePatch> patches = new LinkedList<OnePatch>();
 	
@@ -29,7 +29,8 @@ public class SameLockExclusivePatches {
 	 * @return true means has merged; false means can not merge.
 	 * @throws InvalidClassFileException 
 	 */
-	public boolean Merge(SameLockExclusivePatches slep) throws InvalidClassFileException
+	@Override
+	public SameLockExclusivePatches Merge(SameLockExclusivePatches slep) throws Exception
 	{
 		List<OnePatch> mergeresult = new LinkedList<OnePatch>();
 		boolean intersected = false;
@@ -41,7 +42,7 @@ public class SameLockExclusivePatches {
 			while (iitr.hasNext())
 			{
 				OnePatch iop = iitr.next();
-				OnePatch tempmergere = op.JudgeIntersectAndMerge(iop);
+				OnePatch tempmergere = op.Merge(iop);
 				if (tempmergere != null)
 				{
 					// means intersected.
@@ -58,55 +59,28 @@ public class SameLockExclusivePatches {
 		if (intersected)
 		{
 			this.patches = OneListMerge(mergeresult);
+			return this;
 		}
-		return intersected;
+		return null;
 	}
 	
-	private List<OnePatch> OneListMerge(List<OnePatch> tomergelist) throws InvalidClassFileException
+	@SuppressWarnings("unchecked")
+	private List<OnePatch> OneListMerge(List<OnePatch> tomergelist) throws Exception
 	{
-		boolean intersected = true;
-		List<OnePatch> temp = null;
-		List<OnePatch> tempres = tomergelist;
-		while (intersected)
+		List<Mergeable<OnePatch>> tempinput = new LinkedList<Mergeable<OnePatch>>();
+		Iterator<OnePatch> itr2 = tomergelist.iterator();
+		while (itr2.hasNext())
 		{
-			intersected = false;
-			temp = tempres;
-			tempres = new LinkedList<OnePatch>(); 
-			Iterator<OnePatch> itr = temp.iterator();
-			int l1 = 0;
-			while (itr.hasNext())
-			{
-				l1++;
-				int l2 = 0;
-				OnePatch op = itr.next();
-				Iterator<OnePatch> itr2 = temp.iterator();
-				while (itr2.hasNext())
-				{
-					l2++;
-					if (l2 < l1)
-					{
-						continue;
-					}
-					OnePatch op2 = itr2.next();
-					if (op != op2)
-					{
-						OnePatch tempmergere = op.JudgeIntersectAndMerge(op2);
-						if (tempmergere != null)
-						{
-							// means intersected.
-							intersected = true;
-							tempres.add(tempmergere);
-						}
-						else
-						{
-							tempres.add(op);
-							tempres.add(op2);
-						}
-					}
-				}
-			}
+			tempinput.add((Mergeable<OnePatch>) itr2.next());
 		}
-		return temp;
+		LinkedList<OnePatch> realout = new LinkedList<OnePatch>();
+		List<Mergeable<OnePatch>> tempout = new MergeUtil<OnePatch>().Merge(tempinput);
+		Iterator<Mergeable<OnePatch>> itr = tempout.iterator();
+		while (itr.hasNext())
+		{
+			realout.add((OnePatch) itr.next());
+		}
+		return realout;
 	}
 	
 }

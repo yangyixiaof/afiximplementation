@@ -133,7 +133,7 @@ public class OnePatch {
 	 * @return true intersected and merged; false un_intersected and un_merged.
 	 * @throws InvalidClassFileException 
 	 */
-	public OnePatch JudgeIntersectAndMerge(OnePatch iop) throws InvalidClassFileException {
+	public OnePatch Merge(OnePatch iop) throws InvalidClassFileException {
 		boolean intersected = false;
 		// situation1: in same method and intersected.
 		if (methodsig.equals(iop.methodsig))
