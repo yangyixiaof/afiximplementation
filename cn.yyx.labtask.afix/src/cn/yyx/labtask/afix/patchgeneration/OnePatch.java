@@ -4,13 +4,17 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import cn.yyx.labtask.afix.errordetection.ErrorTrace;
+
 public class OnePatch {
 	
+	ErrorTrace et = null;
 	String methodsig = null;
 	List<Integer> insertbeginidxs = new LinkedList<Integer>();
 	List<Integer> insertendidxs = new LinkedList<Integer>();
 	
-	public OnePatch(String methodsig) {
+	public OnePatch(ErrorTrace et, String methodsig) {
+		this.et = et;
 		this.methodsig = methodsig;
 	}
 	

@@ -3,8 +3,6 @@ package cn.yyx.labtask.afix.patchgeneration;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import com.ibm.wala.classLoader.IBytecodeMethod;
@@ -36,10 +34,12 @@ public class OnePatchGenerator {
 	
 	ClassHierarchy cha = null;
 	String appJar = null;
+	ErrorTrace pct = null;
+	ErrorTrace rt = null;
 	ErrorLocation p = null;
 	ErrorLocation c = null;
 	ErrorLocation r = null;
-	LinkedList<OnePatch> ops = null;
+	SameLockExclusivePatches ops = null;
 	boolean overlap = false;
 	int overlapflag = 0; // 0:at the same level. 1:r is lower level. 2:r is upper level.
 	
@@ -50,9 +50,11 @@ public class OnePatchGenerator {
 		ErrorLocation cel = null;
 		boolean stop = false;
 		Iterator<ErrorLocation> pitr = p.GetNegativeOrderIterator();
+		Iterator<ErrorLocation> pitrcl = p.GetNegativeOrderIterator();
 		while (pitr.hasNext())
 		{
 			pel = pitr.next();
+			pitrcl.next();
 			Iterator<ErrorLocation> citr = c.GetNegativeOrderIterator();
 			stop = false;
 			while (citr.hasNext())
@@ -73,9 +75,15 @@ public class OnePatchGenerator {
 		{
 			this.p = pel;
 			this.c = cel;
+			pct = new ErrorTrace();
+			while (pitrcl.hasNext())
+			{
+				pct.AddLocationAtNegativeOrder(pitrcl.next());
+			}
 			// situation 1 : r and p is at same level.
 			boolean issitu1 = false;
-			ErrorLocation rel = r.GetNegativeOrderIterator().next();
+			Iterator<ErrorLocation> ritr = r.GetNegativeOrderIterator();
+			ErrorLocation rel = ritr.next();
 			this.r = rel;
 			if (pel.InSameMethod(rel))
 			{
@@ -93,10 +101,9 @@ public class OnePatchGenerator {
 			if (!issitu1)
 			{
 				ErrorLocation tel = null;
-				Iterator<ErrorLocation> rir = r.GetNegativeOrderIterator();
-				while (rir.hasNext())
+				while (ritr.hasNext())
 				{
-					tel = rir.next();
+					tel = ritr.next();
 					if (pel.InSameMethod(tel))
 					{
 						int pidx = this.p.getBytecodel();
@@ -111,6 +118,11 @@ public class OnePatchGenerator {
 						break;
 					}
 				}
+			}
+			rt = new ErrorTrace();
+			while (ritr.hasNext())
+			{
+				rt.AddLocationAtNegativeOrder(ritr.next());
 			}
 			// situation 3 : r is upper level.
 			/*boolean issitu3 = false;
@@ -148,17 +160,17 @@ public class OnePatchGenerator {
 	 * @return if generated once, following invocations will only return the same patch.
 	 * @throws InvalidClassFileException 
 	 */
-	public List<OnePatch> GeneratePatch() throws InvalidClassFileException
+	public SameLockExclusivePatches GeneratePatch() throws InvalidClassFileException
 	{
-		ops = new LinkedList<OnePatch>();
+		ops = new SameLockExclusivePatches();
 		
 		if (!overlap)
 		{
 			// handle this.r
-			OnePatch op = new OnePatch(this.r.getSig());
+			OnePatch op = new OnePatch(rt, this.r.getSig());
 			op.AddLockBeforeIndex(this.r.getBytecodel());
 			op.AddUnlockAfterIndex(this.r.getBytecodel());
-			ops.add(op);
+			ops.AddPatches(op);
 		}
 		
 		// handle this.p this.c
@@ -179,8 +191,8 @@ public class OnePatchGenerator {
 		GetSearchSet(cbk, cfg, false, cset, pbk);
 		cset.retainAll(pset);
 		Set<ISSABasicBlock> protectnodes = cset;
-		OnePatch op = new OnePatch(methodSig);
-		ops.add(op);
+		OnePatch op = new OnePatch(pct, methodSig);
+		ops.AddPatches(op);
 		
 		BasicBlock ent = cfg.entry();
 		if (protectnodes.contains(ent))
