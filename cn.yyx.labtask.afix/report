@@ -1,0 +1,62 @@
+Class: cn/yyx/labtask/afix/TeAct
+Instrumenting <init> ()V:
+Initial ShrikeBT code:
+0: LocalLoad(Ljava/lang/Object;,0) (0)
+1: Invoke(SPECIAL,Ljava/lang/Object;,<init>,()V) (1)
+2: LocalLoad(Ljava/lang/Object;,0) (4)
+3: Constant(Ljava/lang/String;,"") (5)
+4: Put(Ljava/lang/String;,NONSTATIC,Lcn/yyx/labtask/afix/TeAct;,hello) (7)
+5: Return(V) (10)
+Final ShrikeBT code:
+0: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,err) (0)
+1: Constant(Ljava/lang/String;,"Entering call to cn.yyx.labtask.afix.TeAct.<init>") (0)
+2: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (0)
+3: LocalLoad(Ljava/lang/Object;,0) (0)
+4: Invoke(SPECIAL,Ljava/lang/Object;,<init>,()V) (1)
+5: LocalLoad(Ljava/lang/Object;,0) (4)
+6: Constant(Ljava/lang/String;,"") (5)
+7: Put(Ljava/lang/String;,NONSTATIC,Lcn/yyx/labtask/afix/TeAct;,hello) (7)
+8: Return(V) (10)
+Instrumenting HGFD ()V:
+Initial ShrikeBT code:
+0: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,out) (0)
+1: Constant(Ljava/lang/String;,"IOU YUIP GF") (3)
+2: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (5)
+3: Return(V) (8)
+Final ShrikeBT code:
+0: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,err) (0)
+1: Constant(Ljava/lang/String;,"Entering call to cn.yyx.labtask.afix.TeAct.HGFD") (0)
+2: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (0)
+3: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,out) (0)
+4: Constant(Ljava/lang/String;,"IOU YUIP GF") (3)
+5: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (5)
+6: Return(V) (8)
+Instrumenting main ([Ljava/lang/String;)V:
+Initial ShrikeBT code:
+0: New(Lcn/yyx/labtask/afix/TeAct;,0) (0)
+1: Dup(1,0) (3)
+2: Invoke(SPECIAL,Lcn/yyx/labtask/afix/TeAct;,<init>,()V) (4)
+3: Invoke(VIRTUAL,Lcn/yyx/labtask/afix/TeAct;,HGFD,()V) (7)
+4: Return(V) (10)
+Final ShrikeBT code:
+0: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,err) (0)
+1: Constant(Ljava/lang/String;,"Entering call to cn.yyx.labtask.afix.TeAct.main") (0)
+2: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (0)
+3: New(Lcn/yyx/labtask/afix/TeAct;,0) (0)
+4: Dup(1,0) (3)
+5: Invoke(SPECIAL,Lcn/yyx/labtask/afix/TeAct;,<init>,()V) (4)
+6: Invoke(VIRTUAL,Lcn/yyx/labtask/afix/TeAct;,HGFD,()V) (7)
+7: Return(V) (10)
+Class: cn/yyx/labtask/afix/LockTestPool
+Instrumenting <init> ()V:
+Initial ShrikeBT code:
+0: LocalLoad(Ljava/lang/Object;,0) (0)
+1: Invoke(SPECIAL,Ljava/lang/Object;,<init>,()V) (1)
+2: Return(V) (4)
+Final ShrikeBT code:
+0: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,err) (0)
+1: Constant(Ljava/lang/String;,"Entering call to cn.yyx.labtask.afix.LockTestPool.<init>") (0)
+2: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (0)
+3: LocalLoad(Ljava/lang/Object;,0) (0)
+4: Invoke(SPECIAL,Ljava/lang/Object;,<init>,()V) (1)
+5: Return(V) (4)
