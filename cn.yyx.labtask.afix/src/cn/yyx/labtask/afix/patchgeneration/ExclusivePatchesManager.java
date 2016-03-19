@@ -13,7 +13,42 @@ public class ExclusivePatchesManager {
 		patches.add(slep);
 	}
 	
-	public List<SameLockExclusivePatches> MergeSelf() throws Exception
+	public void MergeSelf() throws Exception
+	{
+		List<SameLockExclusivePatches> res = new LinkedList<SameLockExclusivePatches>();
+		Iterator<SameLockExclusivePatches> itr = patches.iterator();
+		int idx = 0;
+		while (itr.hasNext())
+		{
+			idx++;
+			SameLockExclusivePatches op = itr.next();
+			Iterator<SameLockExclusivePatches> iitr = patches.iterator();
+			int iidx = 0;
+			while (iitr.hasNext())
+			{
+				iidx++;
+				SameLockExclusivePatches oop = iitr.next();
+				if (iidx <= idx)
+				{
+					continue;
+				}
+				SameLockExclusivePatches mres = op.Merge(oop);
+				if (mres == null)
+				{
+					res.add(op);
+					res.add(oop);
+				}
+				else
+				{
+					res.add(mres);
+				}
+			}
+		}
+		this.patches = res;
+		this.patches = OneListMerge();
+	}
+	
+	private List<SameLockExclusivePatches> OneListMerge() throws Exception
 	{
 		List<Mergeable<SameLockExclusivePatches>> tempinput = new LinkedList<Mergeable<SameLockExclusivePatches>>();
 		Iterator<SameLockExclusivePatches> itr2 = patches.iterator();
