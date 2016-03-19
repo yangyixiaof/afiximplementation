@@ -8,9 +8,18 @@ public class ExclusivePatchesManager {
 	
 	List<SameLockExclusivePatches> patches = new LinkedList<SameLockExclusivePatches>();
 	
+	public ExclusivePatchesManager() {
+	}
+	
 	public void AddOneExclusivePatch(SameLockExclusivePatches slep)
 	{
 		patches.add(slep);
+	}
+	
+	
+	public Iterator<SameLockExclusivePatches> Iterator()
+	{
+		return patches.iterator();
 	}
 	
 	public void MergeSelf() throws Exception
@@ -64,6 +73,10 @@ public class ExclusivePatchesManager {
 			realout.add((SameLockExclusivePatches) itr.next());
 		}
 		return realout;
+	}
+
+	public int getSize() {
+		return patches.size();
 	}
 	
 }
