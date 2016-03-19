@@ -5,11 +5,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantLock;
 
-import com.ibm.wala.shrikeBT.Constants;
+import com.ibm.wala.shrikeBT.DupInstruction;
 import com.ibm.wala.shrikeBT.MethodData;
 import com.ibm.wala.shrikeBT.MethodEditor;
+import com.ibm.wala.shrikeBT.NewInstruction;
+import com.ibm.wala.shrikeBT.Util;
 import com.ibm.wala.shrikeBT.shrikeCT.ClassInstrumenter;
 import com.ibm.wala.shrikeBT.shrikeCT.OfflineInstrumenter;
 import com.ibm.wala.shrikeCT.ClassReader;
@@ -24,6 +29,8 @@ public class JarModifier {
 	private OfflineInstrumenter instrumenter;
 	String jar = null;
 	Writer w = null;
+	public static final String InputJar = "TestInputJar/WTest.jar";
+	public static final String OutputJar = "TestOutputJar/WTest.jar";
 
 	public JarModifier(String jar) {
 		this.jar = jar;
@@ -32,7 +39,7 @@ public class JarModifier {
 	private void InitialInstrumentor() throws IllegalArgumentException, IOException {
 		w = new BufferedWriter(new FileWriter("report", false));
 		instrumenter = new OfflineInstrumenter(false);
-		String[] args = new String[] { "TestInputJar/WTest.jar", "-o", "TestOutputJar/WTest.jar" };
+		String[] args = new String[] { InputJar, "-o", OutputJar };
 		instrumenter.parseStandardArgs(args);
 		instrumenter.setPassUnmodifiedClasses(true);
 		instrumenter.addInputClass(new File("selfuseclasscode"),
@@ -45,7 +52,7 @@ public class JarModifier {
 	}
 
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm)
-			throws IllegalArgumentException, IOException, InvalidClassFileException {
+			throws IllegalArgumentException, IOException, InvalidClassFileException, ClassNotFoundException {
 		InitialInstrumentor();
 
 		int asize = epm.getSize();
@@ -63,29 +70,48 @@ public class JarModifier {
 		DestroyInstrumentor();
 	}
 
-	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException {
+	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException, ClassNotFoundException {
 		ClassInstrumenter ci = null;
 		while ((ci = instrumenter.nextClass()) != null) {
-			
 			ClassReader cls = ci.getReader();
 			String classname = cls.getName();
 			if (classname.equals("cn/yyx/labtask/afix/LockPool")) {
-				for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
-					MethodData d = ci.visitMethod(m);
-					
-					MethodEditor me = new MethodEditor(d);
-					me.beginPass();
-					// TODO
-				}
 				ClassWriter cw = ci.emitClass();
-				cw.addField(ClassReader.ACC_PUBLIC | ClassReader.ACC_STATIC, "lock"+idx, "java.util.concurrent.locks.Lock",
-						new ClassWriter.Element[0]);
-				instrumenter.outputModifiedClass(ci, cw);
 				for (int i=0;i<asize;i++)
 				{
-					
+					cw.addField(ClassReader.ACC_PUBLIC | ClassReader.ACC_STATIC, "lock"+(i+1), "java.util.concurrent.locks.Lock",
+							new ClassWriter.Element[0]);
 				}
+				instrumenter.outputModifiedClass(ci, cw);
 				
+				@SuppressWarnings("resource")
+				ClassLoader cl = new URLClassLoader(new URL[]{new URL(OutputJar)});
+		        Class<?> c = cl.loadClass("cn/yyx/labtask/afix/LockPool");
+				MethodEditor me = null;
+				for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
+					MethodData d = ci.visitMethod(m);
+					if (ci.getReader().getMethodName(m).equals("<clinit>"))
+					{
+						me = new MethodEditor(d);
+						break;
+					}
+				}
+				me.beginPass();
+				for (int i=0;i<asize;i++)
+				{
+					String name = "lock"+(i+1);
+					me.insertAtStart(new MethodEditor.Patch() {
+						@Override
+						public void emitTo(MethodEditor.Output w) {
+							w.emit(NewInstruction.make(Util.makeType(c), 0));
+							w.emit(DupInstruction.make(0));
+							w.emit(Util.makeGet(c, name));
+							w.emit(Util.makeInvoke(ReentrantLock.class, "<init>",  new Class[] {}));
+							w.emit(Util.makePut(c, name));
+						}
+					});
+				}
+				me.applyPatches();
 				break;
 			}
 		}
