@@ -42,11 +42,12 @@ public class JarModifier {
 	}
 
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm) throws IllegalArgumentException, IOException, InvalidClassFileException {
+		InitialInstrumentor();
+		
 		int asize = epm.getSize();
 		InitialLockPool(asize);
 		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
-		InitialInstrumentor();
-		ClassInstrumenter ci;
+		ClassInstrumenter ci = null;
 		while ((ci = instrumenter.nextClass()) != null) {
 			ClassReader cls = ci.getReader();
 			String classname = cls.getName();
@@ -54,13 +55,25 @@ public class JarModifier {
 			// doClass(ci, w);
 			// TODO
 		}
+		
 		DestroyInstrumentor();
 	}
 
-	private void InitialLockPool(int asize) {
-		// TODO
+	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException {
+		ClassInstrumenter ci = null;
+		while ((ci = instrumenter.nextClass()) != null) {
+			ClassReader cls = ci.getReader();
+			String classname = cls.getName();
+			if (classname.equals("cn/yyx/labtask/afix/LockPool"))
+			{
+				// doClass(ci, w);
+				// TODO
+				
+				break;
+			}
+		}
 	}
 	
 	
-
+	
 }
