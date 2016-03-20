@@ -10,7 +10,10 @@ import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.ibm.wala.shrikeBT.ConstantInstruction;
 import com.ibm.wala.shrikeBT.DupInstruction;
+import com.ibm.wala.shrikeBT.IInstruction;
+import com.ibm.wala.shrikeBT.IInstruction.Visitor;
 import com.ibm.wala.shrikeBT.MethodData;
 import com.ibm.wala.shrikeBT.MethodEditor;
 import com.ibm.wala.shrikeBT.NewInstruction;
@@ -22,6 +25,7 @@ import com.ibm.wala.shrikeCT.ClassWriter;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
+import cn.yyx.labtask.afix.patchgeneration.OnePatch;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
 public class JarModifier {
@@ -29,8 +33,9 @@ public class JarModifier {
 	private OfflineInstrumenter instrumenter;
 	String jar = null;
 	Writer w = null;
-	public static final String InputJar = "TestInputJar/WTest.jar";
-	public static final String OutputJar = "TestOutputJar/WTest.jar";
+	Class<?> lockpool = null;
+	public static String InputJar = "TestInputJar/WTest.jar";
+	public static String OutputJar = "TestOutputJar/WTest.jar";
 
 	public JarModifier(String jar) {
 		this.jar = jar;
@@ -44,9 +49,13 @@ public class JarModifier {
 		instrumenter.setPassUnmodifiedClasses(true);
 		instrumenter.addInputClass(new File("selfuseclasscode"),
 				new File("selfuseclasscode/cn/yyx/labtask/afix/LockPool.class"));
+	}
+	
+	private void TranverseFromBeginning()
+	{
 		instrumenter.beginTraversal();
 	}
-
+	
 	private void DestroyInstrumentor() throws IllegalStateException, IOException {
 		instrumenter.close();
 	}
@@ -57,20 +66,63 @@ public class JarModifier {
 
 		int asize = epm.getSize();
 		InitialLockPool(asize);
-		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
+		
+		TranverseFromBeginning();
 		ClassInstrumenter ci = null;
+		int lockidx = 0;
 		while ((ci = instrumenter.nextClass()) != null) {
 			ClassReader cls = ci.getReader();
 			String classname = cls.getName();
-			System.out.println(classname);
-			// doClass(ci, w);
-			// TODO
+			Iterator<SameLockExclusivePatches> itr = epm.Iterator();
+			while (itr.hasNext())
+			{
+				SameLockExclusivePatches slep = itr.next();
+				String msig = slep.GetMethodSig();
+				if (msig.startsWith(classname))
+				{
+					lockidx++;
+					MethodEditor me = null;
+					for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
+						MethodData d = ci.visitMethod(m);
+						String dsig = ci.getReader().getMethodName(m) + ci.getReader().getMethodType(m);
+						if (dsig.equals(msig))
+						{
+							me = new MethodEditor(d);
+							break;
+						}
+					}
+					Iterator<OnePatch> slepitr = slep.GetIterator();
+					while (slepitr.hasNext())
+					{
+						OnePatch op = slepitr.next();
+						Iterator<Integer> bpos = op.GetInsertPosBeginIterator();
+						while (bpos.hasNext())
+						{
+							int bp = bpos.next();
+							me.insertBefore(bp, new MethodEditor.Patch() {
+								@Override
+								public void emitTo(MethodEditor.Output w) {
+									w.emit(getSysErr);
+									w.emit(ConstantInstruction.makeString(msg0));
+									w.emit(callPrintln);
+								}
+							});
+						}
+						Iterator<Integer> epos = op.GetInsertPosBeginIterator();
+						while (epos.hasNext())
+						{
+							int ep = epos.next();
+							
+						}
+					}
+				}
+			}
 		}
-
 		DestroyInstrumentor();
 	}
 
 	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException, ClassNotFoundException {
+		TranverseFromBeginning();
 		ClassInstrumenter ci = null;
 		while ((ci = instrumenter.nextClass()) != null) {
 			ClassReader cls = ci.getReader();
@@ -86,7 +138,7 @@ public class JarModifier {
 				
 				@SuppressWarnings("resource")
 				ClassLoader cl = new URLClassLoader(new URL[]{new URL(OutputJar)});
-		        Class<?> c = cl.loadClass("cn/yyx/labtask/afix/LockPool");
+		        lockpool = cl.loadClass("cn/yyx/labtask/afix/LockPool");
 				MethodEditor me = null;
 				for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
 					MethodData d = ci.visitMethod(m);
@@ -103,11 +155,11 @@ public class JarModifier {
 					me.insertAtStart(new MethodEditor.Patch() {
 						@Override
 						public void emitTo(MethodEditor.Output w) {
-							w.emit(NewInstruction.make(Util.makeType(c), 0));
+							w.emit(NewInstruction.make(Util.makeType(lockpool), 0));
 							w.emit(DupInstruction.make(0));
-							w.emit(Util.makeGet(c, name));
+							w.emit(Util.makeGet(lockpool, name));
 							w.emit(Util.makeInvoke(ReentrantLock.class, "<init>",  new Class[] {}));
-							w.emit(Util.makePut(c, name));
+							w.emit(Util.makePut(lockpool, name));
 						}
 					});
 				}

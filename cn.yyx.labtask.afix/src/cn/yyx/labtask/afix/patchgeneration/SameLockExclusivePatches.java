@@ -83,4 +83,10 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 		return realout;
 	}
 	
+	public String GetMethodSig()
+	{
+		OnePatch op = patches.iterator().next();
+		return op.getMethodsig();
+	}
+	
 }

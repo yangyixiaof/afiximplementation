@@ -20,7 +20,7 @@ import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 public class OnePatch {
 	
 	ErrorTrace et = null;
-	String methodsig = null;
+	private String methodsig = null;
 	Set<ISSABasicBlock> protectednodes = null;
 	IR ir = null;
 	SSACFG cfg = null;
@@ -29,7 +29,7 @@ public class OnePatch {
 	
 	public OnePatch(ErrorTrace et, String methodsig, Set<ISSABasicBlock> protectednodes, IR ir, SSACFG cfg) {
 		this.et = et;
-		this.methodsig = methodsig;
+		this.setMethodsig(methodsig);
 		this.protectednodes = protectednodes;
 		this.ir = ir;
 		this.cfg = cfg;
@@ -136,7 +136,7 @@ public class OnePatch {
 	public OnePatch Merge(OnePatch iop) throws InvalidClassFileException {
 		boolean intersected = false;
 		// situation1: in same method and intersected.
-		if (methodsig.equals(iop.methodsig))
+		if (getMethodsig().equals(iop.getMethodsig()))
 		{
 			Iterator<ISSABasicBlock> itr = iop.protectednodes.iterator();
 			while (itr.hasNext())
@@ -160,7 +160,7 @@ public class OnePatch {
 			}
 		}
 		// situation2: in different method and be wrapped.
-		if (!(methodsig.equals(iop.methodsig)))
+		if (!(getMethodsig().equals(iop.getMethodsig())))
 		{
 			// sub_situation1: this may in upper
 			ErrorTrace tet = iop.et;
@@ -168,7 +168,7 @@ public class OnePatch {
 			while (itr.hasNext())
 			{
 				ErrorLocation tel = itr.next();
-				if (methodsig.equals(tel.getSig()))
+				if (getMethodsig().equals(tel.getSig()))
 				{
 					ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), ir);
 					if (protectednodes.contains(tbk))
@@ -182,7 +182,7 @@ public class OnePatch {
 			// sub_situation2: this may in lower
 			if (!intersected)
 			{
-				String tmsig = iop.methodsig;
+				String tmsig = iop.getMethodsig();
 				itr = et.GetNegativeOrderIterator();
 				while (itr.hasNext())
 				{
@@ -207,6 +207,14 @@ public class OnePatch {
 			System.exit(1);
 		}
 		return null;
+	}
+
+	public String getMethodsig() {
+		return methodsig;
+	}
+
+	public void setMethodsig(String methodsig) {
+		this.methodsig = methodsig;
 	}
 	
 }

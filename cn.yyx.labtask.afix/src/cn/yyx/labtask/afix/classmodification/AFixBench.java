@@ -102,7 +102,6 @@ public class AFixBench {
 
 		for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
 			MethodData d = ci.visitMethod(m);
-
 			// d could be null, e.g., if the method is abstract or native
 			if (d != null) {
 				w.write("Instrumenting " + ci.getReader().getMethodName(m) + " " + ci.getReader().getMethodType(m)
@@ -127,6 +126,11 @@ public class AFixBench {
 					final String msg0 = "Entering call to " + Util.makeClass("L" + ci.getReader().getName() + ";") + "."
 							+ ci.getReader().getMethodName(m);
 					// final int noTraceLabel = me.allocateLabel();
+					IInstruction[] iis = me.getInstructions();
+					for (IInstruction ii : iis)
+					{
+						System.out.println("ii type:" + ii.getClass() + ";one ii:"+ii+";pop count:"+ii.getPoppedCount());
+					}
 					me.insertAtStart(new MethodEditor.Patch() {
 						@Override
 						public void emitTo(MethodEditor.Output w) {
