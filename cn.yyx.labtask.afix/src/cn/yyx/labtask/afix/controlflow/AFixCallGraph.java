@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import com.ibm.wala.classLoader.IBytecodeMethod;
@@ -29,9 +30,11 @@ import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.Util;
 import com.ibm.wala.ipa.callgraph.propagation.LocalPointerKey;
 import com.ibm.wala.ipa.cha.ClassHierarchy;
+import com.ibm.wala.shrikeBT.IInstruction;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.SSACFG;
+import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.CancelException;
@@ -134,19 +137,34 @@ public class AFixCallGraph {
 					System.out.print("Print CFG Begin:");
 					SSACFG sfg = ir.getControlFlowGraph();
 					System.out.print(sfg);
-					System.out.print("Print CFG End.");
+					System.out.print("Print CFG End.\n");
 					
 					IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-					int bytecodeIndex = method.getBytecodeIndex(12);
+					SSACFG cfg = ir.getControlFlowGraph();
+					BasicBlock bb = cfg.getBasicBlock(4);
+					IInstruction[] iis = method.getInstructions();
+					for (IInstruction ii : iis)
+					{
+						System.out.println("ii:" + ii);
+					}
+					int fidx = bb.getFirstInstructionIndex();
+					int lidx = bb.getLastInstructionIndex();
+					System.out.println("ii first:"+fidx);
+					System.out.println("ii last:"+lidx);
+					int bytecodeIndex = method.getBytecodeIndex(10);
+					
+					System.out.println("bytecodeIndex content:" + iis[12]);
+					
 					int sourceLineNum = method.getLineNumber(bytecodeIndex);
 					System.out.println("bytecodeIndex:"+bytecodeIndex+";sourceIndex:"+sourceLineNum);
 					
 					System.out.println("======Begin print ir.======");
-					Iterator<SSAInstruction> iir = ir.iterateNormalInstructions();
-					while (iir.hasNext())
+					SSAInstruction[] iirarr = ir.getInstructions();
+					for (int i=0;i<iirarr.length;i++)
 					{
-						SSAInstruction si = iir.next();
-						System.out.println("sicnt:"+si+";siindex:"+si.iindex);
+						SSAInstruction si = iirarr[i];
+						System.out.println("index:" + i + ";sicnt:"+si + ";sidx:" + (si != null ? si.getDef() : "null"));
+						// +";siindex:"+si.iindex
 					}
 					System.out.println("======End print ir.======");
 					return PrintUtil.PrintIR(cha, ir);
@@ -162,8 +180,8 @@ public class AFixCallGraph {
 			return null;
 		} catch (InvalidClassFileException e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 	
 	/**
