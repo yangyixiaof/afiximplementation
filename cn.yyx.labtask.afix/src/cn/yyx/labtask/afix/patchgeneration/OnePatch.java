@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.ibm.wala.classLoader.IBytecodeMethod;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
@@ -103,16 +102,18 @@ public class OnePatch {
 	
 	private Integer GetBasicBlockBeforePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getFirstInstructionIndex();
-		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		int bytecodeIndex = method.getBytecodeIndex(iidx);
-		return bytecodeIndex;
+		// IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
+		// int bytecodeIndex = method.getBytecodeIndex(iidx);
+		// return bytecodeIndex;
+		return iidx;
 	}
 	
 	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getLastInstructionIndex();
-		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		int bytecodeIndex = method.getBytecodeIndex(iidx);
-		return bytecodeIndex;
+		// IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
+		// int bytecodeIndex = method.getBytecodeIndex(iidx);
+		// return bytecodeIndex;
+		return iidx;
 	}
 	
 	public Iterator<Integer> GetInsertPosEndIterator() throws InvalidClassFileException
