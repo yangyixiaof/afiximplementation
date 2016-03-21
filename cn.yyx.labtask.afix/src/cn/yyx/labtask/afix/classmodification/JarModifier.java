@@ -73,7 +73,6 @@ public class JarModifier {
 	
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm)
 			throws IllegalArgumentException, IOException, InvalidClassFileException, ClassNotFoundException {
-		InitialInstrumentor();
 		
 		int asize = epm.getSize();
 		InitialLockPool(asize);
@@ -122,8 +121,7 @@ public class JarModifier {
 					});
 				}
 			}
-		}
-		*/
+		}*/
 		
 		DestroyInstrumentor();
 	}
