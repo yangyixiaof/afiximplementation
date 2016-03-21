@@ -87,7 +87,7 @@ public class JarModifier {
 			while (opitr.hasNext()) {
 				OnePatch op = opitr.next();
 				String msig = op.getMethodsig();
-				ClassInstrumenter ci = GetClassInstrumenter(msig);
+				ClassInstrumenter ci = GetClassInstrumenter(msig, instrumenter);
 				MethodEditor me = null;
 				for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
 					MethodData d = ci.visitMethod(m);
@@ -126,7 +126,7 @@ public class JarModifier {
 		DestroyInstrumentor();
 	}
 	
-	private ClassInstrumenter GetClassInstrumenter(String msig) throws IOException, InvalidClassFileException {
+	private ClassInstrumenter GetClassInstrumenter(String msig, OfflineInstrumenter instrumenter) throws IOException, InvalidClassFileException {
 		TranverseFromBeginning(instrumenter);
 		ClassInstrumenter ci = null;
 		while ((ci = instrumenter.nextClass()) != null) {
