@@ -6,11 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.ibm.wala.shrikeBT.ReturnInstruction;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSACFG.BasicBlock;
+import com.ibm.wala.ssa.SSAInstruction;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
@@ -108,6 +110,12 @@ public class OnePatch {
 	
 	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getLastInstructionIndex();
+		SSAInstruction is = bbk.getLastInstruction();
+		String content = is.toString();
+		if (content.startsWith("return"))
+		{
+			iidx--;
+		}
 		// IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		// return bytecodeIndex;
