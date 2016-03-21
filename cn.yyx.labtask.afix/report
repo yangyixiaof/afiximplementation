@@ -1,0 +1,57 @@
+Class: cn/yyx/labtask/afix/TeAct
+Instrumenting <init> ()V:
+Initial ShrikeBT code:
+0: LocalLoad(Ljava/lang/Object;,0) (0)
+1: Invoke(SPECIAL,Ljava/lang/Object;,<init>,()V) (1)
+2: LocalLoad(Ljava/lang/Object;,0) (4)
+3: Constant(Ljava/lang/String;,"he ha.") (5)
+4: Put(Ljava/lang/String;,NONSTATIC,Lcn/yyx/labtask/afix/TeAct;,hello) (7)
+5: Return(V) (10)
+Instrumenting HGFD ()V:
+Initial ShrikeBT code:
+0: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,out) (0)
+1: Constant(Ljava/lang/String;,"IOU YUIP GF") (3)
+2: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (5)
+3: Return(V) (8)
+Instrumenting main ([Ljava/lang/String;)V:
+Initial ShrikeBT code:
+0: New(Lcn/yyx/labtask/afix/TeAct;,0) (0)
+1: Dup(1,0) (3)
+2: Invoke(SPECIAL,Lcn/yyx/labtask/afix/TeAct;,<init>,()V) (4)
+3: Invoke(VIRTUAL,Lcn/yyx/labtask/afix/TeAct;,HGFD,()V) (7)
+4: Return(V) (10)
+Instrumenting <clinit> ()V:
+Initial ShrikeBT code:
+0: New(Ljava/util/concurrent/locks/ReentrantLock;,0) (0)
+1: Dup(1,0) (3)
+2: Invoke(SPECIAL,Ljava/util/concurrent/locks/ReentrantLock;,<init>,()V) (4)
+3: Put(Ljava/util/concurrent/locks/Lock;,STATIC,Lcn/yyx/labtask/afix/TeAct;,lk) (7)
+4: Return(V) (10)
+Class: cn/yyx/labtask/afix/LockTestPoolAddedTest
+Instrumenting <init> ()V:
+Initial ShrikeBT code:
+0: LocalLoad(Ljava/lang/Object;,0) (0)
+1: Invoke(SPECIAL,Ljava/lang/Object;,<init>,()V) (1)
+2: Return(V) (4)
+Instrumenting <clinit> ()V:
+Initial ShrikeBT code:
+0: New(Ljava/util/concurrent/locks/ReentrantLock;,0) (0)
+1: Dup(1,0) (3)
+2: Invoke(SPECIAL,Ljava/util/concurrent/locks/ReentrantLock;,<init>,()V) (4)
+3: Put(Ljava/util/concurrent/locks/Lock;,STATIC,Lcn/yyx/labtask/afix/LockTestPoolAddedTest;,lock1) (7)
+4: New(Ljava/util/concurrent/locks/ReentrantLock;,0) (10)
+5: Dup(1,0) (13)
+6: Invoke(SPECIAL,Ljava/util/concurrent/locks/ReentrantLock;,<init>,()V) (14)
+7: Put(Ljava/util/concurrent/locks/Lock;,STATIC,Lcn/yyx/labtask/afix/LockTestPoolAddedTest;,lock2) (17)
+8: New(Ljava/util/concurrent/locks/ReentrantLock;,0) (20)
+9: Dup(1,0) (23)
+10: Invoke(SPECIAL,Ljava/util/concurrent/locks/ReentrantLock;,<init>,()V) (24)
+11: Put(Ljava/util/concurrent/locks/Lock;,STATIC,Lcn/yyx/labtask/afix/LockTestPoolAddedTest;,lock3) (27)
+12: Get(Ljava/util/concurrent/locks/Lock;,STATIC,Lcn/yyx/labtask/afix/LockTestPoolAddedTest;,lock1) (30)
+13: Invoke(INTERFACE,Ljava/util/concurrent/locks/Lock;,lock,()V) (33)
+14: Get(Ljava/io/PrintStream;,STATIC,Ljava/lang/System;,err) (38)
+15: Constant(Ljava/lang/String;,"haha") (41)
+16: Invoke(VIRTUAL,Ljava/io/PrintStream;,println,(Ljava/lang/String;)V) (43)
+17: Get(Ljava/util/concurrent/locks/Lock;,STATIC,Lcn/yyx/labtask/afix/LockTestPoolAddedTest;,lock1) (46)
+18: Invoke(INTERFACE,Ljava/util/concurrent/locks/Lock;,unlock,()V) (49)
+19: Return(V) (54)

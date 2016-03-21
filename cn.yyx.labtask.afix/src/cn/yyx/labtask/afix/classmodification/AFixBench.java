@@ -80,6 +80,16 @@ public class AFixBench {
 			ClassInstrumenter ci;
 			while ((ci = instrumenter.nextClass()) != null) {
 				ClassReader cr = ci.getReader();
+				int fcount = cr.getFieldCount();
+				System.out.println("field count:"+fcount);
+				
+					for (int ii=0;ii<fcount;ii++)
+					{
+						int size = cr.getFieldRawSize(ii);
+						String fname = cr.getFieldName(ii);
+						System.out.println("field size:" + size + ";fname:"+fname);
+					}
+				
 				
 				String classname = cr.getName();
 				System.out.println("name of class:"+classname);
