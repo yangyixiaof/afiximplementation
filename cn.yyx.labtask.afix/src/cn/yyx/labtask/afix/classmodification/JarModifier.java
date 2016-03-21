@@ -87,16 +87,21 @@ public class JarModifier {
 			while (opitr.hasNext()) {
 				OnePatch op = opitr.next();
 				String msig = op.getMethodsig();
+				String dsig = null;
 				ClassInstrumenter ci = GetClassInstrumenter(msig, instrumenter);
 				MethodEditor me = null;
 				for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
 					MethodData d = ci.visitMethod(m);
-					String dsig = ci.getReader().getMethodName(m) + ci.getReader().getMethodType(m);
-					if (dsig.equals(msig)) {
+					ClassReader cr = ci.getReader();
+					dsig = cr.getMethodName(m) + cr.getMethodType(m);
+					// System.err.println("dsig:" + dsig);
+					// System.err.println("msig:" + msig);
+					if (dsig.endsWith(msig) || msig.endsWith(dsig)) {
 						me = new MethodEditor(d);
 						break;
 					}
 				}
+				me.beginPass();
 				Iterator<Integer> bpos = op.GetInsertPosBeginIterator();
 				while (bpos.hasNext()) {
 					int bp = bpos.next();
@@ -115,7 +120,7 @@ public class JarModifier {
 					int ep = epos.next();
 					// testing
 					System.out.println("methodsig:"+op.getMethodsig()+";ep:"+ep);
-					me.insertBefore(ep, new MethodEditor.Patch() {
+					me.insertAfter(ep, new MethodEditor.Patch() {
 						@Override
 						public void emitTo(MethodEditor.Output w) {
 							w.emit(Util.makeGet(lockpool, lockname));
@@ -123,6 +128,7 @@ public class JarModifier {
 						}
 					});
 				}
+				me.applyPatches();
 				ClassWriter cw = ci.emitClass();
 				instrumenter.outputModifiedClass(ci, cw);
 			}
@@ -131,6 +137,12 @@ public class JarModifier {
 	}
 	
 	private ClassInstrumenter GetClassInstrumenter(String msig, OfflineInstrumenter instrumenter) throws IOException, InvalidClassFileException {
+		
+		if (msig.equals("demo.Example$MyThread.run()V"))
+		{
+			System.out.println("dsds");
+		}
+		
 		TranverseFromBeginning(instrumenter);
 		ClassInstrumenter ci = null;
 		while ((ci = instrumenter.nextClass()) != null) {
@@ -138,7 +150,11 @@ public class JarModifier {
 			String classname = cls.getName();
 			// System.out.println("classname:"+classname);
 			classname = classname.replace('/', '.');
-			if (msig.startsWith(classname)) {
+			int bra = msig.indexOf('(');
+			String mtype = msig.substring(0, bra);
+			int lddx = mtype.lastIndexOf('.');
+			mtype = mtype.substring(0, lddx);
+			if (mtype.equals(classname)) {
 				break;
 			}
 		}

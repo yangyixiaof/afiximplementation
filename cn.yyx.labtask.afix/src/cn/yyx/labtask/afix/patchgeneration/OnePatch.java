@@ -61,8 +61,6 @@ public class OnePatch {
 				AddUnlockAfterIndex(GetBasicBlockAfterPosition(ext, ir));
 			}
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
-			visited.add(ent);
-			visited.add(ext);
 			Set<ISSABasicBlock> blockprelock = new HashSet<ISSABasicBlock>();
 			Set<ISSABasicBlock> blockafterunlock = new HashSet<ISSABasicBlock>();
 			IterateBlockToAddLockAndUnlock(ent, cfg, protectednodes, visited, blockprelock, blockafterunlock, ir);
