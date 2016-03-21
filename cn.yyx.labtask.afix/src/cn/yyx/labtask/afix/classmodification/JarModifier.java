@@ -161,7 +161,7 @@ public class JarModifier {
 		}
 
 		{
-			File ojf = new File(lppath);
+			File ojf = new File(lpdir);
 			// System.out.println(OutputJar + " exists? " + ojf.exists());
 			@SuppressWarnings("resource")
 			ClassLoader cl = new URLClassLoader(new URL[] { ojf.toURI().toURL() });
