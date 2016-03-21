@@ -27,6 +27,7 @@ public class JarModifier {
 	
 	public static final String lockpoolinipath = "selfuseclassbackup/lockpool.jar";
 	public static final String lockpoolpath = "selfuseclasscode/lockpool.jar";
+	public static final String lockpoolfinalpath = "selfuseclassfinalcode/lockpool.jar";
 	
 	private OfflineInstrumenter instrumenter = null;
 	private OfflineInstrumenter lockpoolinstrumenter = null;
@@ -40,9 +41,9 @@ public class JarModifier {
 		this.OutputJar = outputjar;
 	}
 	
-	private void InitialLockPoolInstrumentor(String inijarpath) throws IllegalArgumentException, IOException {
+	private void InitialLockPoolInstrumentor(String inijarpath, String finaljarpath) throws IllegalArgumentException, IOException {
 		lockpoolinstrumenter = new OfflineInstrumenter(false);
-		String[] args = new String[] { inijarpath, "-o", lockpoolpath };
+		String[] args = new String[] { inijarpath, "-o", finaljarpath };
 		lockpoolinstrumenter.parseStandardArgs(args);
 		lockpoolinstrumenter.setPassUnmodifiedClasses(true);
 	}
@@ -144,7 +145,7 @@ public class JarModifier {
 		System.out.println("lock size:" + asize);
 		
 		{
-			InitialLockPoolInstrumentor(lockpoolinipath);
+			InitialLockPoolInstrumentor(lockpoolinipath, lockpoolpath);
 			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool", lockpoolinstrumenter);
 			ClassWriter cw = ci.emitClass();
 			for (int i = 0; i < asize; i++) {
@@ -164,7 +165,7 @@ public class JarModifier {
 		}
 
 		{
-			InitialLockPoolInstrumentor(lockpoolpath);
+			InitialLockPoolInstrumentor(lockpoolpath, lockpoolfinalpath);
 			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool", lockpoolinstrumenter);
 			MethodEditor me = null;
 			for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
