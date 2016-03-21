@@ -32,11 +32,12 @@ public class JarModifier {
 	String jar = null;
 	Writer w = null;
 	Class<?> lockpool = null;
-	public static String InputJar = "TestInputJar/WTest.jar";
-	public static String OutputJar = "TestOutputJar/WTest.jar";
+	String InputJar = "TestInputJar/WTest.jar";
+	String OutputJar = "TestOutputJar/WTest.jar";
 
-	public JarModifier(String jar) {
-		this.jar = jar;
+	public JarModifier(String inputjar, String outputjar) {
+		this.InputJar = inputjar;
+		this.OutputJar = outputjar;
 	}
 
 	private void InitialInstrumentor() throws IllegalArgumentException, IOException {
