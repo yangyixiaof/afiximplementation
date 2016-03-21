@@ -1,6 +1,5 @@
 package cn.yyx.labtask.afix.patchgeneration;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -92,7 +91,7 @@ public class OnePatch {
 			{
 				if (!blockafterunlock.contains(now))
 				{
-					ISSABasicBlock bk = now;
+					/*ISSABasicBlock bk = now;
 					Collection<ISSABasicBlock> nsuccs = cfg.getNormalSuccessors(now);
 					if (nsuccs.size() == 1)
 					{
@@ -101,8 +100,8 @@ public class OnePatch {
 						{
 							bk = now;
 						}
-					}
-					AddUnlockAfterIndex(GetBasicBlockAfterPosition(bk, ir));
+					}*/
+					AddUnlockAfterIndex(GetBasicBlockAfterPosition(now, ir));
 					blockafterunlock.add(now);
 				}
 			}
