@@ -52,7 +52,7 @@ public class JarModifier {
 
 	private void DestroyLockPoolInstrumentor() throws IllegalStateException, IOException {
 		lockpoolinstrumenter.close();
-		lockpoolinstrumenter = null;
+		lockpoolinstrumenter = null;  
 	}
 
 	private void InitialInstrumentor() throws IllegalArgumentException, IOException {
@@ -60,7 +60,7 @@ public class JarModifier {
 		String[] args = new String[] { InputJar, "-o", OutputJar };
 		instrumenter.parseStandardArgs(args);
 		instrumenter.setPassUnmodifiedClasses(true);
-		instrumenter.addInputJarEntry(new File(lockpoolfinalpath), "cn/yyx/labtask/afix/LockPool.class");
+		// instrumenter.addInputJarEntry(new File(lockpoolfinalpath), "cn/yyx/labtask/afix/LockPool.class");
 	}
 
 	private void TranverseFromBeginning(OfflineInstrumenter instrumenter) {
