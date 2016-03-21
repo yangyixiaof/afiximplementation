@@ -126,6 +126,9 @@ public class JarModifier {
 	}
 
 	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException, ClassNotFoundException {
+		
+		System.out.println("generate size:" + asize);
+		
 		{
 			InitialInstrumentor();
 			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool");
@@ -136,7 +139,9 @@ public class JarModifier {
 			}
 			instrumenter.outputModifiedClass(ci, cw);
 			DestroyInstrumentor();
+		}
 
+		{
 			File ojf = new File(OutputJar);
 			// System.out.println(OutputJar + " exists? " + ojf.exists());
 			@SuppressWarnings("resource")
