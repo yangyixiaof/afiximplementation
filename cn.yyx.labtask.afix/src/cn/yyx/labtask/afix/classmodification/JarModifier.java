@@ -60,11 +60,11 @@ public class JarModifier {
 
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm)
 			throws IllegalArgumentException, IOException, InvalidClassFileException, ClassNotFoundException {
-		InitialInstrumentor();
 
 		int asize = epm.getSize();
 		InitialLockPool(asize);
 
+		InitialInstrumentor();
 		int lockidx = 0;
 		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
 		while (itr.hasNext()) {
@@ -126,48 +126,74 @@ public class JarModifier {
 	}
 
 	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException, ClassNotFoundException {
+		{
+			InitialInstrumentor();
+			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool");
+			ClassWriter cw = ci.emitClass();
+			for (int i = 0; i < asize; i++) {
+				cw.addField(ClassReader.ACC_PUBLIC | ClassReader.ACC_STATIC, "lock" + (i + 1),
+						"java.util.concurrent.locks.Lock", new ClassWriter.Element[0]);
+			}
+			instrumenter.outputModifiedClass(ci, cw);
+			DestroyInstrumentor();
+
+			File ojf = new File(OutputJar);
+			System.out.println(OutputJar + " exists? " + ojf.exists());
+			@SuppressWarnings("resource")
+			ClassLoader cl = new URLClassLoader(new URL[] { ojf.toURI().toURL() });
+			lockpool = cl.loadClass("cn.yyx.labtask.afix.LockPool");
+		}
+
+		{
+			InitialInstrumentor();
+			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool");
+			MethodEditor me = null;
+			for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
+				MethodData d = ci.visitMethod(m);
+				if (ci.getReader().getMethodName(m).equals("<clinit>")) {
+					me = new MethodEditor(d);
+					break;
+				}
+			}
+			me.beginPass();
+			for (int i = 0; i < asize; i++) {
+				String name = "lock" + (i + 1);
+				me.insertAtStart(new MethodEditor.Patch() {
+					@Override
+					public void emitTo(MethodEditor.Output w) {
+						w.emit(NewInstruction.make(Util.makeType(lockpool), 0));
+						w.emit(DupInstruction.make(0));
+						w.emit(Util.makeGet(lockpool, name));
+						w.emit(Util.makeInvoke(ReentrantLock.class, "<init>", new Class[] {}));
+						w.emit(Util.makePut(lockpool, name));
+					}
+				});
+			}
+			me.applyPatches();
+			DestroyInstrumentor();
+		}
+	}
+
+	private ClassInstrumenter SearchForSpecifiedClass(String specifiedclassname)
+			throws IOException, InvalidClassFileException {
 		TranverseFromBeginning();
 		ClassInstrumenter ci = null;
+		boolean found = false;
 		while ((ci = instrumenter.nextClass()) != null) {
 			ClassReader cls = ci.getReader();
 			String classname = cls.getName();
-			if (classname.equals("cn/yyx/labtask/afix/LockPool")) {
-				ClassWriter cw = ci.emitClass();
-				for (int i = 0; i < asize; i++) {
-					cw.addField(ClassReader.ACC_PUBLIC | ClassReader.ACC_STATIC, "lock" + (i + 1),
-							"java.util.concurrent.locks.Lock", new ClassWriter.Element[0]);
-				}
-				instrumenter.outputModifiedClass(ci, cw);
-
-				@SuppressWarnings("resource")
-				ClassLoader cl = new URLClassLoader(new URL[] { new URL(OutputJar) });
-				lockpool = cl.loadClass("cn/yyx/labtask/afix/LockPool");
-				MethodEditor me = null;
-				for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
-					MethodData d = ci.visitMethod(m);
-					if (ci.getReader().getMethodName(m).equals("<clinit>")) {
-						me = new MethodEditor(d);
-						break;
-					}
-				}
-				me.beginPass();
-				for (int i = 0; i < asize; i++) {
-					String name = "lock" + (i + 1);
-					me.insertAtStart(new MethodEditor.Patch() {
-						@Override
-						public void emitTo(MethodEditor.Output w) {
-							w.emit(NewInstruction.make(Util.makeType(lockpool), 0));
-							w.emit(DupInstruction.make(0));
-							w.emit(Util.makeGet(lockpool, name));
-							w.emit(Util.makeInvoke(ReentrantLock.class, "<init>", new Class[] {}));
-							w.emit(Util.makePut(lockpool, name));
-						}
-					});
-				}
-				me.applyPatches();
+			
+			System.out.println("classname:"+classname);
+			
+			if (classname.equals(specifiedclassname)) {
+				found = true;
 				break;
 			}
 		}
+		if (!found) {
+			return null;
+		}
+		return ci;
 	}
 
 }
