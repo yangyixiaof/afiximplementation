@@ -38,6 +38,7 @@ public class FixHandler {
 	public static void main(String[] args) {
 		FixHandler fh = new FixHandler();
 		List<OneErrorInfo> oeilist = new LinkedList<OneErrorInfo>();
+		
 		String inputjar = "TestInputJar/WTest.jar";
 		String outputjar = "TestOutputJar/WTest.jar";
 		try {
