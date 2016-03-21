@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cn.yyx.labtask.afix.classmodification.JarModifier;
+import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
@@ -37,10 +38,16 @@ public class FixHandler {
 
 	public static void main(String[] args) {
 		FixHandler fh = new FixHandler();
+		ErrorTrace p = new ErrorTrace();
+		p.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example$MyThread.run()V", 0));
+		ErrorTrace c = new ErrorTrace();
+		c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example$MyThread.run()V", 26));
+		ErrorTrace r = new ErrorTrace();
+		r.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example.main([Ljava/lang/String;)V", 27));
 		List<OneErrorInfo> oeilist = new LinkedList<OneErrorInfo>();
-		
-		String inputjar = "TestInputJar/WTest.jar";
-		String outputjar = "TestOutputJar/WTest.jar";
+		oeilist.add(new OneErrorInfo(p, c, r));
+		String inputjar = "TestInputJar/demo.jar";
+		String outputjar = "TestOutputJar/demo.jar";
 		try {
 			fh.HandleTraces(oeilist, inputjar, outputjar);
 		} catch (Exception e) {

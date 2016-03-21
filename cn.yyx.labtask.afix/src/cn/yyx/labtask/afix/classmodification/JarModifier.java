@@ -32,8 +32,8 @@ public class JarModifier {
 	String jar = null;
 	Writer w = null;
 	Class<?> lockpool = null;
-	String InputJar = "TestInputJar/WTest.jar";
-	String OutputJar = "TestOutputJar/WTest.jar";
+	String InputJar = null;
+	String OutputJar = null;
 
 	public JarModifier(String inputjar, String outputjar) {
 		this.InputJar = inputjar;
