@@ -100,6 +100,8 @@ public class JarModifier {
 				Iterator<Integer> bpos = op.GetInsertPosBeginIterator();
 				while (bpos.hasNext()) {
 					int bp = bpos.next();
+					// testing
+					System.out.println("methodsig:"+op.getMethodsig()+";bp:"+bp);
 					me.insertBefore(bp, new MethodEditor.Patch() {
 						@Override
 						public void emitTo(MethodEditor.Output w) {
@@ -108,9 +110,11 @@ public class JarModifier {
 						}
 					});
 				}
-				Iterator<Integer> epos = op.GetInsertPosBeginIterator();
+				Iterator<Integer> epos = op.GetInsertPosEndIterator();
 				while (epos.hasNext()) {
 					int ep = epos.next();
+					// testing
+					System.out.println("methodsig:"+op.getMethodsig()+";ep:"+ep);
 					me.insertBefore(ep, new MethodEditor.Patch() {
 						@Override
 						public void emitTo(MethodEditor.Output w) {
