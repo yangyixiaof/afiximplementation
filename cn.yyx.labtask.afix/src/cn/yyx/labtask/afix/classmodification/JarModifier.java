@@ -58,7 +58,7 @@ public class JarModifier {
 		String[] args = new String[] { InputJar, "-o", OutputJar };
 		instrumenter.parseStandardArgs(args);
 		instrumenter.setPassUnmodifiedClasses(true);
-		instrumenter.addInputJarEntry(new File(lockpoolfinalpath), "cn.yyx.labtask.afix.LockPool");
+		instrumenter.addInputJarEntry(new File(lockpoolfinalpath), "cn/yyx/labtask/afix/LockPool.class");
 	}
 	
 	private void TranverseFromBeginning(OfflineInstrumenter instrumenter) {
@@ -132,10 +132,16 @@ public class JarModifier {
 		while ((ci = instrumenter.nextClass()) != null) {
 			ClassReader cls = ci.getReader();
 			String classname = cls.getName();
+			// System.out.println("classname:"+classname);
+			classname = classname.replace('/', '.');
 			if (msig.startsWith(classname)) {
 				break;
 			}
 		}
+		/*if (ci == null)
+		{
+			System.out.println(msig);
+		}*/
 		return ci;
 	}
 	
