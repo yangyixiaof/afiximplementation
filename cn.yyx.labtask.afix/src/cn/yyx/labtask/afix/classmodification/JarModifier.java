@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Iterator;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.ibm.wala.shrikeBT.DupInstruction;
-import com.ibm.wala.shrikeBT.IInstruction;
 import com.ibm.wala.shrikeBT.MethodData;
 import com.ibm.wala.shrikeBT.MethodEditor;
 import com.ibm.wala.shrikeBT.NewInstruction;
@@ -18,13 +19,11 @@ import com.ibm.wala.shrikeCT.ClassReader;
 import com.ibm.wala.shrikeCT.ClassWriter;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 
-import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
+import cn.yyx.labtask.afix.patchgeneration.OnePatch;
+import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
 public class JarModifier {
-	
-	public static final String lpdir = "selfuseclasscode";
-	public static final String lppath = "selfuseclasscode/cn/yyx/labtask/afix/LockPool.class";
 	
 	public static final String lockpoolinipath = "selfuseclassbackup/lockpool.jar";
 	public static final String lockpoolpath = "selfuseclasscode/lockpool.jar";
@@ -59,8 +58,7 @@ public class JarModifier {
 		String[] args = new String[] { InputJar, "-o", OutputJar };
 		instrumenter.parseStandardArgs(args);
 		instrumenter.setPassUnmodifiedClasses(true);
-		instrumenter.addInputClass(new File(lpdir),
-				new File(lppath));
+		instrumenter.addInputJarEntry(new File(lockpoolfinalpath), "cn.yyx.labtask.afix.LockPool");
 	}
 	
 	private void TranverseFromBeginning(OfflineInstrumenter instrumenter) {
@@ -78,7 +76,7 @@ public class JarModifier {
 		int asize = epm.getSize();
 		InitialLockPool(asize);
 
-		/*InitialInstrumentor();
+		InitialInstrumentor();
 		int lockidx = 0;
 		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
 		while (itr.hasNext()) {
@@ -121,9 +119,11 @@ public class JarModifier {
 						}
 					});
 				}
+				ClassWriter cw = ci.emitClass();
+				instrumenter.outputModifiedClass(ci, cw);
 			}
 		}
-		DestroyInstrumentor();*/
+		DestroyInstrumentor();
 	}
 	
 	private ClassInstrumenter GetClassInstrumenter(String msig) throws IOException, InvalidClassFileException {
