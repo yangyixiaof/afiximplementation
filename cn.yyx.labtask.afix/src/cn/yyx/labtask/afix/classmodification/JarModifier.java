@@ -138,7 +138,7 @@ public class JarModifier {
 			DestroyInstrumentor();
 
 			File ojf = new File(OutputJar);
-			System.out.println(OutputJar + " exists? " + ojf.exists());
+			// System.out.println(OutputJar + " exists? " + ojf.exists());
 			@SuppressWarnings("resource")
 			ClassLoader cl = new URLClassLoader(new URL[] { ojf.toURI().toURL() });
 			lockpool = cl.loadClass("cn.yyx.labtask.afix.LockPool");
@@ -182,9 +182,7 @@ public class JarModifier {
 		while ((ci = instrumenter.nextClass()) != null) {
 			ClassReader cls = ci.getReader();
 			String classname = cls.getName();
-			
-			System.out.println("classname:"+classname);
-			
+			// System.out.println("classname:"+classname);
 			if (classname.equals(specifiedclassname)) {
 				found = true;
 				break;
