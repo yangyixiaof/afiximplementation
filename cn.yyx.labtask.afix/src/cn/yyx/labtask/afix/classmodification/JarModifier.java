@@ -154,14 +154,14 @@ public class JarModifier {
 			ClassWriter cw = ci.emitClass();
 			for (int i = 0; i < asize; i++) {
 				cw.addField(ClassReader.ACC_PUBLIC | ClassReader.ACC_STATIC, "lock" + (i + 1),
-						"java.util.concurrent.locks.Lock", new ClassWriter.Element[0]);
+						"Ljava/util/concurrent/locks/Lock", new ClassWriter.Element[0]);
 			}
 			instrumenter.outputModifiedClass(ci, cw);
 			DestroyInstrumentor();
 		}
 
 		{
-			File ojf = new File(lpdir);
+			File ojf = new File(OutputJar);
 			// System.out.println(OutputJar + " exists? " + ojf.exists());
 			@SuppressWarnings("resource")
 			ClassLoader cl = new URLClassLoader(new URL[] { ojf.toURI().toURL() });
