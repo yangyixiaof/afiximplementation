@@ -22,13 +22,17 @@ import com.ibm.wala.shrikeCT.ClassReader;
 import com.ibm.wala.shrikeCT.ClassWriter;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 
+import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
 import cn.yyx.labtask.afix.patchgeneration.OnePatch;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
 public class JarModifier {
 
-	private OfflineInstrumenter instrumenter;
+	public static final String lpdir = "selfuseclasscode";
+	public static final String lppath = "selfuseclasscode/cn/yyx/labtask/afix/LockPool.class";
+	public static final String lpemptypath = "selfuseclasscode/cn/yyx/labtask/afix/LockPoolEmptyCopy.class";
+	private OfflineInstrumenter instrumenter = null;
 	String jar = null;
 	Writer w = null;
 	Class<?> lockpool = null;
@@ -38,6 +42,21 @@ public class JarModifier {
 	public JarModifier(String inputjar, String outputjar) {
 		this.InputJar = inputjar;
 		this.OutputJar = outputjar;
+		{
+			File f = new File(lppath);
+			if (f.exists())
+			{
+				f.delete();
+			}
+			File source = new File(lpemptypath);
+			File dest = new File(lppath);
+			try {
+				dest.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			FileUtil.fileChannelCopy(source, dest);
+		}
 	}
 
 	private void InitialInstrumentor() throws IllegalArgumentException, IOException {
@@ -46,8 +65,8 @@ public class JarModifier {
 		String[] args = new String[] { InputJar, "-o", OutputJar };
 		instrumenter.parseStandardArgs(args);
 		instrumenter.setPassUnmodifiedClasses(true);
-		instrumenter.addInputClass(new File("selfuseclasscode"),
-				new File("selfuseclasscode/cn/yyx/labtask/afix/LockPool.class"));
+		instrumenter.addInputClass(new File(lpdir),
+				new File(lppath));
 	}
 
 	private void TranverseFromBeginning() {
@@ -128,10 +147,6 @@ public class JarModifier {
 	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException, ClassNotFoundException {
 		
 		System.out.println("generate size:" + asize);
-		
-		{
-			
-		}
 		
 		{
 			InitialInstrumentor();
