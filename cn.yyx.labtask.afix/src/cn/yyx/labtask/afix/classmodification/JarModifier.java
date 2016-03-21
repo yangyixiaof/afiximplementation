@@ -1,14 +1,9 @@
 package cn.yyx.labtask.afix.classmodification;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Iterator;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.ibm.wala.shrikeBT.DupInstruction;
@@ -24,8 +19,6 @@ import com.ibm.wala.shrikeCT.InvalidClassFileException;
 
 import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
-import cn.yyx.labtask.afix.patchgeneration.OnePatch;
-import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
 public class JarModifier {
 	
@@ -33,8 +26,8 @@ public class JarModifier {
 	public static final String lppath = "selfuseclasscode/cn/yyx/labtask/afix/LockPool.class";
 	public static final String lpemptypath = "selfuseclasscode/cn/yyx/labtask/afix/LockPoolEmptyCopy.class";
 	private OfflineInstrumenter instrumenter = null;
+	private OfflineInstrumenter lockpoolinstrumenter = null;
 	String jar = null;
-	Writer w = null;
 	Class<?> lockpool = null;
 	String InputJar = null;
 	String OutputJar = null;
@@ -59,8 +52,19 @@ public class JarModifier {
 		}
 	}
 	
+	private void InitialLockPoolInstrumentor() throws IllegalArgumentException, IOException {
+		lockpoolinstrumenter = new OfflineInstrumenter(false);
+		String[] args = new String[] { lppath, "-o", lppath };
+		lockpoolinstrumenter.parseStandardArgs(args);
+		lockpoolinstrumenter.setPassUnmodifiedClasses(true);
+	}
+	
+	private void DestroyLockPoolInstrumentor() throws IllegalStateException, IOException {
+		lockpoolinstrumenter.close();
+		lockpoolinstrumenter = null;
+	}
+	
 	private void InitialInstrumentor() throws IllegalArgumentException, IOException {
-		w = new BufferedWriter(new FileWriter("report", false));
 		instrumenter = new OfflineInstrumenter(false);
 		String[] args = new String[] { InputJar, "-o", OutputJar };
 		instrumenter.parseStandardArgs(args);
@@ -75,15 +79,17 @@ public class JarModifier {
 	
 	private void DestroyInstrumentor() throws IllegalStateException, IOException {
 		instrumenter.close();
+		instrumenter = null;
 	}
 	
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm)
 			throws IllegalArgumentException, IOException, InvalidClassFileException, ClassNotFoundException {
-
+		InitialInstrumentor();
+		
 		int asize = epm.getSize();
 		InitialLockPool(asize);
 
-		InitialInstrumentor();
+		/*InitialInstrumentor();
 		int lockidx = 0;
 		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
 		while (itr.hasNext()) {
@@ -128,6 +134,8 @@ public class JarModifier {
 				}
 			}
 		}
+		*/
+		
 		DestroyInstrumentor();
 	}
 	
@@ -145,23 +153,22 @@ public class JarModifier {
 	}
 	
 	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException, ClassNotFoundException {
-		
-		System.out.println("generate size:" + asize);
+		System.out.println("lock size:" + asize);
 		
 		{
-			InitialInstrumentor();
-			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool");
+			InitialLockPoolInstrumentor();
+			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool", lockpoolinstrumenter);
 			ClassWriter cw = ci.emitClass();
 			for (int i = 0; i < asize; i++) {
 				cw.addField(ClassReader.ACC_PUBLIC | ClassReader.ACC_STATIC, "lock" + (i + 1),
 						"Ljava/util/concurrent/locks/Lock", new ClassWriter.Element[0]);
 			}
 			instrumenter.outputModifiedClass(ci, cw);
-			DestroyInstrumentor();
+			DestroyLockPoolInstrumentor();
 		}
 
 		{
-			File ojf = new File(OutputJar);
+			File ojf = new File(lppath);
 			// System.out.println(OutputJar + " exists? " + ojf.exists());
 			@SuppressWarnings("resource")
 			ClassLoader cl = new URLClassLoader(new URL[] { ojf.toURI().toURL() });
@@ -169,8 +176,8 @@ public class JarModifier {
 		}
 
 		{
-			InitialInstrumentor();
-			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool");
+			InitialLockPoolInstrumentor();
+			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool", lockpoolinstrumenter);
 			MethodEditor me = null;
 			for (int m = 0; m < ci.getReader().getMethodCount(); m++) {
 				MethodData d = ci.visitMethod(m);
@@ -194,11 +201,11 @@ public class JarModifier {
 				});
 			}
 			me.applyPatches();
-			DestroyInstrumentor();
+			DestroyLockPoolInstrumentor();
 		}
 	}
 	
-	private ClassInstrumenter SearchForSpecifiedClass(String specifiedclassname)
+	private ClassInstrumenter SearchForSpecifiedClass(String specifiedclassname, OfflineInstrumenter instrumenter)
 			throws IOException, InvalidClassFileException {
 		TranverseFromBeginning();
 		ClassInstrumenter ci = null;
