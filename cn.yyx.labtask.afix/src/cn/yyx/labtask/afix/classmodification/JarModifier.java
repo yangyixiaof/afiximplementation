@@ -7,6 +7,7 @@ import java.net.URLClassLoader;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.ibm.wala.shrikeBT.DupInstruction;
+import com.ibm.wala.shrikeBT.IInstruction;
 import com.ibm.wala.shrikeBT.MethodData;
 import com.ibm.wala.shrikeBT.MethodEditor;
 import com.ibm.wala.shrikeBT.NewInstruction;
@@ -62,7 +63,7 @@ public class JarModifier {
 				new File(lppath));
 	}
 	
-	private void TranverseFromBeginning() {
+	private void TranverseFromBeginning(OfflineInstrumenter instrumenter) {
 		instrumenter.beginTraversal();
 	}
 	
@@ -121,13 +122,12 @@ public class JarModifier {
 					});
 				}
 			}
-		}*/
-		
-		DestroyInstrumentor();
+		}
+		DestroyInstrumentor();*/
 	}
 	
 	private ClassInstrumenter GetClassInstrumenter(String msig) throws IOException, InvalidClassFileException {
-		TranverseFromBeginning();
+		TranverseFromBeginning(instrumenter);
 		ClassInstrumenter ci = null;
 		while ((ci = instrumenter.nextClass()) != null) {
 			ClassReader cls = ci.getReader();
@@ -188,13 +188,15 @@ public class JarModifier {
 				});
 			}
 			me.applyPatches();
+			ClassWriter cw = ci.emitClass();
+			lockpoolinstrumenter.outputModifiedClass(ci, cw);
 			DestroyLockPoolInstrumentor();
 		}
 	}
 	
 	private ClassInstrumenter SearchForSpecifiedClass(String specifiedclassname, OfflineInstrumenter instrumenter)
 			throws IOException, InvalidClassFileException {
-		TranverseFromBeginning();
+		TranverseFromBeginning(instrumenter);
 		ClassInstrumenter ci = null;
 		boolean found = false;
 		while ((ci = instrumenter.nextClass()) != null) {
