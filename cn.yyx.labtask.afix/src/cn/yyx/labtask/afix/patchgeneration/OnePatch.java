@@ -47,7 +47,7 @@ public class OnePatch {
 	
 	private void CheckGenerateLockUnlockSolutions() throws InvalidClassFileException
 	{
-		if (methodsig.startsWith("demo.Example$MyThread.run()V"))
+		if (methodsig.startsWith("demo.Example.main([Ljava/lang/String;)V"))
 		{
 			System.out.println("just test.");
 		}
@@ -79,14 +79,14 @@ public class OnePatch {
 			return;
 		}
 		visited.add(now);
-		Iterator<ISSABasicBlock> itr = cfg.getSuccNodes(now);
+		Iterator<ISSABasicBlock> itr = cfg.getNormalSuccessors(now).iterator();// .getSuccNodes(now)
 		while (itr.hasNext())
 		{
 			ISSABasicBlock ibb = itr.next();
-			if (ibb == ext)
+			/*if (ibb == ext)
 			{
 				continue;
-			}
+			}*/
 			if ((protectnodes.contains(now)) && (!protectnodes.contains(ibb)))
 			{
 				if (!blockafterunlock.contains(now))
