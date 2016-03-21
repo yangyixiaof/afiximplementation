@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.ibm.wala.shrikeBT.ReturnInstruction;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
@@ -48,6 +47,10 @@ public class OnePatch {
 	
 	private void CheckGenerateLockUnlockSolutions() throws InvalidClassFileException
 	{
+		if (methodsig.startsWith("demo.Example$MyThread.run()V"))
+		{
+			System.out.println("just test.");
+		}
 		if (insertbeginidxs == null)
 		{
 			insertbeginidxs = new LinkedList<Integer>();
@@ -65,11 +68,11 @@ public class OnePatch {
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			Set<ISSABasicBlock> blockprelock = new HashSet<ISSABasicBlock>();
 			Set<ISSABasicBlock> blockafterunlock = new HashSet<ISSABasicBlock>();
-			IterateBlockToAddLockAndUnlock(ent, cfg, protectednodes, visited, blockprelock, blockafterunlock, ir);
+			IterateBlockToAddLockAndUnlock(ent, cfg, protectednodes, visited, blockprelock, blockafterunlock, ir, ent, ext);
 		}
 	}
 	
-	private void IterateBlockToAddLockAndUnlock(ISSABasicBlock now, SSACFG cfg, Set<ISSABasicBlock> protectnodes, Set<ISSABasicBlock> visited, Set<ISSABasicBlock> blockprelock, Set<ISSABasicBlock> blockafterunlock, IR ir) throws InvalidClassFileException
+	private void IterateBlockToAddLockAndUnlock(ISSABasicBlock now, SSACFG cfg, Set<ISSABasicBlock> protectnodes, Set<ISSABasicBlock> visited, Set<ISSABasicBlock> blockprelock, Set<ISSABasicBlock> blockafterunlock, IR ir, final BasicBlock ent, final BasicBlock ext) throws InvalidClassFileException
 	{
 		if (visited.contains(now))
 		{
@@ -80,6 +83,10 @@ public class OnePatch {
 		while (itr.hasNext())
 		{
 			ISSABasicBlock ibb = itr.next();
+			if (ibb == ext)
+			{
+				continue;
+			}
 			if ((protectnodes.contains(now)) && (!protectnodes.contains(ibb)))
 			{
 				if (!blockafterunlock.contains(now))
@@ -96,7 +103,7 @@ public class OnePatch {
 					blockprelock.add(ibb);
 				}
 			}
-			IterateBlockToAddLockAndUnlock(ibb, cfg, protectnodes, visited, blockprelock, blockafterunlock, ir);
+			IterateBlockToAddLockAndUnlock(ibb, cfg, protectnodes, visited, blockprelock, blockafterunlock, ir, ent, ext);
 		}
 	}
 	
