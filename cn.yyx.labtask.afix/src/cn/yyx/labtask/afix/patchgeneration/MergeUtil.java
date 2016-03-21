@@ -24,6 +24,7 @@ public class MergeUtil<T> {
 				l1++;
 				int l2 = 0;
 				Mergeable<T> op = itr.next();
+				boolean ophandled = false;
 				Iterator<Mergeable<T>> itr2 = temp.iterator();
 				while (itr2.hasNext())
 				{
@@ -40,14 +41,18 @@ public class MergeUtil<T> {
 						{
 							// means intersected.
 							intersected = true;
+							ophandled = true;
 							tempres.add(tempmergere);
 						}
 						else
 						{
-							tempres.add(op);
 							tempres.add(op2);
 						}
 					}
+				}
+				if (!ophandled)
+				{
+					tempres.add(op);
 				}
 			}
 		}

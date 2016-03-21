@@ -30,6 +30,7 @@ public class ExclusivePatchesManager {
 		while (itr.hasNext())
 		{
 			idx++;
+			boolean ophandled = false;
 			SameLockExclusivePatches op = itr.next();
 			Iterator<SameLockExclusivePatches> iitr = patches.iterator();
 			int iidx = 0;
@@ -44,13 +45,17 @@ public class ExclusivePatchesManager {
 				SameLockExclusivePatches mres = op.Merge(oop);
 				if (mres == null)
 				{
-					res.add(op);
 					res.add(oop);
 				}
 				else
 				{
+					ophandled = true;
 					res.add(mres);
 				}
+			}
+			if (!ophandled)
+			{
+				res.add(op);
 			}
 		}
 		this.patches = res;

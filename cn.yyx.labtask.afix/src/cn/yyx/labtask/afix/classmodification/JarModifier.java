@@ -130,6 +130,10 @@ public class JarModifier {
 		System.out.println("generate size:" + asize);
 		
 		{
+			
+		}
+		
+		{
 			InitialInstrumentor();
 			ClassInstrumenter ci = SearchForSpecifiedClass("cn/yyx/labtask/afix/LockPool");
 			ClassWriter cw = ci.emitClass();
