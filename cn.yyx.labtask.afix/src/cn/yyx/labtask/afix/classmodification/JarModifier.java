@@ -28,7 +28,7 @@ import cn.yyx.labtask.afix.patchgeneration.OnePatch;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
 public class JarModifier {
-
+	
 	public static final String lpdir = "selfuseclasscode";
 	public static final String lppath = "selfuseclasscode/cn/yyx/labtask/afix/LockPool.class";
 	public static final String lpemptypath = "selfuseclasscode/cn/yyx/labtask/afix/LockPoolEmptyCopy.class";
@@ -38,7 +38,7 @@ public class JarModifier {
 	Class<?> lockpool = null;
 	String InputJar = null;
 	String OutputJar = null;
-
+	
 	public JarModifier(String inputjar, String outputjar) {
 		this.InputJar = inputjar;
 		this.OutputJar = outputjar;
@@ -58,7 +58,7 @@ public class JarModifier {
 			FileUtil.fileChannelCopy(source, dest);
 		}
 	}
-
+	
 	private void InitialInstrumentor() throws IllegalArgumentException, IOException {
 		w = new BufferedWriter(new FileWriter("report", false));
 		instrumenter = new OfflineInstrumenter(false);
@@ -68,15 +68,15 @@ public class JarModifier {
 		instrumenter.addInputClass(new File(lpdir),
 				new File(lppath));
 	}
-
+	
 	private void TranverseFromBeginning() {
 		instrumenter.beginTraversal();
 	}
-
+	
 	private void DestroyInstrumentor() throws IllegalStateException, IOException {
 		instrumenter.close();
 	}
-
+	
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm)
 			throws IllegalArgumentException, IOException, InvalidClassFileException, ClassNotFoundException {
 
@@ -130,7 +130,7 @@ public class JarModifier {
 		}
 		DestroyInstrumentor();
 	}
-
+	
 	private ClassInstrumenter GetClassInstrumenter(String msig) throws IOException, InvalidClassFileException {
 		TranverseFromBeginning();
 		ClassInstrumenter ci = null;
@@ -143,7 +143,7 @@ public class JarModifier {
 		}
 		return ci;
 	}
-
+	
 	private void InitialLockPool(int asize) throws IOException, InvalidClassFileException, ClassNotFoundException {
 		
 		System.out.println("generate size:" + asize);
@@ -161,7 +161,7 @@ public class JarModifier {
 		}
 
 		{
-			File ojf = new File(OutputJar);
+			File ojf = new File(lppath);
 			// System.out.println(OutputJar + " exists? " + ojf.exists());
 			@SuppressWarnings("resource")
 			ClassLoader cl = new URLClassLoader(new URL[] { ojf.toURI().toURL() });
@@ -197,7 +197,7 @@ public class JarModifier {
 			DestroyInstrumentor();
 		}
 	}
-
+	
 	private ClassInstrumenter SearchForSpecifiedClass(String specifiedclassname)
 			throws IOException, InvalidClassFileException {
 		TranverseFromBeginning();
@@ -217,5 +217,5 @@ public class JarModifier {
 		}
 		return ci;
 	}
-
+	
 }
