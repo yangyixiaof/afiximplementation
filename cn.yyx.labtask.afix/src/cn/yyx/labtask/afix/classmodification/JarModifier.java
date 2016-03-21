@@ -136,13 +136,8 @@ public class JarModifier {
 		DestroyInstrumentor();
 	}
 	
-	private ClassInstrumenter GetClassInstrumenter(String msig, OfflineInstrumenter instrumenter) throws IOException, InvalidClassFileException {
-		
-		if (msig.equals("demo.Example$MyThread.run()V"))
-		{
-			System.out.println("dsds");
-		}
-		
+	private ClassInstrumenter GetClassInstrumenter(String msig, OfflineInstrumenter instrumenter) throws IOException, InvalidClassFileException
+	{
 		TranverseFromBeginning(instrumenter);
 		ClassInstrumenter ci = null;
 		while ((ci = instrumenter.nextClass()) != null) {
