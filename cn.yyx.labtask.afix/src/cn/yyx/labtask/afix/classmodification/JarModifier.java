@@ -200,7 +200,7 @@ public class JarModifier {
 				me.insertAtStart(new MethodEditor.Patch() {
 					@Override
 					public void emitTo(MethodEditor.Output w) {
-						w.emit(NewInstruction.make(Util.makeType(lockpool), 0));
+						w.emit(NewInstruction.make(Util.makeType(ReentrantLock.class), 0));
 						w.emit(DupInstruction.make(0));
 						// w.emit(Util.makeGet(lockpool, name));
 						w.emit(Util.makeInvoke(ReentrantLock.class, "<init>", new Class[] {}));
