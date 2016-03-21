@@ -25,6 +25,10 @@ public class JarModifier {
 	public static final String lpdir = "selfuseclasscode";
 	public static final String lppath = "selfuseclasscode/cn/yyx/labtask/afix/LockPool.class";
 	public static final String lpemptypath = "selfuseclassbackup/cn/yyx/labtask/afix/LockPoolEmptyCopy.class";
+	
+	public static final String lockpoolinipath = "selfuseclassbackup/lockpool.jar";
+	public static final String lockpoolpath = "selfuseclasscode/lockpool.jar";
+	
 	private OfflineInstrumenter instrumenter = null;
 	private OfflineInstrumenter lockpoolinstrumenter = null;
 	String jar = null;
