@@ -55,6 +55,7 @@ public class SourceFileModifier {
 			while (opitr.hasNext()) {
 				OnePatch op = opitr.next();
 				String msig = op.getMethodsig();
+				String mtype = NameUtil.GetClassNameFromMethodSig(msig);
 				CompilationUnit cu = GetCompilationUnit(msig);
 				AST ast = cu.getAST();
 				ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
@@ -68,15 +69,16 @@ public class SourceFileModifier {
 					Iterator<Integer> sbitr = op.GetInsertPosBeginSourceIterator();
 					while (sbitr.hasNext())
 					{
-						int pos = sbitr.next();
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(pos, true);
+						int posline = sbitr.next();
+						int poslineoff =  FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline-1, GetFileContent(mtype));
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, false);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("lock"));
-						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool"+lockname));
+						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool."+lockname));
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
-						listRewrite.insertBefore(insertnode, newStatement, null);
+						listRewrite.insertAfter(insertnode, newStatement, null);
 					}
 				}
 				
@@ -84,15 +86,15 @@ public class SourceFileModifier {
 					Iterator<Integer> seitr = op.GetInsertPosEndSourceIterator();
 					while (seitr.hasNext())
 					{
-						int pos = seitr.next();
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(pos, false);
+						int posline = seitr.next();
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(posline, true);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("unlock"));
-						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool"+lockname));
+						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool."+lockname));
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
-						listRewrite.insertAfter(insertnode, newStatement, null);
+						listRewrite.insertBefore(insertnode, newStatement, null);
 					}
 				}
 			}

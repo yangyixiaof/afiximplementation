@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.channels.FileChannel;
 import java.util.Map;
 
@@ -82,6 +83,25 @@ public class FileUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static int GetTotalOffsetOfLineEnd(int soff, int line, String content)
+	{
+		// line start from 0.
+		int totaloffset = 0;
+		try {
+			BufferedReader br = new BufferedReader(new StringReader(content));
+			String oneline = null;
+			int ldx = 0;
+			while ((oneline = br.readLine()) != null && ldx <= line)
+			{
+				ldx++;
+				totaloffset += oneline.length() + 1;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return totaloffset - soff;
 	}
 	
 }
