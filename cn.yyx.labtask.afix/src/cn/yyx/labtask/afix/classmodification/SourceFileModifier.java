@@ -164,6 +164,9 @@ public class SourceFileModifier {
 			while (itr.hasNext())
 			{
 				String fpath = itr.next();
+				
+				System.out.println("fpath:"+fpath);
+				
 				if (fpath.endsWith(path))
 				{
 					f = allfiles.get(fpath);
@@ -172,6 +175,7 @@ public class SourceFileModifier {
 			if (f == null)
 			{
 				System.err.println("There is no corresponding source file in directory of class:"+mtype+". The system will exit.");
+				new Exception().printStackTrace();
 				System.exit(1);
 			}
 			exactmatchfile.put(mtype, f);
