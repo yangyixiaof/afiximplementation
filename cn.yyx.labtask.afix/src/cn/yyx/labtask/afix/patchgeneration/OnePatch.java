@@ -52,10 +52,10 @@ public class OnePatch {
 	
 	private void CheckGenerateLockUnlockSolutions() throws InvalidClassFileException
 	{
-		if (methodsig.startsWith("demo.Example.main([Ljava/lang/String;)V"))
+		/*if (methodsig.startsWith("demo.Example.main([Ljava/lang/String;)V"))
 		{
 			System.out.println("just test.");
-		}
+		}*/
 		if (insertbeginidxs == null)
 		{
 			insertbeginidxs = new LinkedList<Integer>();

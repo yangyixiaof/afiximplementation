@@ -5,9 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.Map;
 
 public class FileUtil {
-	
+
 	public static void fileChannelCopy(File source, File dest) {
 		FileInputStream fi = null;
 		FileOutputStream fo = null;
@@ -32,5 +33,19 @@ public class FileUtil {
 			}
 		}
 	}
-	
+
+	public static void GetAllFilesInADirectory(File f, Map<String, File> map) {
+		if (f.isDirectory())
+		{
+			File[] fs = f.listFiles();
+			for (int i = 0; i < fs.length; i++) {
+				GetAllFilesInADirectory(fs[i], map);
+			}
+		}
+		else
+		{
+			map.put(f.getAbsolutePath(), f);
+		}
+	}
+
 }
