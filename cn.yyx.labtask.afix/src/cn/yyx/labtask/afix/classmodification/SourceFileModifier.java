@@ -38,6 +38,7 @@ public class SourceFileModifier {
 	Map<String, String> filecontent = new TreeMap<String, String>();
 	Map<String, ASTRewrite> allrewrites = new TreeMap<String, ASTRewrite>();
 	Map<String, CompilationUnit> cus = new TreeMap<String, CompilationUnit>();
+	Map<String, AST> asts = new TreeMap<String, AST>();
 	
 	public SourceFileModifier(String sourcefolder) {
 		FileUtil.GetAllFilesInADirectory(new File(sourcefolder), allfiles);
@@ -57,7 +58,7 @@ public class SourceFileModifier {
 				String msig = op.getMethodsig();
 				String mtype = NameUtil.GetClassNameFromMethodSig(msig);
 				CompilationUnit cu = GetCompilationUnit(msig);
-				AST ast = cu.getAST();
+				AST ast = GetAST(msig);
 				ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
 				SearchOrder so = new SearchOrder(msig);
 				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
@@ -77,9 +78,13 @@ public class SourceFileModifier {
 					Iterator<Integer> sbitr = op.GetInsertPosBeginSourceIterator();
 					while (sbitr.hasNext())
 					{
-						int posline = sbitr.next();
+						int posline = sbitr.next() - 1;
 						int poslineoff =  FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline-1, GetFileContent(mtype));
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, false);
+						// testing
+						// poslineoff =  FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), 1, GetFileContent(mtype));
+						// testing
+						// System.out.println("cu start pos:"+cu.getStartPosition()+";beginpos:"+posline+";poslineoff:"+poslineoff+";filecontent:"+GetFileContent(mtype));
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, true, methodblock);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
 						MethodInvocation newInvocation = ast.newMethodInvocation();
@@ -88,9 +93,9 @@ public class SourceFileModifier {
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
 						
 						// testing
-						System.out.println("insertnode:"+insertnode+".");
+						System.out.println("posline:"+posline+";insertnodeBegin:"+insertnode+";insertnodestartpos:"+insertnode.getStartPosition()+";insertnodeendpos:"+(insertnode.getStartPosition()+insertnode.getLength()));
 						
-						listRewrite.insertAfter(insertnode, newStatement, null);
+						listRewrite.insertBefore(newStatement, insertnode, null);
 					}
 				}
 				
@@ -98,20 +103,28 @@ public class SourceFileModifier {
 					Iterator<Integer> seitr = op.GetInsertPosEndSourceIterator();
 					while (seitr.hasNext())
 					{
-						int posline = seitr.next();
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(posline, true);
+						int posline = seitr.next() - 1;
+						int poslineoff =  FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline, GetFileContent(mtype));
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, false, methodblock);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("unlock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool."+lockname));
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
-						listRewrite.insertBefore(insertnode, newStatement, null);
+						
+						// testing
+						System.out.println("posline:"+posline+";insertnodeEnd:"+insertnode+";insertnodestartpos:"+insertnode.getStartPosition()+";insertnodeendpos:"+(insertnode.getStartPosition()+insertnode.getLength()));
+						
+						listRewrite.insertAfter(newStatement, insertnode, null);
 					}
 				}
 			}
 		}
 		Set<String> keys = allrewrites.keySet();
+		
+		System.out.println("allrewrites size:" + allrewrites.size());
+		
 		Iterator<String> kitr = keys.iterator();
 		while (kitr.hasNext())
 		{
@@ -125,6 +138,17 @@ public class SourceFileModifier {
 		}
 	}
 	
+	private AST GetAST(String msig) {
+		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
+		AST res = asts.get(mtype);
+		if (res == null)
+		{
+			res = GetCompilationUnit(msig).getAST();
+			asts.put(mtype, res);
+		}
+		return res;
+	}
+
 	private CompilationUnit GetCompilationUnit(String msig)
 	{
 		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
@@ -169,7 +193,13 @@ public class SourceFileModifier {
 		File f = exactmatchfile.get(mtype);
 		if (f == null)
 		{
-			String path = mtype.replace('.', '/')+".java";
+			String rawpath = mtype.replace('.', '/');
+			int idx = rawpath.indexOf('$');
+			if (idx != -1)
+			{
+				rawpath = rawpath.substring(0, idx);
+			}
+			String path = rawpath+".java";
 			Set<String> keys = allfiles.keySet();
 			Iterator<String> itr = keys.iterator();
 			f = null;

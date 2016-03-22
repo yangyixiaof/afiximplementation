@@ -57,7 +57,7 @@ public class FileUtil {
 			reader = new BufferedReader(new FileReader(file));
 			String tempString = null;
 			while ((tempString = reader.readLine()) != null) {
-				sb.append(tempString);
+				sb.append(tempString+"\n");
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -93,15 +93,16 @@ public class FileUtil {
 			BufferedReader br = new BufferedReader(new StringReader(content));
 			String oneline = null;
 			int ldx = 0;
-			while ((oneline = br.readLine()) != null && ldx <= line)
+			while (((oneline = br.readLine()) != null) && (ldx <= line))
 			{
 				ldx++;
 				totaloffset += oneline.length() + 1;
 			}
+			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return totaloffset - soff;
+		return totaloffset - soff - 1;
 	}
 	
 }
