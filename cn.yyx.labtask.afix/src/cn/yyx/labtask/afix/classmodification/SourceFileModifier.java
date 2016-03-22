@@ -35,13 +35,16 @@ public class SourceFileModifier {
 	String sourcefolder = null;
 	Map<String, File> allfiles = new TreeMap<String, File>();
 	Map<String, File> exactmatchfile = new TreeMap<String, File>();
+	
+	// key is exact file absolute path
 	Map<String, String> filecontent = new TreeMap<String, String>();
+	Map<String, Document> docs = new TreeMap<String, Document>();
 	Map<String, ASTRewrite> allrewrites = new TreeMap<String, ASTRewrite>();
 	Map<String, CompilationUnit> cus = new TreeMap<String, CompilationUnit>();
 	Map<String, AST> asts = new TreeMap<String, AST>();
 	
-	public SourceFileModifier(String sourcefolder) {
-		FileUtil.GetAllFilesInADirectory(new File(sourcefolder), allfiles);
+	public SourceFileModifier(String projectname) {
+		FileUtil.GetAllFilesInADirectory(new File(projectname), allfiles);
 	}
 	
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm) throws InvalidClassFileException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException
@@ -128,23 +131,28 @@ public class SourceFileModifier {
 		Iterator<String> kitr = keys.iterator();
 		while (kitr.hasNext())
 		{
-			String mtype = kitr.next();
-			ASTRewrite aw = allrewrites.get(mtype);
-			TextEdit edits = aw.rewriteAST();
-			File f = GetMostMatchFile(mtype);
-			Document document = new Document(GetFileContent(mtype));
+			String fabpath = kitr.next();
+			ASTRewrite aw = allrewrites.get(fabpath);
+			Document document = docs.get(fabpath);
+			TextEdit edits = aw.rewriteAST(document, null);
 			edits.apply(document);
-			FileUtil.ClearAndWriteToFile(document.get(), f);
+			FileUtil.ClearAndWriteToFile(document.get(), new File(fabpath));
+			// TextEdit edits = aw.rewriteAST();
+			// File f = GetMostMatchFile(mtype);
+			// Document document = new Document(GetFileContent(mtype));
+			// edits.apply(document);
+			// FileUtil.ClearAndWriteToFile(document.get(), f);
 		}
 	}
 	
 	private AST GetAST(String msig) {
 		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
-		AST res = asts.get(mtype);
+		File f = GetMostMatchFile(mtype);
+		AST res = asts.get(f.getAbsolutePath());
 		if (res == null)
 		{
 			res = GetCompilationUnit(msig).getAST();
-			asts.put(mtype, res);
+			asts.put(f.getAbsolutePath(), res);
 		}
 		return res;
 	}
@@ -152,14 +160,20 @@ public class SourceFileModifier {
 	private CompilationUnit GetCompilationUnit(String msig)
 	{
 		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
-		CompilationUnit cu = cus.get(mtype);
+		File f = GetMostMatchFile(mtype);
+		CompilationUnit cu = cus.get(f.getAbsolutePath());
 		if (cu == null)
 		{
 			Document document = new Document(GetFileContent(mtype));
+			docs.put(f.getAbsolutePath(), document);
 			ASTParser parser = ASTParser.newParser(AST.JLS8);
 			parser.setSource(document.get().toCharArray());
+			parser.setKind(ASTParser.K_COMPILATION_UNIT);
 			cu = (CompilationUnit) parser.createAST(null);
-			cus.put(mtype, cu);
+			cus.put(f.getAbsolutePath(), cu);
+			AST ast = GetAST(msig);
+			GetASTRewriteAccordingToMethodSig(msig, ast);
+			cu.recordModifications();
 		}
 		return cu;
 	}
@@ -167,11 +181,12 @@ public class SourceFileModifier {
 	private ASTRewrite GetASTRewriteAccordingToMethodSig(String msig, AST ast)
 	{
 		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
-		ASTRewrite aw = allrewrites.get(mtype);
+		File f = GetMostMatchFile(mtype);
+		ASTRewrite aw = allrewrites.get(f.getAbsolutePath());
 		if (aw == null)
 		{
 			aw = ASTRewrite.create(ast);
-			allrewrites.put(mtype, aw);
+			allrewrites.put(f.getAbsolutePath(), aw);
 		}
 		return aw;
 	}
@@ -179,17 +194,18 @@ public class SourceFileModifier {
 	private String GetFileContent(String mtype)
 	{
 		File f = GetMostMatchFile(mtype);
-		String fcontent = filecontent.get(mtype);
+		String fcontent = filecontent.get(f.getAbsolutePath());
 		if (fcontent == null)
 		{
 			fcontent = FileUtil.ReadFileByLines(f);
-			filecontent.put(mtype, fcontent);
+			filecontent.put(f.getAbsolutePath(), fcontent);
 		}
 		return fcontent;
 	}
 	
 	private File GetMostMatchFile(String mtype)
 	{
+		System.out.println("mtype:"+mtype);
 		File f = exactmatchfile.get(mtype);
 		if (f == null)
 		{

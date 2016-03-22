@@ -19,7 +19,7 @@ public class FixHandler {
 		
 	}
 	
-	private void HandleTraces(List<OneErrorInfo> oeilist, String inputjar, String outputjar, String sourcedir) throws Exception {
+	private void HandleTraces(List<OneErrorInfo> oeilist, String inputjar, String outputjar, String projectname) throws Exception {
 		ExclusivePatchesManager epm = new ExclusivePatchesManager();
 		Iterator<OneErrorInfo> itr = oeilist.iterator();
 		while (itr.hasNext())
@@ -35,7 +35,7 @@ public class FixHandler {
 		epm.MergeSelf();
 		JarModifier jm = new JarModifier(inputjar, outputjar);
 		jm.HandleExclusivePatchesManager(epm);
-		SourceFileModifier sfm = new SourceFileModifier(sourcedir);
+		SourceFileModifier sfm = new SourceFileModifier(projectname);
 		sfm.HandleExclusivePatchesManager(epm);
 	}
 
@@ -51,9 +51,9 @@ public class FixHandler {
 		oeilist.add(new OneErrorInfo(p, c, r));
 		String inputjar = "TestInputJar/demo.jar";
 		String outputjar = "TestOutputJar/demo.jar";
-		String sourcedir = "SourceDir";
+		String projectname = "SourceDir";
 		try {
-			fh.HandleTraces(oeilist, inputjar, outputjar, sourcedir);
+			fh.HandleTraces(oeilist, inputjar, outputjar, projectname);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -15,11 +15,14 @@ public class Example {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		cn.yyx.labtask.afix.LockPool.lock1.lock();
 		x = 0;
+		cn.yyx.labtask.afix.LockPool.lock1.unlock();
 	}
 
 	static class MyThread extends Thread {
 		public void run() {
+			cn.yyx.labtask.afix.LockPool.lock1.lock();
 			x++;
 			try {
 				Thread.sleep(1000);
@@ -27,6 +30,7 @@ public class Example {
 				e1.printStackTrace();
 			}
 			System.out.println(1 / x);
+			cn.yyx.labtask.afix.LockPool.lock1.unlock();
 		}
 	}
 
