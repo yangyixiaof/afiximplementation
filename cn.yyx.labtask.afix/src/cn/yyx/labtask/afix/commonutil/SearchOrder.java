@@ -2,6 +2,10 @@ package cn.yyx.labtask.afix.commonutil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Type;
 
 import com.ibm.wala.types.TypeName;
 import com.ibm.wala.util.strings.StringStuff;
@@ -13,6 +17,8 @@ public class SearchOrder {
 	private ArrayList<String> classlist = new ArrayList<String>();
 	private String methodreturntype = null;
 	private ArrayList<String> methodparam = new ArrayList<String>();
+	
+	int classidx = 0;
 	
 	public SearchOrder(String msig) { 
 		int ll = msig.indexOf('(');
@@ -67,6 +73,34 @@ public class SearchOrder {
 
 	public void setMethodparam(ArrayList<String> methodparam) {
 		this.methodparam = methodparam;
+	}
+
+	public boolean HandleCurrentClass(String rawclass) {
+		String classname = classlist.get(classidx);
+		if (classname.endsWith(rawclass))
+		{
+			classidx++;
+			return true;
+		}
+		return false;
+	}
+	
+	public void DecreaseLevel()
+	{
+		classidx--;
+	}
+
+	public boolean IsInRightClass() {
+		if (classidx == classlist.size()-1)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public boolean IsInRightMethod(Type tp, List<SingleVariableDeclaration> params) {
+		
+		return false;
 	}
 	
 }
