@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.ibm.wala.classLoader.IBytecodeMethod;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
@@ -26,6 +27,8 @@ public class OnePatch {
 	SSACFG cfg = null;
 	List<Integer> insertbeginidxs = null;
 	List<Integer> insertendidxs = null;
+	List<Integer> insertsourcebeginidxs = null;
+	List<Integer> insertsourceendidxs = null;
 	
 	public OnePatch(ErrorTrace et, String methodsig, Set<ISSABasicBlock> protectednodes, IR ir, SSACFG cfg) {
 		this.et = et;
@@ -35,14 +38,16 @@ public class OnePatch {
 		this.cfg = cfg;
 	}
 	
-	private void AddLockBeforeIndex(Integer idx)
+	private void AddLockBeforeIndex(Integer idx, Integer sourceidx)
 	{
 		insertbeginidxs.add(idx);
+		insertsourcebeginidxs.add(sourceidx);
 	}
 	
-	private void AddUnlockAfterIndex(Integer idx)
+	private void AddUnlockAfterIndex(Integer idx, Integer sourceidx)
 	{
 		insertendidxs.add(idx);
+		insertsourceendidxs.add(sourceidx);
 	}
 	
 	private void CheckGenerateLockUnlockSolutions() throws InvalidClassFileException
@@ -55,15 +60,17 @@ public class OnePatch {
 		{
 			insertbeginidxs = new LinkedList<Integer>();
 			insertendidxs = new LinkedList<Integer>();
+			insertsourcebeginidxs = new LinkedList<Integer>();
+			insertsourceendidxs = new LinkedList<Integer>();
 			BasicBlock ent = cfg.entry();
 			if (protectednodes.contains(ent))
 			{
-				AddLockBeforeIndex(GetBasicBlockBeforePosition(ent, ir));
+				AddLockBeforeIndex(GetBasicBlockBeforePosition(ent, ir), GetBasicBlockBeforeSourcePosition(ent, ir));
 			}
 			BasicBlock ext = cfg.exit();
 			if (protectednodes.contains(ext))
 			{
-				AddUnlockAfterIndex(GetBasicBlockAfterPosition(ext, ir));
+				AddUnlockAfterIndex(GetBasicBlockAfterPosition(ext, ir), GetBasicBlockAfterSourcePosition(ext, ir));
 			}
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			Set<ISSABasicBlock> blockprelock = new HashSet<ISSABasicBlock>();
@@ -101,7 +108,7 @@ public class OnePatch {
 							bk = now;
 						}
 					}*/
-					AddUnlockAfterIndex(GetBasicBlockAfterPosition(now, ir));
+					AddUnlockAfterIndex(GetBasicBlockAfterPosition(now, ir), GetBasicBlockAfterSourcePosition(now, ir));
 					blockafterunlock.add(now);
 				}
 			}
@@ -109,7 +116,7 @@ public class OnePatch {
 			{
 				if (!blockprelock.contains(ibb))
 				{
-					AddLockBeforeIndex(GetBasicBlockBeforePosition(ibb, ir));
+					AddLockBeforeIndex(GetBasicBlockBeforePosition(ibb, ir), GetBasicBlockBeforeSourcePosition(ibb, ir));
 					blockprelock.add(ibb);
 				}
 			}
@@ -119,10 +126,15 @@ public class OnePatch {
 	
 	private Integer GetBasicBlockBeforePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getFirstInstructionIndex();
-		// IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		// int bytecodeIndex = method.getBytecodeIndex(iidx);
-		// return bytecodeIndex;
 		return iidx;
+	}
+	
+	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getFirstInstructionIndex();
+		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
+		int bytecodeIndex = method.getBytecodeIndex(iidx);
+		int sourline = method.getLineNumber(bytecodeIndex);
+		return sourline;
 	}
 	
 	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
@@ -133,10 +145,21 @@ public class OnePatch {
 		{
 			iidx--;
 		}
-		// IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		// int bytecodeIndex = method.getBytecodeIndex(iidx);
-		// return bytecodeIndex;
 		return iidx;
+	}
+	
+	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getLastInstructionIndex();
+		SSAInstruction is = bbk.getLastInstruction();
+		String content = is.toString();
+		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
+		int bytecodeIndex = method.getBytecodeIndex(iidx);
+		int sourline = method.getLineNumber(bytecodeIndex);
+		if (content.startsWith("return"))
+		{
+			sourline--;
+		}
+		return sourline;
 	}
 	
 	public Iterator<Integer> GetInsertPosEndIterator() throws InvalidClassFileException
@@ -145,10 +168,22 @@ public class OnePatch {
 		return insertendidxs.iterator();
 	}
 	
+	public Iterator<Integer> GetInsertPosEndSourceIterator() throws InvalidClassFileException
+	{
+		CheckGenerateLockUnlockSolutions();
+		return insertsourceendidxs.iterator();
+	}
+	
 	public Iterator<Integer> GetInsertPosBeginIterator() throws InvalidClassFileException
 	{
 		CheckGenerateLockUnlockSolutions();
 		return insertbeginidxs.iterator();
+	}
+	
+	public Iterator<Integer> GetInsertPosBeginSourceIterator() throws InvalidClassFileException
+	{
+		CheckGenerateLockUnlockSolutions();
+		return insertsourcebeginidxs.iterator();
 	}
 	
 	/**
