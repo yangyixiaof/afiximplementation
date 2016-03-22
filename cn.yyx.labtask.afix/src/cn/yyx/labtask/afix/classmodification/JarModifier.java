@@ -29,6 +29,7 @@ public class JarModifier {
 	public static final String lockpoolinipath = "selfuseclassbackup/lockpool.jar";
 	public static final String lockpoolpath = "selfuseclasscode/lockpool.jar";
 	public static final String lockpoolfinalpath = "selfuseclassfinalcode/lockpool.jar";
+	public static final String lockpoolstrictrightpath = "/home/yyx/WALAInput/WSource/bigtest/bin/lockpool.jar";
 
 	private OfflineInstrumenter instrumenter = null;
 	private OfflineInstrumenter lockpoolinstrumenter = null;

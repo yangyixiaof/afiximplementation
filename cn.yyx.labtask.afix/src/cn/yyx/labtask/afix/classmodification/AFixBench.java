@@ -11,7 +11,6 @@
 package cn.yyx.labtask.afix.classmodification;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.Writer;
@@ -29,7 +28,9 @@ import com.ibm.wala.shrikeBT.analysis.Verifier;
 import com.ibm.wala.shrikeBT.shrikeCT.ClassInstrumenter;
 import com.ibm.wala.shrikeBT.shrikeCT.OfflineInstrumenter;
 import com.ibm.wala.shrikeCT.ClassReader;
+import com.ibm.wala.shrikeCT.ClassReader.AttrIterator;
 import com.ibm.wala.shrikeCT.ClassWriter;
+import com.ibm.wala.shrikeCT.InvalidClassFileException;
 
 /**
  * This is a demo class.
@@ -74,29 +75,55 @@ public class AFixBench {
 				}
 			}
 			instrumenter.setPassUnmodifiedClasses(true);
-			instrumenter.addInputClass(new File("/home/yyx/WALAInput/WLib"),
-					new File("/home/yyx/WALAInput/WLib/cn/yyx/labtask/afix/LockTestPool.class"));
+			// instrumenter.addInputClass(new File("/home/yyx/WALAInput/WLib"),
+			// new
+			// File("/home/yyx/WALAInput/WLib/cn/yyx/labtask/afix/LockTestPool.class"));
 			instrumenter.beginTraversal();
 			ClassInstrumenter ci;
 			while ((ci = instrumenter.nextClass()) != null) {
 				ClassReader cr = ci.getReader();
+
+				{
+					AttrIterator aitr = new AttrIterator();
+					cr.initClassAttributeIterator(aitr);
+					PrintAttribute(aitr);
+				}
+
 				int fcount = cr.getFieldCount();
-				System.out.println("field count:"+fcount);
+				for (int m = 0; m < fcount; m++) {
+					AttrIterator aitr = new AttrIterator();
+					cr.initFieldAttributeIterator(m, aitr);
+					PrintAttribute(aitr);
+				}
 				
-					for (int ii=0;ii<fcount;ii++)
-					{
-						int size = cr.getFieldRawSize(ii);
-						String fname = cr.getFieldName(ii);
-						System.out.println("field size:" + size + ";fname:"+fname);
-					}
-				
-				
+				int mcount = cr.getMethodCount();
+				for (int m = 0; m < mcount; m++) {
+					AttrIterator aitr = new AttrIterator();
+					cr.initMethodAttributeIterator(m, aitr);
+					PrintAttribute(aitr);
+				}
+
+				for (int ii = 0; ii < fcount; ii++) {
+					int size = cr.getFieldRawSize(ii);
+					String fname = cr.getFieldName(ii);
+					System.out.println("field size:" + size + ";fname:" + fname);
+				}
+
 				String classname = cr.getName();
-				System.out.println("name of class:"+classname);
-				
+				System.out.println("name of class:" + classname);
+
 				doClass(ci, w);
 			}
 			instrumenter.close();
+		}
+	}
+
+	private static void PrintAttribute(AttrIterator aitr) throws InvalidClassFileException {
+		while (aitr.getRemainingAttributesCount() > 0) {
+			System.out.println("atr name:" + aitr.getName() + ";atr size:" + aitr.getDataSize() + ";atr off:"
+					+ aitr.getDataOffset() + ";atr cnt:" + aitr.toString() + ";atr vld:" + aitr.isValid()
+					+ ";aitr left:" + aitr.getRemainingAttributesCount());
+			aitr.advance();
 		}
 	}
 
@@ -137,9 +164,9 @@ public class AFixBench {
 							+ ci.getReader().getMethodName(m);
 					// final int noTraceLabel = me.allocateLabel();
 					IInstruction[] iis = me.getInstructions();
-					for (IInstruction ii : iis)
-					{
-						System.out.println("ii type:" + ii.getClass() + ";one ii:"+ii+";pop count:"+ii.getPoppedCount());
+					for (IInstruction ii : iis) {
+						System.out.println(
+								"ii type:" + ii.getClass() + ";one ii:" + ii + ";pop count:" + ii.getPoppedCount());
 					}
 					me.insertAtStart(new MethodEditor.Patch() {
 						@Override
