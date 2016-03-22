@@ -63,6 +63,14 @@ public class SourceFileModifier {
 				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
 				cu.accept(blvisitor);
 				Block methodblock = blvisitor.getResult();
+				
+				if (methodblock == null)
+				{
+					System.out.println("methodblock:"+methodblock);
+					new Exception("methodblock null, the system will exit.").printStackTrace();
+					System.exit(1);
+				}
+				
 				ListRewrite listRewrite = aw.getListRewrite(methodblock, Block.STATEMENTS_PROPERTY);
 				
 				{
@@ -78,6 +86,10 @@ public class SourceFileModifier {
 						newInvocation.setName(ast.newSimpleName("lock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool."+lockname));
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
+						
+						// testing
+						System.out.println("insertnode:"+insertnode+".");
+						
 						listRewrite.insertAfter(insertnode, newStatement, null);
 					}
 				}

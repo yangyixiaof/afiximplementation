@@ -20,6 +20,7 @@ public class SearchOrder {
 	private ArrayList<String> methodparam = new ArrayList<String>();
 	
 	int classidx = 0;
+	boolean isrightclass = false;
 	
 	public SearchOrder(String msig) { 
 		int ll = msig.indexOf('(');
@@ -77,10 +78,24 @@ public class SearchOrder {
 	}
 
 	public boolean HandleCurrentClass(String rawclass) {
+		
+		// testing
+		System.out.println("rawclass:"+rawclass+";classidx:"+classidx+";classlistsize:"+classlist.size());
+		
+		isrightclass = false;
+		if (classidx >= classlist.size())
+		{
+			return false;
+		}
 		String classname = classlist.get(classidx);
+		
+		// testing
+		System.out.println("classname:"+classname+";rawclass:"+rawclass+".");
+		
 		if (classname.endsWith(rawclass))
 		{
 			classidx++;
+			isrightclass = true;
 			return true;
 		}
 		return false;
@@ -89,10 +104,11 @@ public class SearchOrder {
 	public void DecreaseLevel()
 	{
 		classidx--;
+		isrightclass = false;
 	}
 
 	public boolean IsInRightClass() {
-		if (classidx == classlist.size()-1)
+		if ((classidx == classlist.size()) && isrightclass)
 		{
 			return true;
 		}
@@ -100,6 +116,10 @@ public class SearchOrder {
 	}
 
 	public boolean IsInRightMethod(Type tp, List<SingleVariableDeclaration> params) {
+		
+		// testing
+		System.out.println("tp:"+tp+";methodreturntype:"+methodreturntype+";params size:"+params.size()+";methodparam:"+methodparam.size());
+		
 		if (methodparam.size() != params.size())
 		{
 			return false;
@@ -113,7 +133,7 @@ public class SearchOrder {
 				SingleVariableDeclaration svd = itr.next();
 				String comptype = mitr.next();
 				Type pt = svd.getType();
-				if (TypeUtil.TypeComparable(pt, comptype))
+				if (!TypeUtil.TypeComparable(pt, comptype))
 				{
 					return false;
 				}
