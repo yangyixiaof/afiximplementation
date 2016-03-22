@@ -2,6 +2,7 @@ package cn.yyx.labtask.afix.commonutil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
@@ -99,7 +100,26 @@ public class SearchOrder {
 	}
 
 	public boolean IsInRightMethod(Type tp, List<SingleVariableDeclaration> params) {
-		
+		if (methodparam.size() != params.size())
+		{
+			return false;
+		}
+		if (TypeUtil.TypeComparable(tp, methodreturntype))
+		{
+			Iterator<SingleVariableDeclaration> itr = params.iterator();
+			Iterator<String> mitr = methodparam.iterator();
+			while (itr.hasNext())
+			{
+				SingleVariableDeclaration svd = itr.next();
+				String comptype = mitr.next();
+				Type pt = svd.getType();
+				if (TypeUtil.TypeComparable(pt, comptype))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 		return false;
 	}
 	
