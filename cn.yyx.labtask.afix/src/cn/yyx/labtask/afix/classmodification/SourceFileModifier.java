@@ -157,7 +157,7 @@ public class SourceFileModifier {
 		File f = exactmatchfile.get(mtype);
 		if (f == null)
 		{
-			String path = mtype.replace('.', '/');
+			String path = mtype.replace('.', '/')+".java";
 			Set<String> keys = allfiles.keySet();
 			Iterator<String> itr = keys.iterator();
 			f = null;
