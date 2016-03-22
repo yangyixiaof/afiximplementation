@@ -7,11 +7,20 @@ public class InsertLocationSearchVisitor extends ASTVisitor{
 	
 	private ASTNode insertnode = null;
 	
-	int sourceline = -1;
+	int offsetfrombegining = -1;
 	
-	public InsertLocationSearchVisitor(int sourceline)
+	boolean before = false;
+	
+	public InsertLocationSearchVisitor(int offsetfrombegining, boolean before)
 	{
-		this.sourceline = sourceline;
+		this.offsetfrombegining = offsetfrombegining;
+		this.before = before;
+	}
+	
+	@Override
+	public void preVisit(ASTNode node) {
+		node.
+		super.preVisit(node);
 	}
 
 	public ASTNode getInsertnode() {

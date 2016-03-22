@@ -69,7 +69,7 @@ public class SourceFileModifier {
 					while (sbitr.hasNext())
 					{
 						int pos = sbitr.next();
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(pos);
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(pos, true);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
 						MethodInvocation newInvocation = ast.newMethodInvocation();
@@ -85,7 +85,7 @@ public class SourceFileModifier {
 					while (seitr.hasNext())
 					{
 						int pos = seitr.next();
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(pos);
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(pos, false);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
 						MethodInvocation newInvocation = ast.newMethodInvocation();
