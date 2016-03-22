@@ -20,6 +20,7 @@ import com.ibm.wala.shrikeCT.ClassReader;
 import com.ibm.wala.shrikeCT.ClassWriter;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 
+import cn.yyx.labtask.afix.commonutil.NameUtil;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
 import cn.yyx.labtask.afix.patchgeneration.OnePatch;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
@@ -148,10 +149,7 @@ public class JarModifier {
 			String classname = cls.getName();
 			// System.out.println("classname:"+classname);
 			classname = classname.replace('/', '.');
-			int bra = msig.indexOf('(');
-			String mtype = msig.substring(0, bra);
-			int lddx = mtype.lastIndexOf('.');
-			mtype = mtype.substring(0, lddx);
+			String mtype = NameUtil.GetClassNameFromMethodSig(msig);
 			if (mtype.equals(classname)) {
 				break;
 			}

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cn.yyx.labtask.afix.classmodification.JarModifier;
+import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
@@ -18,7 +19,7 @@ public class FixHandler {
 		
 	}
 	
-	private void HandleTraces(List<OneErrorInfo> oeilist, String inputjar, String outputjar) throws Exception {
+	private void HandleTraces(List<OneErrorInfo> oeilist, String inputjar, String outputjar, String sourcedir) throws Exception {
 		ExclusivePatchesManager epm = new ExclusivePatchesManager();
 		Iterator<OneErrorInfo> itr = oeilist.iterator();
 		while (itr.hasNext())
@@ -34,6 +35,8 @@ public class FixHandler {
 		epm.MergeSelf();
 		JarModifier jm = new JarModifier(inputjar, outputjar);
 		jm.HandleExclusivePatchesManager(epm);
+		SourceFileModifier sfm = new SourceFileModifier(sourcedir);
+		sfm.HandleExclusivePatchesManager(epm);
 	}
 
 	public static void main(String[] args) {
@@ -48,8 +51,9 @@ public class FixHandler {
 		oeilist.add(new OneErrorInfo(p, c, r));
 		String inputjar = "TestInputJar/demo.jar";
 		String outputjar = "TestOutputJar/demo.jar";
+		String sourcedir = "SourceDir";
 		try {
-			fh.HandleTraces(oeilist, inputjar, outputjar);
+			fh.HandleTraces(oeilist, inputjar, outputjar, sourcedir);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
