@@ -14,7 +14,9 @@ public class SearchUtil {
 	{
 		// SSACFG sfg = ir.getControlFlowGraph();
 		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		Iterator<SSAInstruction> iir = ir.iterateNormalInstructions();
+		Iterator<SSAInstruction> iir = ir.iterateAllInstructions();
+		int mostcloseidx = -1;
+		SSAInstruction csi = null;
 		while (iir.hasNext())
 		{
 			SSAInstruction si = iir.next();
@@ -23,6 +25,11 @@ public class SearchUtil {
 			if (idx >= 0)
 			{
 				int bytecodeIndex = method.getBytecodeIndex(idx);
+				if ((bytecodeIndex < bytecodeLineNumber) && (mostcloseidx < bytecodeIndex))
+				{
+					mostcloseidx = bytecodeIndex;
+					csi = si;
+				}
 				// int sourceLineNum = method.getLineNumber(bytecodeIndex);
 				// System.out.println("bytecodeIndex:"+bytecodeIndex+";sourceIndex:"+sourceLineNum);
 				if (bytecodeIndex == bytecodeLineNumber)
@@ -31,7 +38,7 @@ public class SearchUtil {
 				}
 			}
 		}
-		return null;
+		return ir.getBasicBlockForInstruction(csi);
 	}
 	
 }

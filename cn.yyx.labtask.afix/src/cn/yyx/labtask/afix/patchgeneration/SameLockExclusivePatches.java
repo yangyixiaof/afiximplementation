@@ -64,7 +64,6 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<OnePatch> OneListMerge(List<OnePatch> tomergelist) throws Exception
 	{
 		List<Mergeable<OnePatch>> tempinput = new LinkedList<Mergeable<OnePatch>>();

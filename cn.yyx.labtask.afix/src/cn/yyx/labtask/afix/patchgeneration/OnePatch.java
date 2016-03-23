@@ -18,7 +18,7 @@ import cn.yyx.labtask.afix.codemap.SearchUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
-public class OnePatch {
+public class OnePatch implements Mergeable<OnePatch>{
 	
 	ErrorTrace et = null;
 	private String methodsig = null;
@@ -192,6 +192,7 @@ public class OnePatch {
 	 * @return true intersected and merged; false un_intersected and un_merged.
 	 * @throws InvalidClassFileException 
 	 */
+	@Override
 	public OnePatch Merge(OnePatch iop) throws InvalidClassFileException {
 		boolean intersected = false;
 		// situation1: in same method and intersected.

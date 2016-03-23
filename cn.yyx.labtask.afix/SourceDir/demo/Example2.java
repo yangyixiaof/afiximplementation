@@ -17,8 +17,11 @@ public class Example2 {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			System.out.println(1/(x-3));
+			int p = x-3;
+			int v = 1/p;
+			System.out.println(v);
 			x=0;//race here
 			t1.join();
 			t2.join();
@@ -39,6 +42,7 @@ public class Example2 {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 			System.out.println(1/x);//may throw divide by zero exception
 		}

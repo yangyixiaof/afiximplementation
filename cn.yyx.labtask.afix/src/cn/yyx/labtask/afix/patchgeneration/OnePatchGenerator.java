@@ -184,8 +184,20 @@ public class OnePatchGenerator {
 		int cidx = this.c.getBytecodel();
 		IR ir = GetMethodIR(methodSig);
 		SSACFG cfg = ir.getControlFlowGraph();
+		
+		if (methodSig.equals("demo.Example2.main([Ljava/lang/String;)V"))
+		{
+			System.out.println("haha haha.");
+		}
+		
 		ISSABasicBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(pidx, ir);
 		ISSABasicBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(cidx, ir);
+		
+		if (pbk == null || cbk == null)
+		{
+			System.out.println("pmethodSig:"+methodSig+";cmethodSig:"+this.r.getSig()+";pbk:"+pbk+";cbk:"+cbk);
+		}
+		
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		pset.add(pbk);
 		pset.add(cbk);
