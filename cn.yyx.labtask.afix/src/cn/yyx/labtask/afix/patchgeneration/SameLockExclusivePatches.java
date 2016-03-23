@@ -34,11 +34,14 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 	{
 		List<OnePatch> mergeresult = new LinkedList<OnePatch>();
 		boolean intersected = false;
+		List<OnePatch> oplist = new LinkedList<OnePatch>();
+		List<OnePatch> opusedlist = new LinkedList<OnePatch>();
 		Iterator<OnePatch> itr = patches.iterator();
 		while (itr.hasNext())
 		{
 			OnePatch op = itr.next();
 			Iterator<OnePatch> iitr = slep.patches.iterator();
+			boolean oneturnintersected = false;
 			while (iitr.hasNext())
 			{
 				OnePatch iop = iitr.next();
@@ -47,13 +50,18 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 				{
 					// means intersected.
 					intersected = true;
+					oneturnintersected = true;
 					mergeresult.add(tempmergere);
+					SearchAndRemoveIOP(iop, oplist, opusedlist);
 				}
 				else
 				{
-					mergeresult.add(op);
-					mergeresult.add(iop);
+					SearchAndAddIOP(iop, oplist, opusedlist);
 				}
+			}
+			if (!oneturnintersected)
+			{
+				mergeresult.add(op);
 			}
 		}
 		if (intersected)
@@ -62,6 +70,41 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 			return this;
 		}
 		return null;
+	}
+	
+	private void SearchAndAddIOP(OnePatch iop, List<OnePatch> oplist, List<OnePatch> opusedlist) {
+		if (Contains(opusedlist, iop) < 0)
+		{
+			if (Contains(oplist, iop) < 0)
+			{
+				oplist.add(iop);
+			}
+		}
+	}
+	
+	private void SearchAndRemoveIOP(OnePatch iop, List<OnePatch> oplist, List<OnePatch> opusedlist) {
+		int idx = Contains(oplist, iop);
+		if (idx >= 0)
+		{
+			OnePatch op = oplist.remove(idx);
+			if (Contains(opusedlist, op) < 0)
+			{
+				opusedlist.add(op);
+			}
+		}
+	}
+	
+	private int Contains(List<OnePatch> oplist, OnePatch iop)
+	{
+		int len = oplist.size();
+		for (int i=0;i<len;i++)
+		{
+			if (iop == oplist.get(i))
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	private List<OnePatch> OneListMerge(List<OnePatch> tomergelist) throws Exception

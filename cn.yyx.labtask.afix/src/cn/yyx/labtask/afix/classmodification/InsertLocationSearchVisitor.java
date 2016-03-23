@@ -8,6 +8,8 @@ import org.eclipse.jdt.core.dom.Statement;
 public class InsertLocationSearchVisitor extends ASTVisitor {
 
 	private ASTNode insertnode = null;
+	
+	private Block insertblock = null;
 
 	int offsetfrombegining = -1;
 
@@ -38,11 +40,11 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 				if (startpos >= offsetfrombegining) {
 					if (recordpos == -1) {
 						recordpos = startpos;
-						insertnode = node;
+						setInsertnodeAndBlock(node);
 					} else {
 						if (recordpos > startpos) {
 							recordpos = startpos;
-							insertnode = node;
+							setInsertnodeAndBlock(node);
 						}
 					}
 				}
@@ -66,11 +68,11 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 				if (endpos <= offsetfrombegining) {
 					if (recordpos == -1) {
 						recordpos = endpos;
-						insertnode = node;
+						setInsertnodeAndBlock(node);
 					} else {
 						if (recordpos < endpos) {
 							recordpos = endpos;
-							insertnode = node;
+							setInsertnodeAndBlock(node);
 						}
 					}
 				}
@@ -83,8 +85,18 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		return insertnode;
 	}
 
-	public void setInsertnode(ASTNode insertnode) {
+	private void setInsertnodeAndBlock(ASTNode insertnode) {
 		this.insertnode = insertnode;
+		ASTNode temp = insertnode.getParent();
+		while (!(temp instanceof Block))
+		{
+			temp = temp.getParent();
+		}
+		this.insertblock = (Block) temp;
+	}
+
+	public Block getInsertblock() {
+		return insertblock;
 	}
 
 }

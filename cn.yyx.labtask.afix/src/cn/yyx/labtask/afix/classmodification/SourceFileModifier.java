@@ -76,8 +76,6 @@ public class SourceFileModifier {
 					System.exit(1);
 				}
 				
-				ListRewrite listRewrite = aw.getListRewrite(methodblock, Block.STATEMENTS_PROPERTY);
-				
 				{
 					Iterator<Integer> sbitr = op.GetInsertPosBeginSourceIterator();
 					while (sbitr.hasNext())
@@ -91,13 +89,15 @@ public class SourceFileModifier {
 						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, true, methodblock);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
+						Block ib = ilsv.getInsertblock();
+						ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("lock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool."+lockname));
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
 						
 						// testing
-						System.out.println("posline:"+posline+";insertnodeBegin:"+insertnode+";insertnodestartpos:"+insertnode.getStartPosition()+";insertnodeendpos:"+(insertnode.getStartPosition()+insertnode.getLength()));
+						System.out.println("msig:"+msig+";posline:"+posline+";insertnodeBegin:"+insertnode+";insertnodestartpos:"+insertnode.getStartPosition()+";insertnodeendpos:"+(insertnode.getStartPosition()+insertnode.getLength()));
 						
 						listRewrite.insertBefore(newStatement, insertnode, null);
 					}
@@ -112,6 +112,8 @@ public class SourceFileModifier {
 						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, false, methodblock);
 						methodblock.accept(ilsv);
 						ASTNode insertnode = ilsv.getInsertnode();
+						Block ib = ilsv.getInsertblock();
+						ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("unlock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool."+lockname));
