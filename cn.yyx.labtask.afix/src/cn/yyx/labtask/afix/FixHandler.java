@@ -40,7 +40,7 @@ public class FixHandler {
 	}
 
 	public static void main(String[] args) {
-		{
+		/*{
 			// example 1.
 			FixHandler fh = new FixHandler();
 			ErrorTrace p = new ErrorTrace();
@@ -59,19 +59,30 @@ public class FixHandler {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 		{
 			// example 2.
 			FixHandler fh = new FixHandler();
-			ErrorTrace p = new ErrorTrace();
-			p.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example$MyThread.run()V", 0));
-			ErrorTrace c = new ErrorTrace();
-			c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example$MyThread.run()V", 29));
-			ErrorTrace r = new ErrorTrace();
-			r.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example.main([Ljava/lang/String;)V", 27));
 			List<OneErrorInfo> oeilist = new LinkedList<OneErrorInfo>();
-			oeilist.add(new OneErrorInfo(p, c, r));
+			{
+				ErrorTrace p = new ErrorTrace();
+				p.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2.main([Ljava/lang/String;)V", 24));
+				ErrorTrace c = new ErrorTrace();
+				c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2.main([Ljava/lang/String;)V", 56));
+				ErrorTrace r = new ErrorTrace();
+				r.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2$MyThread.run()V", 0));
+				oeilist.add(new OneErrorInfo(p, c, r));
+			}
+			{
+				ErrorTrace p = new ErrorTrace();
+				p.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2$MyThread.run()V", 0));
+				ErrorTrace c = new ErrorTrace();
+				c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2$MyThread.run()V", 25));
+				ErrorTrace r = new ErrorTrace();
+				r.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2.main([Ljava/lang/String;)V", 24));
+				oeilist.add(new OneErrorInfo(p, c, r));
+			}
 			String inputjar = "TestInputJar/Example2.jar";
 			String outputjar = "TestOutputJar/Example2.jar";
 			String projectname = "SourceDir";
