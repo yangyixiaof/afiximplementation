@@ -1,5 +1,7 @@
 package demo;
 
+import java.util.concurrent.locks.Lock;
+
 public class Example2 {
 	static Object lock = new Object();
 	
@@ -13,6 +15,7 @@ public class Example2 {
 			MyThread t2 = new MyThread();
 			t1.start();
 			t2.start();
+			cn.yyx.labtask.afix.LockPool.lock1.lock();
 			x++;
 			try {
 				Thread.sleep(500);
@@ -23,7 +26,8 @@ public class Example2 {
 			int v = 1/p;
 			System.out.println(v);
 			x=0;
-			System.out.println(x);
+			System.out.println("lock here");
+			cn.yyx.labtask.afix.LockPool.lock1.unlock();
 			t1.join();
 			t2.join();
 		}catch(Exception e)
@@ -38,6 +42,7 @@ public class Example2 {
 		
 		public void run()
 		{
+			cn.yyx.labtask.afix.LockPool.lock1.lock();
 			//sleep for 10ms to let main thread go first 
 			x++;
 			try {
@@ -46,6 +51,7 @@ public class Example2 {
 				e.printStackTrace();
 			}
 			System.out.println(1/x);//may throw divide by zero exception
+			cn.yyx.labtask.afix.LockPool.lock1.unlock();
 		}
 	}
 }
