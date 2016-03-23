@@ -17,7 +17,7 @@ public class ClassHierarchyManager {
 	
 	public static ClassHierarchy GetClassHierarchy(String appJar) throws IOException, ClassHierarchyException {
 		ClassHierarchy cha = chamap.get(appJar);
-		if (cha != null)
+		if (cha == null)
 		{
 			AnalysisScope scope = AnalysisScopeReader.makeJavaBinaryAnalysisScope(appJar,
 					(new FileProvider()).getFile(CallGraphTestUtil.REGRESSION_EXCLUSIONS));
