@@ -22,7 +22,8 @@ public class Example2 {
 			int p = x-3;
 			int v = 1/p;
 			System.out.println(v);
-			x=0;//race here
+			x=0;
+			System.out.println(x);
 			t1.join();
 			t2.join();
 		}catch(Exception e)
