@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -172,8 +173,12 @@ public class SourceFileModifier {
 			cu = (CompilationUnit) parser.createAST(null);
 			cus.put(f.getAbsolutePath(), cu);
 			AST ast = GetAST(msig);
-			GetASTRewriteAccordingToMethodSig(msig, ast);
+			ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
 			cu.recordModifications();
+			ImportDeclaration id = ast.newImportDeclaration();
+			id.setName(ast.newName(new String[] {"java", "util", "concurrent", "locks", "Lock"}));
+			ListRewrite lrw = aw.getListRewrite(cu, CompilationUnit.IMPORTS_PROPERTY);
+			lrw.insertLast(id, null);
 		}
 		return cu;
 	}
