@@ -9,6 +9,7 @@ import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
+import cn.yyx.labtask.afix.patchgeneration.ClassHierarchyManager;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
 import cn.yyx.labtask.afix.patchgeneration.OnePatchGenerator;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
@@ -61,6 +62,8 @@ public class FixHandler {
 			}
 		}*/
 		
+		ClassHierarchyManager.Clear();
+		
 		{
 			// example 2.
 			FixHandler fh = new FixHandler();
@@ -69,7 +72,7 @@ public class FixHandler {
 				ErrorTrace p = new ErrorTrace();
 				p.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2.main([Ljava/lang/String;)V", 24));
 				ErrorTrace c = new ErrorTrace();
-				c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2.main([Ljava/lang/String;)V", 56));
+				c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2.main([Ljava/lang/String;)V", 66));
 				ErrorTrace r = new ErrorTrace();
 				r.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2$MyThread.run()V", 0));
 				oeilist.add(new OneErrorInfo(p, c, r));
@@ -78,7 +81,7 @@ public class FixHandler {
 				ErrorTrace p = new ErrorTrace();
 				p.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2$MyThread.run()V", 0));
 				ErrorTrace c = new ErrorTrace();
-				c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2$MyThread.run()V", 25));
+				c.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2$MyThread.run()V", 29));
 				ErrorTrace r = new ErrorTrace();
 				r.AddLocationAtPositiveOrder(new ErrorLocation("demo.Example2.main([Ljava/lang/String;)V", 24));
 				oeilist.add(new OneErrorInfo(p, c, r));

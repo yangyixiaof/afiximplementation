@@ -6,10 +6,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.ibm.wala.classLoader.IMethod;
-import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
-import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.impl.Everywhere;
 import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
@@ -18,9 +16,7 @@ import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.types.MethodReference;
-import com.ibm.wala.util.config.AnalysisScopeReader;
 import com.ibm.wala.util.debug.Assertions;
-import com.ibm.wala.util.io.FileProvider;
 import com.ibm.wala.util.strings.StringStuff;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
@@ -148,9 +144,7 @@ public class OnePatchGenerator {
 		if (AFixCallGraph.isDirectory(appJar)) {
 			appJar = AFixCallGraph.findJarFiles(new String[] { appJar });
 		}
-		AnalysisScope scope = AnalysisScopeReader.makeJavaBinaryAnalysisScope(appJar,
-				(new FileProvider()).getFile(CallGraphTestUtil.REGRESSION_EXCLUSIONS));
-		cha = ClassHierarchy.make(scope);
+		cha = ClassHierarchyManager.GetClassHierarchy(appJar);
 	}
 	
 	/**
@@ -216,6 +210,7 @@ public class OnePatchGenerator {
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest)
 	{
 		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
+		boolean allres = false;
 		while (itr.hasNext())
 		{
 			ISSABasicBlock ibb = itr.next();
@@ -228,12 +223,13 @@ public class OnePatchGenerator {
 				return true;
 			}
 			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest);
+			allres = allres || istodest;
 			if (istodest)
 			{
 				pset.add(ibb);
 			}
 		}
-		return false;
+		return allres;
 	}
 	
 	private Iterator<ISSABasicBlock> GetBlocks(ISSABasicBlock pbk, SSACFG cfg, boolean forward)
