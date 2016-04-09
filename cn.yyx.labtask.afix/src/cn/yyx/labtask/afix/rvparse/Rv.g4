@@ -20,7 +20,7 @@ lineNumber : Number;
 
 Number : [0_9]+;
 
-ID : [A-Za-z0-9_\$\[\]\./\(\)]+ ;
+ID : [A-Za-z0-9_\$\[\]\./\(\),]+ ;
 
 WS : [ \t\r\n]+ -> skip ;
 
