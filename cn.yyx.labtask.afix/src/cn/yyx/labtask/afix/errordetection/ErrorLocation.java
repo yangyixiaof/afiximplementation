@@ -7,6 +7,10 @@ public class ErrorLocation {
 	
 	public ErrorLocation(String sig, int bytecodel)
 	{
+		
+		//testing
+		System.out.println("methodsig:" + sig + ";line:" + bytecodel);
+		
 		this.setSig(sig);
 		this.setBytecodel(bytecodel);
 	}
