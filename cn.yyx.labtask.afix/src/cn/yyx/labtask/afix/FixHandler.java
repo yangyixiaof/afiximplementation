@@ -1,18 +1,20 @@
 package cn.yyx.labtask.afix;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import cn.yyx.labtask.afix.classmodification.JarModifier;
 import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
-import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
 import cn.yyx.labtask.afix.patchgeneration.ClassHierarchyManager;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
 import cn.yyx.labtask.afix.patchgeneration.OnePatchGenerator;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
+import cn.yyx.labtask.afix.raceinput.PCRPool;
+import cn.yyx.labtask.afix.raceinput.RaceReportHandler;
 
 public class FixHandler {
 	
@@ -62,7 +64,23 @@ public class FixHandler {
 			}
 		}*/
 		
-		
+		PCRPool pcr = null;
+		try {
+			pcr = RaceReportHandler.ReadReport(new File("RaceReport/report"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		List<OneErrorInfo> oeilist = pcr.GetTraces();
+		FixHandler fh = new FixHandler();
+		String inputjar = "TestInputJar/Example3.jar";
+		String outputjar = "TestOutputJar/Example3.jar";
+		String projectname = "SourceDir";
+		try {
+			fh.HandleTraces(oeilist, inputjar, outputjar, projectname);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		ClassHierarchyManager.Clear();
 		
