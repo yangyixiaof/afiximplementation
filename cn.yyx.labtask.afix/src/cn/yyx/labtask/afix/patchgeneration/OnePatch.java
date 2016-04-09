@@ -230,7 +230,8 @@ public class OnePatch implements Mergeable<OnePatch>{
 				ErrorLocation tel = itr.next();
 				if (getMethodsig().equals(tel.getSig()))
 				{
-					ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), ir);
+					// ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), ir);
+					ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(tel.getBytecodel(), ir);
 					if (protectednodes.contains(tbk))
 					{
 						intersected = true;
@@ -249,7 +250,8 @@ public class OnePatch implements Mergeable<OnePatch>{
 					ErrorLocation tel = itr.next();
 					if (tmsig.equals(tel.getSig()))
 					{
-						ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), iop.ir);
+						// ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), iop.ir);
+						ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(tel.getBytecodel(), iop.ir);
 						if (iop.protectednodes.contains(tbk))
 						{
 							intersected = true;

@@ -62,9 +62,11 @@ public class FixHandler {
 			}
 		}*/
 		
+		
+		
 		ClassHierarchyManager.Clear();
 		
-		{
+		/*{
 			// example 2.
 			FixHandler fh = new FixHandler();
 			List<OneErrorInfo> oeilist = new LinkedList<OneErrorInfo>();
@@ -94,7 +96,7 @@ public class FixHandler {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 	
 }

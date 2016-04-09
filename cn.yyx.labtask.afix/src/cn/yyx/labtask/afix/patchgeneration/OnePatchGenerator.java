@@ -163,7 +163,7 @@ public class OnePatchGenerator {
 			int ridx = this.r.getBytecodel();
 			IR ir = GetMethodIR(methodSig);
 			SSACFG cfg = ir.getControlFlowGraph();
-			ISSABasicBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(ridx, ir);
+			ISSABasicBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(ridx, ir);
 			Set<ISSABasicBlock> protectednodes = new HashSet<ISSABasicBlock>();
 			protectednodes.add(rbk);
 			OnePatch op = new OnePatch(rt, this.r.getSig(), protectednodes, ir, cfg);
@@ -184,8 +184,8 @@ public class OnePatchGenerator {
 			System.out.println("haha haha.");
 		}
 		
-		ISSABasicBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(pidx, ir);
-		ISSABasicBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(cidx, ir);
+		ISSABasicBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(pidx, ir);
+		ISSABasicBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(cidx, ir);
 		
 		if (pbk == null || cbk == null)
 		{
