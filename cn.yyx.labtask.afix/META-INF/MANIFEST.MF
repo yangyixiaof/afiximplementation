@@ -22,4 +22,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: attrib4j-0.9.0.jar,
  bcel-5.0.jar,
  cfparse-unknown.jar,
- .
+ .,
+ antlr-4.5.2-complete.jar
