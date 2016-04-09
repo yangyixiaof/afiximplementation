@@ -1,4 +1,4 @@
-package cn.yyx.labtask.rvparse;
+package cn.yyx.labtask.afix.rvparse;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.Queue;
 
 import attrib4j.bcel.DescriptorUtil;
 import cn.yyx.labtask.afix.raceinput.PCRPool;
-import cn.yyx.labtask.rvparse.RvParser.ClassDeclareContext;
+import cn.yyx.labtask.afix.rvparse.RvParser.ClassDeclareContext;
 
 public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 	

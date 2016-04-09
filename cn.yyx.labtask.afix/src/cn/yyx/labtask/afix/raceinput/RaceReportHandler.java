@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import cn.yyx.labtask.rvparse.RVStructureVisitor;
+import cn.yyx.labtask.afix.rvparse.RVStructureVisitor;
 
 public class RaceReportHandler {
 	

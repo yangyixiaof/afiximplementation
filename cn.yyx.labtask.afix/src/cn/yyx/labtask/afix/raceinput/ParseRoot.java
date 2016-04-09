@@ -4,9 +4,9 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import cn.yyx.labtask.rvparse.RvBaseVisitor;
-import cn.yyx.labtask.rvparse.RvLexer;
-import cn.yyx.labtask.rvparse.RvParser;
+import cn.yyx.labtask.afix.rvparse.RvBaseVisitor;
+import cn.yyx.labtask.afix.rvparse.RvLexer;
+import cn.yyx.labtask.afix.rvparse.RvParser;
 
 public class ParseRoot 
 {

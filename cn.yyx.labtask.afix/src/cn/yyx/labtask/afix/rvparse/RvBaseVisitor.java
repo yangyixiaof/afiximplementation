@@ -1,4 +1,4 @@
-package cn.yyx.labtask.rvparse;
+package cn.yyx.labtask.afix.rvparse;
 
 // Generated from Rv.g4 by ANTLR 4.5.2
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
