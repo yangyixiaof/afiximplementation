@@ -71,4 +71,10 @@ public interface RvVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLineNumber(RvParser.LineNumberContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RvParser#idOrNumber}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdOrNumber(RvParser.IdOrNumberContext ctx);
 }

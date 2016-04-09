@@ -1,8 +1,8 @@
 // Define a grammar called Hello
 grammar Rv;
 
-oneRaceReadPart  : '<' classDeclare ':' returnType methodSig '>' '|' ID '=' '<' classDeclare ':' variableType variable '>' '|' lineNumber;
-oneRaceWritePart : '<' classDeclare ':' returnType methodSig '>' '|' '<' classDeclare ':' variableType variable '>' '=' ID '|' lineNumber;
+oneRaceReadPart  : '<' classDeclare ':' returnType methodSig '>' '|' idOrNumber '=' '<' classDeclare ':' variableType variable '>' '|' lineNumber;
+oneRaceWritePart : '<' classDeclare ':' returnType methodSig '>' '|' '<' classDeclare ':' variableType variable '>' '=' idOrNumber '|' lineNumber;
 
 oneRacePart : oneRaceReadPart | oneRaceWritePart;
 
@@ -18,8 +18,10 @@ methodSig : ID;
 
 lineNumber : NUMBER;
 
+idOrNumber : ID | NUMBER;
+
 NUMBER : [0-9]+;
 
-ID : [A-Za-z0-9_\$\[\]\./\(\),]+;
+ID : [A-Za-z0-9\$\[\]\./\(\),]+;
 
 WS : [ \t\r\n]+ -> skip;

@@ -24,7 +24,7 @@ public class RaceReportHandler {
 			try {
 				ParseRoot.ParseOneSentence(online, evalVisitor, false);
 			} catch (Exception e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 				// testing
 				System.err.println("TEST: Wrong parse sentence:" + online);
 			}

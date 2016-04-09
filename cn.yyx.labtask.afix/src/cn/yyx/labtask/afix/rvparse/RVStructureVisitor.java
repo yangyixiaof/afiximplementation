@@ -4,7 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import attrib4j.bcel.DescriptorUtil;
+import org.eclipse.jdt.core.Signature;
+
 import cn.yyx.labtask.afix.raceinput.PCRPool;
 import cn.yyx.labtask.afix.rvparse.RvParser.ClassDeclareContext;
 
@@ -22,9 +23,32 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		Integer res = visitChildren(ctx);
 		List<ClassDeclareContext> cls = ctx.classDeclare();
 		String where = cls.get(0).getText();
+		
+		// System.err.println("where:"+where);
+		
 		String rt = ctx.returnType().getText();
 		String methodsig = ctx.methodSig().getText();
-		String msig = DescriptorUtil.convert(methodsig, rt);
+		
+
+		int lp = methodsig.indexOf('(');
+		int rp = methodsig.indexOf(')');
+		String sig = methodsig.substring(lp+1, rp).trim();
+		String[] ss = sig.split(",");
+		
+		//testing
+		System.err.println("ss:"+ss+";sig:"+sig.length());
+		
+		String[] nss = new String[ss.length];
+		for (int i=0;i<ss.length;i++)
+		{
+			nss[i] = Signature.createTypeSignature(ss[i], true);
+		}
+		String msig = Signature.createMethodSignature(nss, Signature.createTypeSignature(rt, true));
+		// System.err.println("methodsig:"+methodsig);
+		// String msig = DescriptorUtil.convert(sig, rt);
+		
+		System.err.println("msig:"+msig);
+		
 		String vartype = ctx.variableType().getText();
 		String var = ctx.variable().getText();
 		String line = ctx.lineNumber().getText();
@@ -38,9 +62,28 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		Integer res = visitChildren(ctx);
 		List<ClassDeclareContext> cls = ctx.classDeclare();
 		String where = cls.get(0).getText();
+		
+		// System.err.println("where:"+where);
+		
 		String rt = ctx.returnType().getText();
 		String methodsig = ctx.methodSig().getText();
-		String msig = DescriptorUtil.convert(methodsig, rt);
+		
+
+		int lp = methodsig.indexOf('(');
+		int rp = methodsig.indexOf(')');
+		String sig = methodsig.substring(lp+1, rp);
+		String[] ss = sig.split(",");
+		String[] nss = new String[ss.length];
+		for (int i=0;i<ss.length;i++)
+		{
+			nss[i] = Signature.createTypeSignature(ss[i], true);
+		}
+		String msig = Signature.createMethodSignature(nss, Signature.createTypeSignature(rt, true));
+		// System.err.println("methodsig:"+methodsig);
+		// String msig = DescriptorUtil.convert(sig, rt);
+		
+		System.err.println("msig:"+msig);
+		
 		String vartype = ctx.variableType().getText();
 		String var = ctx.variable().getText();
 		String line = ctx.lineNumber().getText();

@@ -108,4 +108,14 @@ public interface RvListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLineNumber(RvParser.LineNumberContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RvParser#idOrNumber}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdOrNumber(RvParser.IdOrNumberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RvParser#idOrNumber}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdOrNumber(RvParser.IdOrNumberContext ctx);
 }
