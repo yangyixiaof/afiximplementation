@@ -27,23 +27,25 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		// System.err.println("where:"+where);
 		
 		String rt = ctx.returnType().getText();
+		String rtsig = Signature.createTypeSignature(rt, true);
 		String methodsig = ctx.methodSig().getText();
-		
 
 		int lp = methodsig.indexOf('(');
 		int rp = methodsig.indexOf(')');
 		String sig = methodsig.substring(lp+1, rp).trim();
-		String[] ss = sig.split(",");
-		
-		//testing
-		System.err.println("ss:"+ss+";sig:"+sig.length());
-		
-		String[] nss = new String[ss.length];
-		for (int i=0;i<ss.length;i++)
+		String met = methodsig.substring(0,lp);
+		String msig = "()" + rtsig;
+		if (sig.length() > 0)
 		{
-			nss[i] = Signature.createTypeSignature(ss[i], true);
+			String[] ss = sig.split(",");
+			String[] nss = new String[ss.length];
+			for (int i=0;i<ss.length;i++)
+			{
+				nss[i] = Signature.createTypeSignature(ss[i], true);
+			}
+			msig = Signature.createMethodSignature(nss, rtsig); 
 		}
-		String msig = Signature.createMethodSignature(nss, Signature.createTypeSignature(rt, true));
+		msig = met + msig;
 		// System.err.println("methodsig:"+methodsig);
 		// String msig = DescriptorUtil.convert(sig, rt);
 		
@@ -66,19 +68,25 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		// System.err.println("where:"+where);
 		
 		String rt = ctx.returnType().getText();
+		String rtsig = Signature.createTypeSignature(rt, true);
 		String methodsig = ctx.methodSig().getText();
-		
 
 		int lp = methodsig.indexOf('(');
 		int rp = methodsig.indexOf(')');
-		String sig = methodsig.substring(lp+1, rp);
-		String[] ss = sig.split(",");
-		String[] nss = new String[ss.length];
-		for (int i=0;i<ss.length;i++)
+		String sig = methodsig.substring(lp+1, rp).trim();
+		String met = methodsig.substring(0,lp);
+		String msig = "()" + rtsig;
+		if (sig.length() > 0)
 		{
-			nss[i] = Signature.createTypeSignature(ss[i], true);
+			String[] ss = sig.split(",");
+			String[] nss = new String[ss.length];
+			for (int i=0;i<ss.length;i++)
+			{
+				nss[i] = Signature.createTypeSignature(ss[i], true);
+			}
+			msig = Signature.createMethodSignature(nss, rtsig); 
 		}
-		String msig = Signature.createMethodSignature(nss, Signature.createTypeSignature(rt, true));
+		msig = met + msig;
 		// System.err.println("methodsig:"+methodsig);
 		// String msig = DescriptorUtil.convert(sig, rt);
 		
