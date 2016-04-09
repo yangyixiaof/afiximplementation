@@ -18,7 +18,8 @@ public class RvParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, Number=2, ID=3, WS=4, RH=5, COMMA=6, LA=7, RA=8, ASSIGN=9, OR=10;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, Number=8, ID=9, 
+		WS=10;
 	public static final int
 		RULE_oneRaceReadPart = 0, RULE_oneRaceWritePart = 1, RULE_oneRacePart = 2, 
 		RULE_oneRace = 3, RULE_classDeclare = 4, RULE_variableType = 5, RULE_variable = 6, 
@@ -29,11 +30,10 @@ public class RvParser extends Parser {
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "'-'", null, null, null, "'Race'", "':'", "'<'", "'>'", "'='", "'|'"
+		null, "'Race:'", "'<'", "':'", "'>'", "'|'", "'='", "'-'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, "Number", "ID", "WS", "RH", "COMMA", "LA", "RA", "ASSIGN", 
-		"OR"
+		null, null, null, null, null, null, null, null, "Number", "ID", "WS"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -85,12 +85,6 @@ public class RvParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class OneRaceReadPartContext extends ParserRuleContext {
-		public TerminalNode RH() { return getToken(RvParser.RH, 0); }
-		public List<TerminalNode> COMMA() { return getTokens(RvParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(RvParser.COMMA, i);
-		}
-		public TerminalNode LA() { return getToken(RvParser.LA, 0); }
 		public List<ClassDeclareContext> classDeclare() {
 			return getRuleContexts(ClassDeclareContext.class);
 		}
@@ -103,16 +97,7 @@ public class RvParser extends Parser {
 		public MethodSigContext methodSig() {
 			return getRuleContext(MethodSigContext.class,0);
 		}
-		public List<TerminalNode> RA() { return getTokens(RvParser.RA); }
-		public TerminalNode RA(int i) {
-			return getToken(RvParser.RA, i);
-		}
-		public List<TerminalNode> OR() { return getTokens(RvParser.OR); }
-		public TerminalNode OR(int i) {
-			return getToken(RvParser.OR, i);
-		}
 		public TerminalNode ID() { return getToken(RvParser.ID, 0); }
-		public TerminalNode ASSIGN() { return getToken(RvParser.ASSIGN, 0); }
 		public VariableTypeContext variableType() {
 			return getRuleContext(VariableTypeContext.class,0);
 		}
@@ -148,42 +133,40 @@ public class RvParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(20);
-			match(RH);
+			match(T__0);
 			setState(21);
-			match(COMMA);
+			match(T__1);
 			setState(22);
-			match(LA);
+			classDeclare();
 			setState(23);
-			classDeclare();
+			match(T__2);
 			setState(24);
-			match(COMMA);
-			setState(25);
 			returnType();
-			setState(26);
+			setState(25);
 			methodSig();
+			setState(26);
+			match(T__3);
 			setState(27);
-			match(RA);
+			match(T__4);
 			setState(28);
-			match(OR);
-			setState(29);
 			match(ID);
+			setState(29);
+			match(T__5);
 			setState(30);
-			match(ASSIGN);
+			match(T__1);
 			setState(31);
-			match(RA);
-			setState(32);
 			classDeclare();
+			setState(32);
+			match(T__2);
 			setState(33);
-			match(COMMA);
-			setState(34);
 			variableType();
-			setState(35);
+			setState(34);
 			variable();
+			setState(35);
+			match(T__3);
 			setState(36);
-			match(RA);
+			match(T__4);
 			setState(37);
-			match(OR);
-			setState(38);
 			lineNumber();
 			}
 		}
@@ -199,12 +182,6 @@ public class RvParser extends Parser {
 	}
 
 	public static class OneRaceWritePartContext extends ParserRuleContext {
-		public TerminalNode RH() { return getToken(RvParser.RH, 0); }
-		public List<TerminalNode> COMMA() { return getTokens(RvParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(RvParser.COMMA, i);
-		}
-		public TerminalNode LA() { return getToken(RvParser.LA, 0); }
 		public List<ClassDeclareContext> classDeclare() {
 			return getRuleContexts(ClassDeclareContext.class);
 		}
@@ -217,21 +194,12 @@ public class RvParser extends Parser {
 		public MethodSigContext methodSig() {
 			return getRuleContext(MethodSigContext.class,0);
 		}
-		public List<TerminalNode> RA() { return getTokens(RvParser.RA); }
-		public TerminalNode RA(int i) {
-			return getToken(RvParser.RA, i);
-		}
-		public List<TerminalNode> OR() { return getTokens(RvParser.OR); }
-		public TerminalNode OR(int i) {
-			return getToken(RvParser.OR, i);
-		}
 		public VariableTypeContext variableType() {
 			return getRuleContext(VariableTypeContext.class,0);
 		}
 		public VariableContext variable() {
 			return getRuleContext(VariableContext.class,0);
 		}
-		public TerminalNode ASSIGN() { return getToken(RvParser.ASSIGN, 0); }
 		public TerminalNode ID() { return getToken(RvParser.ID, 0); }
 		public LineNumberContext lineNumber() {
 			return getRuleContext(LineNumberContext.class,0);
@@ -261,43 +229,41 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(39);
+			match(T__0);
 			setState(40);
-			match(RH);
+			match(T__1);
 			setState(41);
-			match(COMMA);
+			classDeclare();
 			setState(42);
-			match(LA);
+			match(T__2);
 			setState(43);
-			classDeclare();
-			setState(44);
-			match(COMMA);
-			setState(45);
 			returnType();
-			setState(46);
+			setState(44);
 			methodSig();
+			setState(45);
+			match(T__3);
+			setState(46);
+			match(T__4);
 			setState(47);
-			match(RA);
+			match(T__1);
 			setState(48);
-			match(OR);
-			setState(49);
-			match(RA);
-			setState(50);
 			classDeclare();
-			setState(51);
-			match(COMMA);
-			setState(52);
+			setState(49);
+			match(T__2);
+			setState(50);
 			variableType();
-			setState(53);
+			setState(51);
 			variable();
+			setState(52);
+			match(T__3);
+			setState(53);
+			match(T__5);
 			setState(54);
-			match(RA);
-			setState(55);
-			match(ASSIGN);
-			setState(56);
 			match(ID);
-			setState(57);
-			match(OR);
-			setState(58);
+			setState(55);
+			match(T__4);
+			setState(56);
 			lineNumber();
 			}
 		}
@@ -342,20 +308,20 @@ public class RvParser extends Parser {
 		OneRacePartContext _localctx = new OneRacePartContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_oneRacePart);
 		try {
-			setState(62);
+			setState(60);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(60);
+				setState(58);
 				oneRaceReadPart();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(61);
+				setState(59);
 				oneRaceWritePart();
 				}
 				break;
@@ -404,11 +370,11 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
+			setState(62);
 			oneRacePart();
-			setState(65);
-			match(T__0);
-			setState(66);
+			setState(63);
+			match(T__6);
+			setState(64);
 			oneRacePart();
 			}
 		}
@@ -450,7 +416,7 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(68);
+			setState(66);
 			match(ID);
 			}
 		}
@@ -492,7 +458,7 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(70);
+			setState(68);
 			match(ID);
 			}
 		}
@@ -534,7 +500,7 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(72);
+			setState(70);
 			match(ID);
 			}
 		}
@@ -576,7 +542,7 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(74);
+			setState(72);
 			match(ID);
 			}
 		}
@@ -618,7 +584,7 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(76);
+			setState(74);
 			match(ID);
 			}
 		}
@@ -660,7 +626,7 @@ public class RvParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(78);
+			setState(76);
 			match(Number);
 			}
 		}
@@ -676,24 +642,24 @@ public class RvParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\fS\4\2\t\2\4\3\t"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\fQ\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
 		"\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
-		"\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
-		"\3\3\3\3\3\3\3\3\3\3\4\3\4\5\4A\n\4\3\5\3\5\3\5\3\5\3\6\3\6\3\7\3\7\3"+
-		"\b\3\b\3\t\3\t\3\n\3\n\3\13\3\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2"+
-		"\2I\2\26\3\2\2\2\4*\3\2\2\2\6@\3\2\2\2\bB\3\2\2\2\nF\3\2\2\2\fH\3\2\2"+
-		"\2\16J\3\2\2\2\20L\3\2\2\2\22N\3\2\2\2\24P\3\2\2\2\26\27\7\7\2\2\27\30"+
-		"\7\b\2\2\30\31\7\t\2\2\31\32\5\n\6\2\32\33\7\b\2\2\33\34\5\20\t\2\34\35"+
-		"\5\22\n\2\35\36\7\n\2\2\36\37\7\f\2\2\37 \7\5\2\2 !\7\13\2\2!\"\7\n\2"+
-		"\2\"#\5\n\6\2#$\7\b\2\2$%\5\f\7\2%&\5\16\b\2&\'\7\n\2\2\'(\7\f\2\2()\5"+
-		"\24\13\2)\3\3\2\2\2*+\7\7\2\2+,\7\b\2\2,-\7\t\2\2-.\5\n\6\2./\7\b\2\2"+
-		"/\60\5\20\t\2\60\61\5\22\n\2\61\62\7\n\2\2\62\63\7\f\2\2\63\64\7\n\2\2"+
-		"\64\65\5\n\6\2\65\66\7\b\2\2\66\67\5\f\7\2\678\5\16\b\289\7\n\2\29:\7"+
-		"\13\2\2:;\7\5\2\2;<\7\f\2\2<=\5\24\13\2=\5\3\2\2\2>A\5\2\2\2?A\5\4\3\2"+
-		"@>\3\2\2\2@?\3\2\2\2A\7\3\2\2\2BC\5\6\4\2CD\7\3\2\2DE\5\6\4\2E\t\3\2\2"+
-		"\2FG\7\5\2\2G\13\3\2\2\2HI\7\5\2\2I\r\3\2\2\2JK\7\5\2\2K\17\3\2\2\2LM"+
-		"\7\5\2\2M\21\3\2\2\2NO\7\5\2\2O\23\3\2\2\2PQ\7\4\2\2Q\25\3\2\2\2\3@";
+		"\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
+		"\3\3\3\3\3\3\4\3\4\5\4?\n\4\3\5\3\5\3\5\3\5\3\6\3\6\3\7\3\7\3\b\3\b\3"+
+		"\t\3\t\3\n\3\n\3\13\3\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\2G\2\26"+
+		"\3\2\2\2\4)\3\2\2\2\6>\3\2\2\2\b@\3\2\2\2\nD\3\2\2\2\fF\3\2\2\2\16H\3"+
+		"\2\2\2\20J\3\2\2\2\22L\3\2\2\2\24N\3\2\2\2\26\27\7\3\2\2\27\30\7\4\2\2"+
+		"\30\31\5\n\6\2\31\32\7\5\2\2\32\33\5\20\t\2\33\34\5\22\n\2\34\35\7\6\2"+
+		"\2\35\36\7\7\2\2\36\37\7\13\2\2\37 \7\b\2\2 !\7\4\2\2!\"\5\n\6\2\"#\7"+
+		"\5\2\2#$\5\f\7\2$%\5\16\b\2%&\7\6\2\2&\'\7\7\2\2\'(\5\24\13\2(\3\3\2\2"+
+		"\2)*\7\3\2\2*+\7\4\2\2+,\5\n\6\2,-\7\5\2\2-.\5\20\t\2./\5\22\n\2/\60\7"+
+		"\6\2\2\60\61\7\7\2\2\61\62\7\4\2\2\62\63\5\n\6\2\63\64\7\5\2\2\64\65\5"+
+		"\f\7\2\65\66\5\16\b\2\66\67\7\6\2\2\678\7\b\2\289\7\13\2\29:\7\7\2\2:"+
+		";\5\24\13\2;\5\3\2\2\2<?\5\2\2\2=?\5\4\3\2><\3\2\2\2>=\3\2\2\2?\7\3\2"+
+		"\2\2@A\5\6\4\2AB\7\t\2\2BC\5\6\4\2C\t\3\2\2\2DE\7\13\2\2E\13\3\2\2\2F"+
+		"G\7\13\2\2G\r\3\2\2\2HI\7\13\2\2I\17\3\2\2\2JK\7\13\2\2K\21\3\2\2\2LM"+
+		"\7\13\2\2M\23\3\2\2\2NO\7\n\2\2O\25\3\2\2\2\3>";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

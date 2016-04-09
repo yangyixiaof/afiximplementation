@@ -1,8 +1,8 @@
 // Define a grammar called Hello
 grammar Rv;
 
-oneRaceReadPart  : RH COMMA LA classDeclare COMMA returnType methodSig RA OR ID ASSIGN RA classDeclare COMMA variableType variable RA OR lineNumber;
-oneRaceWritePart : RH COMMA LA classDeclare COMMA returnType methodSig RA OR RA classDeclare COMMA variableType variable RA ASSIGN ID OR lineNumber;
+oneRaceReadPart  : 'Race:' '<' classDeclare ':' returnType methodSig '>' '|' ID '=' '<' classDeclare ':' variableType variable '>' '|' lineNumber;
+oneRaceWritePart : 'Race:' '<' classDeclare ':' returnType methodSig '>' '|' '<' classDeclare ':' variableType variable '>' '=' ID '|' lineNumber;
 
 oneRacePart : oneRaceReadPart | oneRaceWritePart;
 
@@ -23,10 +23,3 @@ Number : [0_9]+;
 ID : [A-Za-z0-9_\$\[\]\./\(\),]+ ;
 
 WS : [ \t\r\n]+ -> skip ;
-
-RH : 'Race';
-COMMA : ':';
-LA : '<';
-RA : '>';
-ASSIGN : '=';
-OR : '|';
