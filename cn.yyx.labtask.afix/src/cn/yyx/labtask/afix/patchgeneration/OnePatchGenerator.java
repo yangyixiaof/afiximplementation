@@ -252,6 +252,9 @@ public class OnePatchGenerator {
 	 * @throws IOException
 	 */
 	private IR GetMethodIR(String methodSig) {
+		
+		System.err.println("methodSig:"+methodSig + ";appJar:" + appJar + ";");
+		
 		MethodReference mr = StringStuff.makeMethodReference(methodSig);
 		IMethod m = cha.resolveMethod(mr);
 		if (m == null) {

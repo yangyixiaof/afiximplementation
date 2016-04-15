@@ -52,7 +52,7 @@ public class PCRPool {
 				String pcrs = pck1.next();
 				Iterator<String> pck2 = pcks.iterator();
 				int id2 = 0;
-				while (id2 <= idx && pck2.hasNext())
+				while (id2 < idx && pck2.hasNext())
 				{
 					id2++;
 					pck2.next();

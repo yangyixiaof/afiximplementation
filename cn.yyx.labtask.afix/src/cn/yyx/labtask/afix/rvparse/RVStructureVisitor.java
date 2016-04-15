@@ -27,7 +27,7 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		// System.err.println("where:"+where);
 		
 		String rt = ctx.returnType().getText();
-		String rtsig = Signature.createTypeSignature(rt, true);
+		String rtsig = Signature.createTypeSignature(rt, true).replace('.', '/');
 		String methodsig = ctx.methodSig().getText();
 
 		int lp = methodsig.indexOf('(');
@@ -41,7 +41,7 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 			String[] nss = new String[ss.length];
 			for (int i=0;i<ss.length;i++)
 			{
-				nss[i] = Signature.createTypeSignature(ss[i], true);
+				nss[i] = Signature.createTypeSignature(ss[i], true).replace('.', '/');
 			}
 			msig = Signature.createMethodSignature(nss, rtsig); 
 		}
@@ -68,7 +68,7 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		// System.err.println("where:"+where);
 		
 		String rt = ctx.returnType().getText();
-		String rtsig = Signature.createTypeSignature(rt, true);
+		String rtsig = Signature.createTypeSignature(rt, true).replace('.', '/');
 		String methodsig = ctx.methodSig().getText();
 
 		int lp = methodsig.indexOf('(');
@@ -82,7 +82,7 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 			String[] nss = new String[ss.length];
 			for (int i=0;i<ss.length;i++)
 			{
-				nss[i] = Signature.createTypeSignature(ss[i], true);
+				nss[i] = Signature.createTypeSignature(ss[i], true).replace('.', '/');
 			}
 			msig = Signature.createMethodSignature(nss, rtsig); 
 		}
