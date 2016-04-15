@@ -49,7 +49,7 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		// System.err.println("methodsig:"+methodsig);
 		// String msig = DescriptorUtil.convert(sig, rt);
 		
-		System.err.println("msig:"+msig);
+		// System.err.println("msig:"+msig);
 		
 		String vartype = ctx.variableType().getText();
 		String var = ctx.variable().getText();
@@ -90,7 +90,7 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		// System.err.println("methodsig:"+methodsig);
 		// String msig = DescriptorUtil.convert(sig, rt);
 		
-		System.err.println("msig:"+msig);
+		// System.err.println("msig:"+msig);
 		
 		String vartype = ctx.variableType().getText();
 		String var = ctx.variable().getText();

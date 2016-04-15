@@ -1,6 +1,5 @@
 package cn.yyx.labtask.afix.errordetection;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 public class ErrorTrace {
 	
 	List<ErrorLocation> negativetrace = new LinkedList<ErrorLocation>();
-	ArrayList<ErrorLocation> positivetrace = new ArrayList<ErrorLocation>();
+	List<ErrorLocation> positivetrace = new LinkedList<ErrorLocation>();
 	
 	public void AddLocationAtPositiveOrder(ErrorLocation el)
 	{
@@ -30,6 +29,18 @@ public class ErrorTrace {
 	public Iterator<ErrorLocation> GetNegativeOrderIterator()
 	{
 		return negativetrace.iterator();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("one trace:");
+		Iterator<ErrorLocation> itr = positivetrace.iterator();
+		while (itr.hasNext())
+		{
+			ErrorLocation el = itr.next();
+			sb.append(el+";");
+		}
+		return sb.toString();
 	}
 	
 }

@@ -36,4 +36,13 @@ public class OneErrorInfo {
 		this.r = r;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("");
+		sb.append("p:" + p + "\n");
+		sb.append("c:" + c + "\n");
+		sb.append("r:" + r + "\n");
+		return sb.toString();
+	}
+	
 }

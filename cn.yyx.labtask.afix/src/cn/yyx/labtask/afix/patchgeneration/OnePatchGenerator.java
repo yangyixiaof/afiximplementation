@@ -81,9 +81,9 @@ public class OnePatchGenerator {
 			this.r = rel;
 			if (pel.InSameMethod(rel))
 			{
-				int pidx = this.p.getBytecodel();
-				int cidx = this.c.getBytecodel();
-				int ridx = rel.getBytecodel();
+				int pidx = this.p.getLine();
+				int cidx = this.c.getLine();
+				int ridx = rel.getLine();
 				if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx))
 				{
 					overlap = true;
@@ -100,9 +100,9 @@ public class OnePatchGenerator {
 					tel = ritr.next();
 					if (pel.InSameMethod(tel))
 					{
-						int pidx = this.p.getBytecodel();
-						int cidx = this.c.getBytecodel();
-						int ridx = tel.getBytecodel();
+						int pidx = this.p.getLine();
+						int cidx = this.c.getLine();
+						int ridx = tel.getLine();
 						if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx))
 						{
 							overlap = true;
@@ -160,7 +160,7 @@ public class OnePatchGenerator {
 		{
 			// handle this.r
 			String methodSig = this.r.getSig();
-			int ridx = this.r.getBytecodel();
+			int ridx = this.r.getLine();
 			IR ir = GetMethodIR(methodSig);
 			SSACFG cfg = ir.getControlFlowGraph();
 			ISSABasicBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(ridx, ir);
@@ -174,8 +174,8 @@ public class OnePatchGenerator {
 		
 		// handle this.p this.c
 		String methodSig = this.p.getSig();
-		int pidx = this.p.getBytecodel();
-		int cidx = this.c.getBytecodel();
+		int pidx = this.p.getLine();
+		int cidx = this.c.getLine();
 		IR ir = GetMethodIR(methodSig);
 		SSACFG cfg = ir.getControlFlowGraph();
 		

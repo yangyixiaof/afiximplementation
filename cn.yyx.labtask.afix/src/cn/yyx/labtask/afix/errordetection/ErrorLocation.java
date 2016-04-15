@@ -3,16 +3,12 @@ package cn.yyx.labtask.afix.errordetection;
 public class ErrorLocation {
 	
 	private String sig = null;
-	private int bytecodel = -1;
+	private int line = -1;
 	
-	public ErrorLocation(String sig, int bytecodel)
+	public ErrorLocation(String sig, int line)
 	{
-		
-		//testing
-		System.out.println("methodsig:" + sig + ";line:" + bytecodel);
-		
 		this.setSig(sig);
-		this.setBytecodel(bytecodel);
+		this.setLine(line);
 	}
 
 	public String getSig() {
@@ -23,12 +19,12 @@ public class ErrorLocation {
 		this.sig = sig;
 	}
 
-	public int getBytecodel() {
-		return bytecodel;
+	public int getLine() {
+		return line;
 	}
 
-	public void setBytecodel(int bytecodel) {
-		this.bytecodel = bytecodel;
+	public void setLine(int bytecodel) {
+		this.line = bytecodel;
 	}
 	
 	public boolean InSameMethod(ErrorLocation el)
@@ -44,12 +40,17 @@ public class ErrorLocation {
 	public boolean equals(Object el) {
 		if (el instanceof ErrorLocation)
 		{
-			if (sig.equals(((ErrorLocation)el).sig) && (bytecodel == ((ErrorLocation)el).bytecodel))
+			if (sig.equals(((ErrorLocation)el).sig) && (line == ((ErrorLocation)el).line))
 			{
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "methodsig:" + sig + ";line:" + line;
 	}
 	
 }

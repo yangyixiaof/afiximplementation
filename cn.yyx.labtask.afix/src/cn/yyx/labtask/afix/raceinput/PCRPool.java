@@ -70,6 +70,16 @@ public class PCRPool {
 				}
 			}
 		}
+		// debugging
+		Iterator<OneErrorInfo> itr = oeilist.iterator();
+		while (itr.hasNext())
+		{
+			OneErrorInfo oei = itr.next();
+			
+			System.out.println("One Oei Start.");
+			System.out.println(oei);
+			System.out.println("One Oei End.");
+		}
 		return oeilist;
 	}
 	
