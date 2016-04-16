@@ -22,23 +22,23 @@ public class MergeUtil<T> {
 			List<Mergeable<T>> merged = new LinkedList<Mergeable<T>>();
 			while (itr.hasNext())
 			{
+				Mergeable<T> op = itr.next();
 				l1++;
 				int l2 = 0;
-				Mergeable<T> op = itr.next();
 				if (HasMerged(op, merged))
 				{
 					continue;
 				}
-				boolean ophandled = false;
+				// boolean ophandled = false;
 				Iterator<Mergeable<T>> itr2 = temp.iterator();
 				while (itr2.hasNext())
 				{
+					Mergeable<T> op2 = itr2.next();
 					l2++;
-					if (l2 < l1)
+					if (l2 <= l1)
 					{
 						continue;
 					}
-					Mergeable<T> op2 = itr2.next();
 					if (op != op2)
 					{
 						Mergeable<T> tempmergere = (Mergeable<T>) op.Merge((T)op2);
@@ -46,17 +46,17 @@ public class MergeUtil<T> {
 						{
 							// means intersected.
 							intersected = true;
-							ophandled = true;
-							tempres.add(tempmergere);
+							// ophandled = true;
 							merged.add(op2);
-							break;
+							// break;
 						}
 					}
 				}
-				if (!ophandled)
+				tempres.add(op);
+				/*if (!ophandled)
 				{
 					tempres.add(op);
-				}
+				}*/
 			}
 		}
 		return temp;
