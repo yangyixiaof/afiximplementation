@@ -36,8 +36,8 @@ public class FixHandler {
 			epm.AddOneExclusivePatch(sp);
 		}
 		epm.MergeSelf();
-		JarModifier jm = new JarModifier(inputjar, outputjar);
-		jm.HandleExclusivePatchesManager(epm);
+		// JarModifier jm = new JarModifier(inputjar, outputjar);
+		// jm.HandleExclusivePatchesManager(epm);
 		SourceFileModifier sfm = new SourceFileModifier(projectname);
 		sfm.HandleExclusivePatchesManager(epm);
 	}
