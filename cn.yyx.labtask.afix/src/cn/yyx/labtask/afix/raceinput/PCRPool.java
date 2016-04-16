@@ -50,6 +50,10 @@ public class PCRPool {
 			{
 				idx++;
 				String pcrs = pck1.next();
+				String[] ps = pcrs.split("#");
+				ErrorTrace p = new ErrorTrace();
+				p.AddLocationAtPositiveOrder(new ErrorLocation(ps[0], Integer.parseInt(ps[3])));
+				oeilist.add(new OneErrorInfo(p, p, r));
 				Iterator<String> pck2 = pcks.iterator();
 				int id2 = 0;
 				while (id2 < idx && pck2.hasNext())
@@ -60,9 +64,6 @@ public class PCRPool {
 				while (pck2.hasNext())
 				{
 					String pcrs2 = pck2.next();
-					String[] ps = pcrs.split("#");
-					ErrorTrace p = new ErrorTrace();
-					p.AddLocationAtPositiveOrder(new ErrorLocation(ps[0], Integer.parseInt(ps[3])));
 					String[] cs = pcrs2.split("#");
 					ErrorTrace c = new ErrorTrace();
 					c.AddLocationAtPositiveOrder(new ErrorLocation(cs[0], Integer.parseInt(cs[3])));
@@ -70,6 +71,7 @@ public class PCRPool {
 				}
 			}
 		}
+		
 		// debugging
 		Iterator<OneErrorInfo> itr = oeilist.iterator();
 		while (itr.hasNext())
