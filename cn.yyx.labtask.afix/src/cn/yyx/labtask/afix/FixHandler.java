@@ -72,8 +72,8 @@ public class FixHandler {
 			System.exit(1);
 		}
 		FixHandler fh = new FixHandler();
-		String inputjar = "TestInputJar/Example3.jar";
-		String outputjar = "TestOutputJar/Example3.jar";
+		String inputjar = "TestInputJar/Example4.jar";
+		String outputjar = "TestOutputJar/Example4.jar";
 		String projectname = "SourceDir";
 		List<OneErrorInfo> oeilist = pcr.GetTraces(inputjar);
 		try {

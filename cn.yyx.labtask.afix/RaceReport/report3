@@ -1,0 +1,17 @@
+------------------ maximal-branch (z3): demo.Example3 -------------------
+
+Race: <demo.Example3$MyThread: void run()>|$i0 = <demo.Example3: int x>|19 - <demo.Example3: void main(java.lang.String[])>|<demo.Example3: int x> = 0|11
+Race: <demo.Example3$MyThread: void run()>|$i1 = <demo.Example3: int x>|20 - <demo.Example3: void main(java.lang.String[])>|<demo.Example3: int x> = 0|11
+Race: <demo.Example3$MyThread: void run()>|<demo.Example3: int x> = $i2|19 - <demo.Example3: void main(java.lang.String[])>|<demo.Example3: int x> = 0|11
+Trace Size: 6
+Total #Threads: 2
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 4
+Total #Local Read-Writes: 0
+Total #Initial Writes: 1
+Total #Synchronizations: 1
+Total #Branches: 0
+Total #Property Events: 0
+Total #Potential Violations: 3
+Total #Real Violations: 3
+Total Time: 476ms

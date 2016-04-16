@@ -195,11 +195,19 @@ public class OnePatchGenerator {
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		pset.add(pbk);
 		pset.add(cbk);
-		GetSearchSet(pbk, cfg, true, pset, cbk);
+		if (!pbk.equals(cbk))
+		{
+			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
+			GetSearchSet(pbk, cfg, true, pset, cbk, visited);
+		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
 		cset.add(pbk);
 		cset.add(cbk);
-		GetSearchSet(cbk, cfg, false, cset, pbk);
+		if (!pbk.equals(cbk))
+		{
+			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
+			GetSearchSet(cbk, cfg, false, cset, pbk, visited);
+		}
 		cset.retainAll(pset);
 		Set<ISSABasicBlock> protectednodes = cset;
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg);
@@ -207,13 +215,19 @@ public class OnePatchGenerator {
 		return ops;
 	}
 	
-	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest)
+	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest, Set<ISSABasicBlock> visited)
 	{
+		visited.add(nowbk);
 		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
 		boolean allres = false;
 		while (itr.hasNext())
 		{
 			ISSABasicBlock ibb = itr.next();
+			// eliminate self cycle
+			if (visited.contains(ibb))
+			{
+				continue;
+			}
 			if (ibb.equals(dest))
 			{
 				return true;
@@ -222,7 +236,7 @@ public class OnePatchGenerator {
 			{
 				return true;
 			}
-			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest);
+			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest, visited);
 			allres = allres || istodest;
 			if (istodest)
 			{
