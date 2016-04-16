@@ -64,6 +64,7 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 				mergeresult.add(op);
 			}
 		}
+		mergeresult.addAll(oplist);
 		if (intersected)
 		{
 			this.patches = OneListMerge(mergeresult);

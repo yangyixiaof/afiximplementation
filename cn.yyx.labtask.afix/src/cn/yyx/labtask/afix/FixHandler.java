@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import cn.yyx.labtask.afix.classmodification.JarModifier;
 import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;

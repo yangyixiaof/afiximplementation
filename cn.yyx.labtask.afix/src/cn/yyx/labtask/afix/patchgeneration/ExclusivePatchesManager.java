@@ -30,7 +30,7 @@ public class ExclusivePatchesManager {
 		while (itr.hasNext())
 		{
 			idx++;
-			boolean ophandled = false;
+			// boolean ophandled = false;
 			SameLockExclusivePatches op = itr.next();
 			Iterator<SameLockExclusivePatches> iitr = patches.iterator();
 			int iidx = 0;
@@ -49,14 +49,14 @@ public class ExclusivePatchesManager {
 				}
 				else
 				{
-					ophandled = true;
-					res.add(mres);
+					// ophandled = true;
+					// res.add(mres);
 				}
 			}
-			if (!ophandled)
-			{
-				res.add(op);
-			}
+			// if (!ophandled)
+			// {
+			res.add(op);
+			// }
 		}
 		this.patches = res;
 		this.patches = OneListMerge();
