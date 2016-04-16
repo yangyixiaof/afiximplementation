@@ -31,7 +31,16 @@ public class PCRPool {
 		o1.put(two, true);
 	}
 
-	public List<OneErrorInfo> GetTraces() {
+	public List<OneErrorInfo> GetTraces(String appJar) {
+		/*Graph<CGNode> cg = null;
+		try {
+			cg = SimpleCallGraph.GetCallGraph(appJar);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Wrong CGNode.");
+			System.exit(1);
+		}*/
+		
 		List<OneErrorInfo> oeilist = new LinkedList<OneErrorInfo>();
 		Set<String> ks = pcrs.keySet();
 		Iterator<String> ritr = ks.iterator();
@@ -52,7 +61,9 @@ public class PCRPool {
 				String pcrs = pck1.next();
 				String[] ps = pcrs.split("#");
 				ErrorTrace p = new ErrorTrace();
-				p.AddLocationAtPositiveOrder(new ErrorLocation(ps[0], Integer.parseInt(ps[3])));
+				String ps0 = ps[0];
+				int ps3 = Integer.parseInt(ps[3]);
+				p.AddLocationAtPositiveOrder(new ErrorLocation(ps0, ps3));
 				oeilist.add(new OneErrorInfo(p, p, r));
 				Iterator<String> pck2 = pcks.iterator();
 				int id2 = 0;
@@ -66,8 +77,20 @@ public class PCRPool {
 					String pcrs2 = pck2.next();
 					String[] cs = pcrs2.split("#");
 					ErrorTrace c = new ErrorTrace();
-					c.AddLocationAtPositiveOrder(new ErrorLocation(cs[0], Integer.parseInt(cs[3])));
-					oeilist.add(new OneErrorInfo(p, c, r));
+					String cs0 = cs[0];
+					int cs3 = Integer.parseInt(cs[3]);
+					c.AddLocationAtPositiveOrder(new ErrorLocation(cs0, cs3));
+					if (ps0.equals(cs0))
+					{
+						if (ps3 < cs3)
+						{
+							oeilist.add(new OneErrorInfo(p, c, r));
+						}
+						else
+						{
+							oeilist.add(new OneErrorInfo(c, p, r));
+						}
+					}
 				}
 			}
 		}

@@ -71,11 +71,11 @@ public class FixHandler {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		List<OneErrorInfo> oeilist = pcr.GetTraces();
 		FixHandler fh = new FixHandler();
 		String inputjar = "TestInputJar/Example3.jar";
 		String outputjar = "TestOutputJar/Example3.jar";
 		String projectname = "SourceDir";
+		List<OneErrorInfo> oeilist = pcr.GetTraces(inputjar);
 		try {
 			fh.HandleTraces(oeilist, inputjar, outputjar, projectname);
 		} catch (Exception e) {

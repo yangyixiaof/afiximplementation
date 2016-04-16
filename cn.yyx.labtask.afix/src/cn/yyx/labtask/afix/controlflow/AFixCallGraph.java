@@ -88,18 +88,6 @@ public class AFixCallGraph {
 	 * @throws CancelException
 	 * @throws IllegalArgumentException
 	 */
-	public static void main(String[] args) throws WalaException, IllegalArgumentException, CancelException {
-		run(args);
-	}
-
-	/**
-	 * Usage: args =
-	 * "-appJar [jar file name] {-exclusionFile [exclusionFileName]}" The
-	 * "jar file name" should be something like "c:/temp/testdata/java_cup.jar"
-	 * 
-	 * @throws CancelException
-	 * @throws IllegalArgumentException
-	 */
 	public static Process run(String[] args) throws WalaException, IllegalArgumentException, CancelException {
 		Properties p = CommandLine.parse(args);
 		validateCommandLine(p);
