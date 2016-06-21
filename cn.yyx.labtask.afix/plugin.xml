@@ -58,5 +58,19 @@
          </toolbar>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="cn.yyx.labtask.afix.fixshowcategory"
+            name="fixshow">
+      </category>
+      <view
+            category="cn.yyx.labtask.afix.fixshowcategory"
+            class="cn.yyx.labtask.afix.AtomFixesView"
+            icon="icons/atomfixicon.png"
+            id="cn.yyx.labtask.afix.fixshowview"
+            name="Atom Fixes">
+      </view>
+   </extension>
 
 </plugin>
