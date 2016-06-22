@@ -66,7 +66,7 @@
       </category>
       <view
             category="cn.yyx.labtask.afix.fixshowcategory"
-            class="cn.yyx.labtask.afix.AtomFixesView"
+            class="cn.yyx.labtask.afix.gui.AtomFixesView"
             icon="icons/atomfixicon.png"
             id="cn.yyx.labtask.afix.fixshowview"
             name="Atom Fixes">
