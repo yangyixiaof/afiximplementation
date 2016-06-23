@@ -1,23 +1,21 @@
 package cn.yyx.labtask.afix.gui;
 
-import java.io.File;
-
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 public class TableViewerLabelProvider implements ITableLabelProvider {
 
-	{
+	/*{
 		File directory = new File("");
 		try {
 			System.out.println(directory.getCanonicalPath());
 			System.out.println(directory.getAbsolutePath());
 		} catch (Exception e) {
 		}
-	}
+	}*/
 
-	Image image = new Image(null, "icons/atomfixicon.png");
+	// Image image = new Image(null, "icons/atomfixicon.png");
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
@@ -25,7 +23,7 @@ public class TableViewerLabelProvider implements ITableLabelProvider {
 
 	@Override
 	public void dispose() {
-		image.dispose();
+		// image.dispose();
 	}
 
 	@Override
@@ -39,7 +37,8 @@ public class TableViewerLabelProvider implements ITableLabelProvider {
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-		return image;
+		// return image;
+		return null;
 	}
 
 	@Override
