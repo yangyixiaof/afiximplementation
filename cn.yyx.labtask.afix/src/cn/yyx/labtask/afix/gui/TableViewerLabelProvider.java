@@ -1,10 +1,21 @@
 package cn.yyx.labtask.afix.gui;
 
+import java.io.File;
+
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 public class TableViewerLabelProvider implements ITableLabelProvider {
+
+	{
+		File directory = new File("");
+		try {
+			System.out.println(directory.getCanonicalPath());
+			System.out.println(directory.getAbsolutePath());
+		} catch (Exception e) {
+		}
+	}
 
 	Image image = new Image(null, "icons/atomfixicon.png");
 
@@ -34,16 +45,13 @@ public class TableViewerLabelProvider implements ITableLabelProvider {
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		AFixEntity o = (AFixEntity) element;
-		if (columnIndex == 0)
-		{
+		if (columnIndex == 0) {
 			return "";
 		}
-		if (columnIndex == 1)
-		{
+		if (columnIndex == 1) {
 			return o.getLockname();
 		}
-		if (columnIndex == 2)
-		{
+		if (columnIndex == 2) {
 			return o.getLocklocation();
 		}
 		return null;

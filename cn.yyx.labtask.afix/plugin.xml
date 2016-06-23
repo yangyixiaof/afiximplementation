@@ -62,12 +62,12 @@
          point="org.eclipse.ui.views">
       <category
             id="cn.yyx.labtask.afix.fixshowcategory"
-            name="fixshow">
+            name="AFix View">
       </category>
       <view
             category="cn.yyx.labtask.afix.fixshowcategory"
             class="cn.yyx.labtask.afix.gui.AtomFixesView"
-            icon="icons/atomfixicon.png"
+            icon="src/cn/yyx/labtask/afix/gui/atomfixicon.png"
             id="cn.yyx.labtask.afix.fixshowview"
             name="Atom Fixes">
       </view>
