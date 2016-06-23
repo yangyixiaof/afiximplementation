@@ -37,7 +37,7 @@ public class AtomFixesView extends ViewPart {
 		
 		viewer.setContentProvider(new TableViewerContentProvider());
 		viewer.setLabelProvider(new TableViewerLabelProvider());
-		viewer.setInput(getViewSite());
+		viewer.setInput(AFixFactory.list);
 	}
 
 	@Override

@@ -18,10 +18,11 @@ public class TableViewerContentProvider implements IStructuredContentProvider {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof List)// 加一个List类型判断  
-            return ((List) inputElement).toArray(); // 将数据集List转化为数组  
-        else  
-            return new Object[0];
+		if (inputElement instanceof List) {
+			return ((List) inputElement).toArray();
+		} else {
+			return new Object[0];
+		}
 	}
 
 }
