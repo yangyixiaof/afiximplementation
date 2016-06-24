@@ -7,6 +7,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
+import cn.yyx.labtask.afix.irengine.IRGenerator;
+
 public class AtomFixesView extends ViewPart {
 	
 	TableColumn typeCol = null;
@@ -38,6 +40,9 @@ public class AtomFixesView extends ViewPart {
 		viewer.setContentProvider(new TableViewerContentProvider());
 		viewer.setLabelProvider(new TableViewerLabelProvider());
 		viewer.setInput(AFixFactory.list);
+		
+		// testing
+		IRGenerator.InitialLibs("classpathtest");
 	}
 
 	@Override

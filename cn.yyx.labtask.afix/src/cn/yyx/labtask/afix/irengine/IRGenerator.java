@@ -25,7 +25,7 @@ public class IRGenerator {
 		{
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (IProject project : projects) {
-				System.err.println("pj name:" + project.getName());
+				// System.err.println("pj name:" + project.getName());
 				if (project.getName().equals(projectname))
 				{
 					/*try {
