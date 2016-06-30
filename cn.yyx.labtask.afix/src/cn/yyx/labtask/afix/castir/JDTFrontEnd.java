@@ -2,8 +2,6 @@ package cn.yyx.labtask.afix.castir;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
@@ -13,26 +11,35 @@ import com.ibm.wala.cast.java.ipa.callgraph.JavaSourceAnalysisScope;
 import com.ibm.wala.client.AbstractAnalysisEngine;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
+import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.Util;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
+import com.ibm.wala.util.CancelException;
 import com.ibm.wala.util.io.TemporaryFile;
 
 public class JDTFrontEnd {
-
-	IJavaProject project = null;
-
-	public JDTFrontEnd(IJavaProject project) {
+	
+	private CallGraph callGraph = null;
+	private IJavaProject project = null;
+	private String[] mainClassDescriptors = null;
+	
+	public JDTFrontEnd(IJavaProject project, String mainClass) {
 		this.project = project;
+		this.mainClassDescriptors = new String[1];
+		this.mainClassDescriptors[0] = mainClass;
+	}
+	
+	public JDTFrontEnd(IJavaProject project, String[] mainClassDescriptors) {
+		this.project = project;
+		this.mainClassDescriptors = mainClassDescriptors;
 	}
 
-	protected AbstractAnalysisEngine getAnalysisEngine(final String[] mainClassDescriptors, Collection<String> sources,
-			List<String> libs) {
-		return makeAnalysisEngine(mainClassDescriptors, sources, libs);
+	protected AbstractAnalysisEngine getAnalysisEngine(final String[] mainClassDescriptors) {
+		return makeAnalysisEngine(mainClassDescriptors);
 	}
 
-	private AbstractAnalysisEngine makeAnalysisEngine(final String[] mainClassDescriptors, Collection<String> sources,
-			List<String> libs) {
+	private AbstractAnalysisEngine makeAnalysisEngine(final String[] mainClassDescriptors) {
 		AbstractAnalysisEngine engine = null;
 		try {
 			engine = new JDTJavaSourceAnalysisEngine(project) {
@@ -58,5 +65,24 @@ public class JDTFrontEnd {
 			return null;
 		}
 	}
+	
+	public void BuildCallGraph() throws IllegalArgumentException, CancelException, IOException
+	{
+		AbstractAnalysisEngine engine = getAnalysisEngine(mainClassDescriptors);
+		setCallGraph(engine.buildDefaultCallGraph());
+		if (getCallGraph() == null)
+		{
+			System.err.println("Build call graph into error.");
+			System.exit(1);
+		}
+	}
 
+	public CallGraph getCallGraph() {
+		return callGraph;
+	}
+
+	public void setCallGraph(CallGraph callGraph) {
+		this.callGraph = callGraph;
+	}
+	
 }
