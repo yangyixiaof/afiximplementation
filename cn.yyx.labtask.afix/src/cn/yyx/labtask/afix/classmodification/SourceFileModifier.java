@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -44,8 +45,16 @@ public class SourceFileModifier {
 	Map<String, CompilationUnit> cus = new TreeMap<String, CompilationUnit>();
 	Map<String, AST> asts = new TreeMap<String, AST>();
 	
-	public SourceFileModifier(String projectname) {
-		FileUtil.GetAllFilesInADirectory(new File(projectname), allfiles);
+	// String projectname
+	public SourceFileModifier(IJavaProject ijp) {
+		String abspath = ijp.getProject().getLocation().toFile().getAbsolutePath();
+		File absf = new File(abspath + "/" + "src");
+		if (!absf.exists())
+		{
+			System.err.println("No src? What the fuck?");
+			System.exit(1);
+		}
+		FileUtil.GetAllFilesInADirectory(new File(absf.getAbsolutePath()), allfiles);
 	}
 	
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm) throws InvalidClassFileException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException

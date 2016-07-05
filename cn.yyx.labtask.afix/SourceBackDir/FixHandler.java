@@ -71,25 +71,6 @@ public class FixHandler {
 			}
 		}*/
 		
-		PCRPool pcr = null;
-		try {
-			pcr = RaceReportHandler.ReadReport(new File("RaceReport/report"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		FixHandler fh = new FixHandler();
-		String inputjar = "TestInputJar/Example4.jar";
-		String outputjar = "TestOutputJar/Example4.jar";
-		String projectname = "SourceDir";
-		List<OneErrorInfo> oeilist = pcr.GetTraces(inputjar);
-		try {
-			fh.HandleTraces(oeilist, inputjar, outputjar, projectname);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		ClassHierarchyManager.Clear();
-		
 		/*{
 			// example 2.
 			FixHandler fh = new FixHandler();

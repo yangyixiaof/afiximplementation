@@ -8,8 +8,9 @@ import java.util.Set;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
+import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.impl.Everywhere;
-import com.ibm.wala.ipa.cha.ClassHierarchy;
+import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
@@ -20,14 +21,14 @@ import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.strings.StringStuff;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
-import cn.yyx.labtask.afix.controlflow.AFixCallGraph;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
 public class OnePatchGenerator {
 	
-	ClassHierarchy cha = null;
-	String appJar = null;
+	IClassHierarchy cha = null;
+	
+	// String appJar = null;
 	ErrorTrace pct = null;
 	ErrorTrace rt = null;
 	ErrorLocation p = null;
@@ -37,9 +38,10 @@ public class OnePatchGenerator {
 	boolean overlap = false;
 	int overlapflag = 0; // 0:at the same level. 1:r is lower level. 2:r is upper level and this situation should not be considered.
 	
-	public OnePatchGenerator(String jar, ErrorTrace p, ErrorTrace c, ErrorTrace r) throws Exception
+	// String jar
+	public OnePatchGenerator(CallGraph callGraph, ErrorTrace p, ErrorTrace c, ErrorTrace r) throws Exception
 	{
-		this.appJar = jar;
+		// this.appJar = jar;
 		ErrorLocation pel = null;
 		ErrorLocation cel = null;
 		boolean stop = false;
@@ -141,10 +143,11 @@ public class OnePatchGenerator {
 		{
 			throw new NoOneScopePatchException("p and c can not put in one (parent) method scope.");
 		}
-		if (AFixCallGraph.isDirectory(appJar)) {
+		/*if (AFixCallGraph.isDirectory(appJar)) {
 			appJar = AFixCallGraph.findJarFiles(new String[] { appJar });
-		}
-		cha = ClassHierarchyManager.GetClassHierarchy(appJar);
+		}*/
+		// cha = ClassHierarchyManager.GetClassHierarchy(appJar);
+		cha = callGraph.getClassHierarchy();
 	}
 	
 	/**
@@ -267,7 +270,7 @@ public class OnePatchGenerator {
 	 */
 	private IR GetMethodIR(String methodSig) {
 		
-		System.err.println("methodSig:"+methodSig + ";appJar:" + appJar + ";");
+		// System.err.println("methodSig:"+methodSig + ";appJar:" + appJar + ";");
 		
 		MethodReference mr = StringStuff.makeMethodReference(methodSig);
 		IMethod m = cha.resolveMethod(mr);
