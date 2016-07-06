@@ -13,6 +13,7 @@ public class AtomFixesView extends ViewPart {
 	
 	TableColumn typeCol = null;
 	TableColumn nameCol = null;
+	TableColumn opCol = null;
 	TableColumn locCol = null;
 	
 	TableViewer viewer = null;
@@ -28,11 +29,15 @@ public class AtomFixesView extends ViewPart {
 		
 		nameCol = new TableColumn(table, SWT.LEFT);
 		nameCol.setText("LockName");
-		nameCol.setWidth(200);
+		nameCol.setWidth(175);
+		
+		opCol = new TableColumn(table, SWT.LEFT);
+		opCol.setText("OperationType");
+		opCol.setWidth(175);
 		
 		locCol = new TableColumn(table, SWT.LEFT);
 		locCol.setText("Location");
-		locCol.setWidth(450);
+		locCol.setWidth(300);
 		
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);

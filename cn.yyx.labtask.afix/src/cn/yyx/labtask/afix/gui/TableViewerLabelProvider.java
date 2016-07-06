@@ -51,6 +51,9 @@ public class TableViewerLabelProvider implements ITableLabelProvider {
 			return o.getLockname();
 		}
 		if (columnIndex == 2) {
+			return o.getOperationtype();
+		}
+		if (columnIndex == 3) {
 			return o.getLocklocation();
 		}
 		return null;
