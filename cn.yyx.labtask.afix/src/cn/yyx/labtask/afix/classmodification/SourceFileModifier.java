@@ -29,6 +29,8 @@ import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.commonutil.NameUtil;
 import cn.yyx.labtask.afix.commonutil.SearchOrder;
+import cn.yyx.labtask.afix.gui.AFixEntity;
+import cn.yyx.labtask.afix.gui.AFixFactory;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
 import cn.yyx.labtask.afix.patchgeneration.OnePatch;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
@@ -48,6 +50,8 @@ public class SourceFileModifier {
 	
 	Map<String, LinkedList<Integer>> initialpositions = new TreeMap<String, LinkedList<Integer>>();
 	Map<String, LinkedList<Integer>> actualpositions = new TreeMap<String, LinkedList<Integer>>();
+	Map<String, LinkedList<Boolean>> positionislock = new TreeMap<String, LinkedList<Boolean>>();
+	Map<String, String> positionlocknames = new TreeMap<String, String>();
 	
 	// String projectname
 	public SourceFileModifier(IJavaProject ijp) {
@@ -93,6 +97,13 @@ public class SourceFileModifier {
 					actualpositions.put(fileunique, ap);
 				}
 				
+				LinkedList<Boolean> pil = positionislock.get(fileunique);
+				if (pil == null)
+				{
+					pil = new LinkedList<Boolean>();
+					positionislock.put(fileunique, pil);
+				}
+				
 				SearchOrder so = new SearchOrder(msig);
 				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
 				cu.accept(blvisitor);
@@ -131,7 +142,8 @@ public class SourceFileModifier {
 						listRewrite.insertBefore(newStatement, insertnode, null);
 						
 						int lineNumber = cu.getLineNumber(insertnode.getStartPosition() - 1) - 1;
-						HandleInitialAndActualPositions(lineNumber, inip, ap);
+						positionlocknames.put(fileunique + ":" + lineNumber, lockname);
+						HandleInitialAndActualPositions(lineNumber, inip, ap, pil, true);
 					}
 				}
 				
@@ -157,7 +169,8 @@ public class SourceFileModifier {
 						listRewrite.insertAfter(newStatement, insertnode, null);
 						
 						int lineNumber = cu.getLineNumber(insertnode.getStartPosition() + insertnode.getLength()) - 1;
-						HandleInitialAndActualPositions(lineNumber, inip, ap);
+						positionlocknames.put(fileunique + ":" + lineNumber, lockname);
+						HandleInitialAndActualPositions(lineNumber, inip, ap, pil, false);
 					}
 				}
 			}
@@ -165,8 +178,6 @@ public class SourceFileModifier {
 		
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
-		
-		// TODO set AFix Factory.
 		
 		Set<String> keys = allrewrites.keySet();
 		Iterator<String> kitr = keys.iterator();
@@ -178,10 +189,39 @@ public class SourceFileModifier {
 			TextEdit edits = aw.rewriteAST(document, null);
 			edits.apply(document);
 			FileUtil.ClearAndWriteToFile(document.get(), new File(fabpath));
+			
+			AFixFactory.CLear();
+			LinkedList<Integer> inip = initialpositions.get(fabpath);
+			LinkedList<Integer> ap = actualpositions.get(fabpath);
+			LinkedList<Boolean> pil = positionislock.get(fabpath);
+			if (inip == null || ap == null || pil == null)
+			{
+				System.err.println("No position?");
+				System.exit(1);
+			}
+			Iterator<Integer> iitr = inip.iterator();
+			Iterator<Integer> aitr = ap.iterator();
+			Iterator<Boolean> pitr = pil.iterator();
+			while (aitr.hasNext())
+			{
+				Integer ii = iitr.next();
+				Integer ai = aitr.next();
+				Boolean pi = pitr.next();
+				String lockfullnamekey = fabpath + ":" + ii;
+				String lockname = positionlocknames.get(lockfullnamekey);
+				String lockfullnamelocation = fabpath + ":" + ai;
+				int lidx = lockfullnamelocation.indexOf('/');
+				if (lidx == -1)
+				{
+					lidx = lockfullnamelocation.indexOf('\\');
+				}
+				AFixFactory.AddEntry(new AFixEntity(lockname, pi ? "lock" : "unlock", lockfullnamelocation.substring(lidx + 1), lockfullnamelocation));
+			}
+			
 		}
 	}
 	
-	private void HandleInitialAndActualPositions(int lineNumber, LinkedList<Integer> inip, LinkedList<Integer> ap)
+	private void HandleInitialAndActualPositions(int lineNumber, LinkedList<Integer> inip, LinkedList<Integer> ap, LinkedList<Boolean> pil, boolean islock)
 	{
 		int idx = 0;
 		Iterator<Integer> iitr = inip.iterator();
@@ -194,6 +234,7 @@ public class SourceFileModifier {
 			}
 			idx++;
 		}
+		pil.add(idx, islock);
 		inip.add(idx, lineNumber);
 		ap.add(idx, lineNumber + idx);
 		int aidx = 0;

@@ -12,4 +12,14 @@ public class AFixFactory {
 		list.add(o);
 	}
 	
+	public static void CLear()
+	{
+		list.clear();
+	}
+	
+	public static void AddEntry(AFixEntity afe)
+	{
+		list.add(afe);
+	}
+	
 }
