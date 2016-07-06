@@ -2,6 +2,7 @@ package cn.yyx.labtask.afix.classmodification;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -34,7 +35,7 @@ import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
 public class SourceFileModifier {
 	
-	String sourcefolder = null;
+	// String sourcefolder = null;
 	Map<String, File> allfiles = new TreeMap<String, File>();
 	Map<String, File> exactmatchfile = new TreeMap<String, File>();
 	
@@ -44,6 +45,9 @@ public class SourceFileModifier {
 	Map<String, ASTRewrite> allrewrites = new TreeMap<String, ASTRewrite>();
 	Map<String, CompilationUnit> cus = new TreeMap<String, CompilationUnit>();
 	Map<String, AST> asts = new TreeMap<String, AST>();
+	
+	Map<String, LinkedList<Integer>> initialpositions = new TreeMap<String, LinkedList<Integer>>();
+	Map<String, LinkedList<Integer>> actualpositions = new TreeMap<String, LinkedList<Integer>>();
 	
 	// String projectname
 	public SourceFileModifier(IJavaProject ijp) {
@@ -73,6 +77,22 @@ public class SourceFileModifier {
 				CompilationUnit cu = GetCompilationUnit(msig);
 				AST ast = GetAST(msig);
 				ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
+				String fileunique = GetFileUnique(mtype);
+				
+				LinkedList<Integer> inip = initialpositions.get(fileunique);
+				if (inip == null)
+				{
+					inip = new LinkedList<Integer>();
+					initialpositions.put(fileunique, inip);
+				}
+				
+				LinkedList<Integer> ap = actualpositions.get(fileunique);
+				if (ap == null)
+				{
+					ap = new LinkedList<Integer>();
+					actualpositions.put(fileunique, ap);
+				}
+				
 				SearchOrder so = new SearchOrder(msig);
 				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
 				cu.accept(blvisitor);
@@ -109,6 +129,9 @@ public class SourceFileModifier {
 						System.out.println("msig:"+msig+";posline:"+posline+";insertnodeBegin:"+insertnode+";insertnodestartpos:"+insertnode.getStartPosition()+";insertnodeendpos:"+(insertnode.getStartPosition()+insertnode.getLength()));
 						
 						listRewrite.insertBefore(newStatement, insertnode, null);
+						
+						int lineNumber = cu.getLineNumber(insertnode.getStartPosition() - 1) - 1;
+						HandleInitialAndActualPositions(lineNumber, inip, ap);
 					}
 				}
 				
@@ -132,14 +155,20 @@ public class SourceFileModifier {
 						System.out.println("posline:"+posline+";insertnodeEnd:"+insertnode+";insertnodestartpos:"+insertnode.getStartPosition()+";insertnodeendpos:"+(insertnode.getStartPosition()+insertnode.getLength()));
 						
 						listRewrite.insertAfter(newStatement, insertnode, null);
+						
+						int lineNumber = cu.getLineNumber(insertnode.getStartPosition() + insertnode.getLength()) - 1;
+						HandleInitialAndActualPositions(lineNumber, inip, ap);
 					}
 				}
 			}
 		}
-		Set<String> keys = allrewrites.keySet();
 		
+		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
 		
+		// TODO set AFix Factory.
+		
+		Set<String> keys = allrewrites.keySet();
 		Iterator<String> kitr = keys.iterator();
 		while (kitr.hasNext())
 		{
@@ -149,11 +178,34 @@ public class SourceFileModifier {
 			TextEdit edits = aw.rewriteAST(document, null);
 			edits.apply(document);
 			FileUtil.ClearAndWriteToFile(document.get(), new File(fabpath));
-			// TextEdit edits = aw.rewriteAST();
-			// File f = GetMostMatchFile(mtype);
-			// Document document = new Document(GetFileContent(mtype));
-			// edits.apply(document);
-			// FileUtil.ClearAndWriteToFile(document.get(), f);
+		}
+	}
+	
+	private void HandleInitialAndActualPositions(int lineNumber, LinkedList<Integer> inip, LinkedList<Integer> ap)
+	{
+		int idx = 0;
+		Iterator<Integer> iitr = inip.iterator();
+		while (iitr.hasNext())
+		{
+			Integer ii = iitr.next();
+			if (ii > lineNumber)
+			{
+				break;
+			}
+			idx++;
+		}
+		inip.add(idx, lineNumber);
+		ap.add(idx, lineNumber + idx);
+		int aidx = 0;
+		Iterator<Integer> aitr = ap.iterator();
+		while (aitr.hasNext())
+		{
+			Integer ai = aitr.next();
+			if (aidx > idx)
+			{
+				ap.set(aidx, ai+1);
+			}
+			aidx++;
 		}
 	}
 	
@@ -217,6 +269,12 @@ public class SourceFileModifier {
 			filecontent.put(f.getAbsolutePath(), fcontent);
 		}
 		return fcontent;
+	}
+	
+	private String GetFileUnique(String mtype)
+	{
+		File f = GetMostMatchFile(mtype);
+		return f.getAbsolutePath();
 	}
 	
 	private File GetMostMatchFile(String mtype)

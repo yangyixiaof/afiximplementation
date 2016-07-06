@@ -5,11 +5,13 @@ public class AFixEntity {
 	private String lockname = null;
 	private String operationtype = null;
 	private String locklocation = null;
+	private String lockfullnamelocation = null;
 	
-	public AFixEntity(String lockname, String operationtype, String locklocation) {
+	public AFixEntity(String lockname, String operationtype, String locklocation, String lockfullnamelocation) {
 		this.setLockname(lockname);
 		this.setOperationtype(operationtype);
 		this.setLocklocation(locklocation);
+		this.setLockfullnamelocation(lockfullnamelocation);
 	}
 
 	public String getLockname() {
@@ -34,6 +36,14 @@ public class AFixEntity {
 
 	public void setOperationtype(String operationtype) {
 		this.operationtype = operationtype;
+	}
+
+	public String getLockfullnamelocation() {
+		return lockfullnamelocation;
+	}
+
+	public void setLockfullnamelocation(String lockfullnamelocation) {
+		this.lockfullnamelocation = lockfullnamelocation;
 	}
 	
 }
