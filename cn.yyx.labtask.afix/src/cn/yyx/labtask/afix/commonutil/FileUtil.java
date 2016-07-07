@@ -1,16 +1,24 @@
 package cn.yyx.labtask.afix.commonutil;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.channels.FileChannel;
 import java.util.Map;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class FileUtil {
 
@@ -76,13 +84,28 @@ public class FileUtil {
 	public static void ClearAndWriteToFile(String content, File file)
 	{
 		try {
-			FileWriter fw = new FileWriter(file);
+			IFile ifile = FileToIFile(file);
+			InputStream is = new ByteArrayInputStream(content.getBytes("UTF-8"));
+			ifile.setContents(is, IResource.KEEP_HISTORY, null);
+			
+			// Common write file.
+			/*FileWriter fw = new FileWriter(file);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(content);
-			bw.close();
+			bw.close();*/
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (CoreException e) {
+			e.printStackTrace();
 		}
+	}
+	
+	public static IFile FileToIFile(File file)
+	{
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IPath location = Path.fromOSString(file.getAbsolutePath());
+		IFile ifile = workspace.getRoot().getFileForLocation(location);
+		return ifile;
 	}
 	
 	public static int GetTotalOffsetOfLineEnd(int soff, int line, String content)
