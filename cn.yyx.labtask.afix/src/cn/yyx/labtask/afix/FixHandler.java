@@ -51,7 +51,7 @@ public class FixHandler {
 		sfm.HandleExclusivePatchesManager(epm);
 	}
 	
-	public void HandleRaceReport(File reportfile, String javaprojectname, String mainclass)
+	private static void HandleRaceReport(File reportfile, String javaprojectname, String mainclass)
 	{
 		PCRPool pcr = null;
 		try {
@@ -102,7 +102,7 @@ public class FixHandler {
 				e.printStackTrace();
 			}
 		}*/
-		
+		HandleRaceReport(new File("RaceReport/report"), "afixtest", "afixmain");
 		/*{
 			// example 2.
 			FixHandler fh = new FixHandler();
