@@ -9,9 +9,11 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.ibm.wala.ipa.callgraph.CallGraph;
 
+import cn.yyx.labtask.afix.castir.JDTFrontEnd;
 import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
+import cn.yyx.labtask.afix.ideutil.EclipseHelper;
 import cn.yyx.labtask.afix.patchgeneration.ClassHierarchyManager;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
 import cn.yyx.labtask.afix.patchgeneration.OnePatchGenerator;
@@ -49,6 +51,36 @@ public class FixHandler {
 		sfm.HandleExclusivePatchesManager(epm);
 	}
 	
+	public void HandleRaceReport(File reportfile, String javaprojectname, String mainclass)
+	{
+		PCRPool pcr = null;
+		try {
+			// new File("RaceReport/report")
+			pcr = RaceReportHandler.ReadReport(reportfile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		IJavaProject ijp = EclipseHelper.GetSpecifiedProject(javaprojectname);
+		JDTFrontEnd jdtfe = new JDTFrontEnd(ijp, mainclass);
+		CallGraph jdtcg = jdtfe.getCallGraph();
+		
+		// String inputjar = "TestInputJar/Example4.jar";
+		// String outputjar = "TestOutputJar/Example4.jar";
+		// String projectname = "SourceDir";
+		
+		FixHandler fh = new FixHandler(ijp);
+		List<OneErrorInfo> oeilist = pcr.GetTraces(); // para: inputjar.
+		try {
+			// fh.HandleTraces(oeilist, inputjar, outputjar, projectname);
+			fh.HandleTraces(oeilist, jdtcg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		ClassHierarchyManager.Clear();
+	}
+	
 	public static void main(String[] args) {
 		/*{
 			// example 1.
@@ -70,25 +102,6 @@ public class FixHandler {
 				e.printStackTrace();
 			}
 		}*/
-		
-		PCRPool pcr = null;
-		try {
-			pcr = RaceReportHandler.ReadReport(new File("RaceReport/report"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		FixHandler fh = new FixHandler();
-		String inputjar = "TestInputJar/Example4.jar";
-		String outputjar = "TestOutputJar/Example4.jar";
-		String projectname = "SourceDir";
-		List<OneErrorInfo> oeilist = pcr.GetTraces(inputjar);
-		try {
-			fh.HandleTraces(oeilist, inputjar, outputjar, projectname);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		ClassHierarchyManager.Clear();
 		
 		/*{
 			// example 2.

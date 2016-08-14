@@ -30,8 +30,9 @@ public class PCRPool {
 		}
 		o1.put(two, true);
 	}
-
-	public List<OneErrorInfo> GetTraces(String appJar) {
+	
+	// parameter : String appJar.
+	public List<OneErrorInfo> GetTraces() {
 		/*Graph<CGNode> cg = null;
 		try {
 			cg = SimpleCallGraph.GetCallGraph(appJar);

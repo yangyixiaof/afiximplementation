@@ -28,15 +28,29 @@ public class JDTFrontEnd {
 		this.project = project;
 		this.mainClassDescriptors = new String[1];
 		this.mainClassDescriptors[0] = mainClass;
+		try {
+			BuildCallGraph();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (CancelException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public JDTFrontEnd(IJavaProject project, String[] mainClassDescriptors) {
 		this.project = project;
 		this.mainClassDescriptors = mainClassDescriptors;
-	}
-
-	protected AbstractAnalysisEngine getAnalysisEngine(final String[] mainClassDescriptors) {
-		return makeAnalysisEngine(mainClassDescriptors);
+		try {
+			BuildCallGraph();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (CancelException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private AbstractAnalysisEngine makeAnalysisEngine(final String[] mainClassDescriptors) {
@@ -66,9 +80,9 @@ public class JDTFrontEnd {
 		}
 	}
 	
-	public void BuildCallGraph() throws IllegalArgumentException, CancelException, IOException
+	private void BuildCallGraph() throws IllegalArgumentException, CancelException, IOException
 	{
-		AbstractAnalysisEngine engine = getAnalysisEngine(mainClassDescriptors);
+		AbstractAnalysisEngine engine = makeAnalysisEngine(mainClassDescriptors);
 		setCallGraph(engine.buildDefaultCallGraph());
 		if (getCallGraph() == null)
 		{
