@@ -102,7 +102,7 @@ public class FixHandler {
 				e.printStackTrace();
 			}
 		}*/
-		HandleRaceReport(new File("RaceReport/report"), "afixtest", "afixmain");
+		HandleRaceReport(new File("RaceReport/report_demo_Example"), "Demo_Example", "demo.Example");
 		/*{
 			// example 2.
 			FixHandler fh = new FixHandler();

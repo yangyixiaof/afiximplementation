@@ -1,0 +1,16 @@
+
+------------------ maximal-branch (z3): demo.Example -------------------
+
+Race: <demo.Example$MyThread: void run()>|$i0 = <demo.Example: int x>|68 - <demo.Example: void main(java.lang.String[])>|<demo.Example: int x> = 0|51
+Trace Size: 15
+Total #Threads: 2
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 4
+Total #Local Read-Writes: 2
+Total #Initial Writes: 2
+Total #Synchronizations: 5
+Total #Branches: 2
+Total #Property Events: 0
+Total #Potential Violations: 1
+Total #Real Violations: 1
+Total Time: 1071ms
