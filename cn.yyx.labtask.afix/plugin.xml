@@ -9,7 +9,7 @@
             id="cn.yyx.labtask.afix.commands.afix">
       </category>
       <command
-            name="AFix Command"
+            name="Fix Atom Bug"
             categoryId="cn.yyx.labtask.afix.commands.afix"
             id="cn.yyx.labtask.afix.commands.afixcommand">
       </command>
