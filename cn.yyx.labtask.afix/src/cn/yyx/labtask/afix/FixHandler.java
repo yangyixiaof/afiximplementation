@@ -89,8 +89,8 @@ public class FixHandler {
 		ClassHierarchyManager.Clear();
 	}
 	
-	public static void main(String[] args) {
-		/*{
+	/*public static void main(String[] args) {
+		{
 			// example 1.
 			FixHandler fh = new FixHandler();
 			ErrorTrace p = new ErrorTrace();
@@ -109,9 +109,8 @@ public class FixHandler {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}*/
-		HandleRaceReport(new File("RaceReport/report_demo_Example"), "Demo_Example", "demo.Example");
-		/*{
+		}
+		{
 			// example 2.
 			FixHandler fh = new FixHandler();
 			List<OneErrorInfo> oeilist = new LinkedList<OneErrorInfo>();
@@ -141,7 +140,6 @@ public class FixHandler {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}*/
-	}
-	
+		}
+	}*/
 }

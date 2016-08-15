@@ -1,11 +1,15 @@
 package cn.yyx.labtask.afix.handlers;
 
+import java.io.File;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.jface.dialogs.MessageDialog;
+
+import cn.yyx.labtask.afix.FixHandler;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -24,11 +28,12 @@ public class AFixHandler extends AbstractHandler {
 	 * from the application context.
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		FixHandler.HandleRaceReport(new File("RaceReport/report_demo_Example"), "Demo_Example", "demo.Example");
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		MessageDialog.openInformation(
 				window.getShell(),
 				"Afix",
-				"Hello, Eclipse world");
+				"The process has been run over.");
 		return null;
 	}
 }
