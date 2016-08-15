@@ -10,6 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import cn.yyx.labtask.afix.FixHandler;
+import cn.yyx.labtask.afix.ideutil.EclipseHelper;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -28,6 +29,9 @@ public class AFixHandler extends AbstractHandler {
 	 * from the application context.
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		String testcontent = EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example");
+		System.err.println("testcontent:" + testcontent);
+		System.err.println("==================== split line in legend hahaha ====================");
 		FixHandler.HandleRaceReport(new File("RaceReport/report_demo_Example"), "Demo_Example", "demo.Example");
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		MessageDialog.openInformation(
