@@ -11,6 +11,7 @@ import com.ibm.wala.ipa.callgraph.CallGraph;
 
 import cn.yyx.labtask.afix.castir.JDTFrontEnd;
 import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
+import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
 import cn.yyx.labtask.afix.ideutil.EclipseHelper;
@@ -51,7 +52,14 @@ public class FixHandler {
 		sfm.HandleExclusivePatchesManager(epm);
 	}
 	
-	private static void HandleRaceReport(File reportfile, String javaprojectname, String mainclass)
+	public static void HandleRaceReport(String reportcontent, String javaprojectname, String mainclass) throws Exception
+	{
+		File repf = new File("tempreport");
+		FileUtil.ContentToFile(repf, reportcontent);
+		HandleRaceReport(repf, javaprojectname, mainclass);
+	}
+	
+	public static void HandleRaceReport(File reportfile, String javaprojectname, String mainclass)
 	{
 		PCRPool pcr = null;
 		try {

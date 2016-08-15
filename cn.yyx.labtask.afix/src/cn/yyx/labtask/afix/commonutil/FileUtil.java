@@ -1,11 +1,13 @@
 package cn.yyx.labtask.afix.commonutil;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -21,8 +23,16 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class FileUtil {
-
-	public static void fileChannelCopy(File source, File dest) {
+	
+	public static void ContentToFile(File fest, String content) throws Exception
+	{
+		FileWriter fw = new FileWriter(fest.getAbsoluteFile());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(content);
+		bw.close();
+	}
+	
+	public static void FileChannelCopy(File source, File dest) {
 		FileInputStream fi = null;
 		FileOutputStream fo = null;
 		FileChannel in = null;
@@ -46,7 +56,7 @@ public class FileUtil {
 			}
 		}
 	}
-
+	
 	public static void GetAllFilesInADirectory(File f, Map<String, File> map) {
 		if (f.isDirectory()) {
 			File[] fs = f.listFiles();
