@@ -52,10 +52,15 @@ public class FixHandler {
 		sfm.HandleExclusivePatchesManager(epm);
 	}
 	
-	public static void HandleRaceReport(String reportcontent, String javaprojectname, String mainclass) throws Exception
+	public static void HandleRaceReport(String reportcontent, String javaprojectname, String mainclass)
 	{
 		File repf = new File("tempreport");
-		FileUtil.ContentToFile(repf, reportcontent);
+		try {
+			FileUtil.ContentToFile(repf, reportcontent);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 		HandleRaceReport(repf, javaprojectname, mainclass);
 	}
 	

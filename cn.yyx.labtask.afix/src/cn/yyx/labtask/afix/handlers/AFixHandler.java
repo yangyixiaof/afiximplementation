@@ -1,7 +1,5 @@
 package cn.yyx.labtask.afix.handlers;
 
-import java.io.File;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -29,10 +27,10 @@ public class AFixHandler extends AbstractHandler {
 	 * from the application context.
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String testcontent = EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example");
-		System.err.println("testcontent:" + testcontent);
-		System.err.println("==================== split line in legend hahaha ====================");
-		FixHandler.HandleRaceReport(new File("RaceReport/report_demo_Example"), "Demo_Example", "demo.Example");
+		String demo_Example_content = EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example");
+		// System.err.println("testcontent:" + testcontent);
+		// System.err.println("==================== split line in legend hahaha ====================");
+		FixHandler.HandleRaceReport(demo_Example_content, "Demo_Example", "demo.Example");
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		MessageDialog.openInformation(
 				window.getShell(),
