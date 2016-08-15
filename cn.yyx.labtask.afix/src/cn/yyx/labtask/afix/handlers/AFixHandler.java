@@ -22,7 +22,7 @@ public class AFixHandler extends AbstractHandler {
 	 */
 	public AFixHandler() {
 	}
-
+	
 	/**
 	 * the command has been executed, so extract extract the needed information
 	 * from the application context.
