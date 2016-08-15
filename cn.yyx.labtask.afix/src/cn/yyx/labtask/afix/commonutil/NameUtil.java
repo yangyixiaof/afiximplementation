@@ -25,4 +25,9 @@ public class NameUtil {
 		return mtype;
 	}
 	
+	public static String TranslateJVMNameToUnifiedForm(String jvmname)
+	{
+		return jvmname.replace('.', '/');
+	}
+	
 }

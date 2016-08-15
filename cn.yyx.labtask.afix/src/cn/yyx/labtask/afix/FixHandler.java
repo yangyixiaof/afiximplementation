@@ -12,6 +12,7 @@ import com.ibm.wala.ipa.callgraph.CallGraph;
 import cn.yyx.labtask.afix.castir.JDTFrontEnd;
 import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
 import cn.yyx.labtask.afix.commonutil.FileUtil;
+import cn.yyx.labtask.afix.commonutil.NameUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
 import cn.yyx.labtask.afix.ideutil.EclipseHelper;
@@ -66,6 +67,7 @@ public class FixHandler {
 	
 	public static void HandleRaceReport(File reportfile, String javaprojectname, String mainclass)
 	{
+		mainclass = "L" + NameUtil.TranslateJVMNameToUnifiedForm(mainclass);
 		PCRPool pcr = null;
 		try {
 			// new File("RaceReport/report")
