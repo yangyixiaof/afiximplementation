@@ -266,8 +266,8 @@ public class OnePatchGenerator {
 		
 		CGNode node = callGraph.getNodes(mref).iterator().next();
 		
-		System.err.println(node);
-		System.exit(1);
+		// System.err.println(node);
+		// System.exit(1);
 		
 		return node.getIR();
 
