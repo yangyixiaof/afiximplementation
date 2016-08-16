@@ -1,6 +1,5 @@
 package cn.yyx.labtask.afix.patchgeneration;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,7 +15,6 @@ import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.types.MethodReference;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
-import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
@@ -239,34 +237,38 @@ public class OnePatchGenerator {
 		// System.err.println("methodSig:" + methodSig + ";"); // ";appJar:" + appJar + 
 		// System.exit(1);
 		
-		String descriptor = MethodSigToJDTDescriptor(methodSig, "Application"); // "Source#Array1#foo#()V"
+		String descriptor = MethodSigToJDTDescriptor(methodSig, "Source"); // "Source#Array1#foo#()V"
 		
 		// System.err.println("methodSig:" + methodSig + ";" + "descriptor:" + descriptor); // ";appJar:" + appJar + 
 		// System.exit(1);
 		
 		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
 		
-		StringBuilder sb = new StringBuilder("");
-		Iterator<CGNode> cgitr = callGraph.iterator();
-		while (cgitr.hasNext())
-		{
-			CGNode cgn = cgitr.next();
-			sb.append(cgn.toString());
+		// StringBuilder sb = new StringBuilder("");
+		// Iterator<CGNode> cgitr = callGraph.iterator();
+		// while (cgitr.hasNext())
+		// {
+		// 	CGNode cgn = cgitr.next();
+		// 	sb.append(cgn.toString());
 			// System.err.println("CGNode:" + cgn);
-		}
-		try {
-			File tf = new File("test_info.txt");
-			if (!tf.exists())
-			{
-				tf.createNewFile();
-			}
-			FileUtil.ContentToFile(tf, sb.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.exit(1);
+		// }
+		// try {
+		// 	File tf = new File("test_info.txt");
+		// 	if (!tf.exists())
+		// 	{
+		// 		tf.createNewFile();
+		// 	}
+		// 	FileUtil.ContentToFile(tf, sb.toString());
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// }
+		// System.exit(1);
 		
 		CGNode node = callGraph.getNodes(mref).iterator().next();
+		
+		System.err.println(node);
+		System.exit(1);
+		
 		return node.getIR();
 
 		// MethodReference mr = StringStuff.makeMethodReference(methodSig);
@@ -291,6 +293,7 @@ public class OnePatchGenerator {
 	 */
 	private String MethodSigToJDTDescriptor(String methodSig, String loader)
 	{
+		methodSig = methodSig.replace('.', '/');
 		int msidx = methodSig.indexOf('(');
 		String pre = methodSig.substring(0, msidx);
 		int psidx = pre.lastIndexOf('.');
