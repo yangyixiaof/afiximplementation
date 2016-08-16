@@ -255,7 +255,12 @@ public class OnePatchGenerator {
 			// System.err.println("CGNode:" + cgn);
 		}
 		try {
-			FileUtil.ContentToFile(new File("C:/test.txt"), sb.toString());
+			File tf = new File("test_info.txt");
+			if (!tf.exists())
+			{
+				tf.createNewFile();
+			}
+			FileUtil.ContentToFile(tf, sb.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
