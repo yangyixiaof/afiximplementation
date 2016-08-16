@@ -296,10 +296,10 @@ public class OnePatchGenerator {
 		methodSig = methodSig.replace('.', '/');
 		int msidx = methodSig.indexOf('(');
 		String pre = methodSig.substring(0, msidx);
-		int psidx = pre.lastIndexOf('.');
+		String post = methodSig.substring(msidx);
+		int psidx = pre.lastIndexOf('/');
 		String prepre = pre.substring(0, psidx);
 		String prepost = pre.substring(psidx+1);
-		String post = methodSig.substring(msidx);
 		return loader + "#" + prepre + "#" + prepost + "#" + post;
 	}
 	
