@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.ibm.wala.cast.java.test.IRTests;
+import com.ibm.wala.classLoader.IClassLoader;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
@@ -229,18 +230,18 @@ public class OnePatchGenerator {
 	 */
 	private IR GetMethodIR(String methodSig) {
 		
-		// IClassLoader[] loaders = callGraph.getClassHierarchy().getLoaders();
-		// for (IClassLoader loader : loaders) {
-		//	System.err.println("loader name:" + loader.getName());
-		// }
+		IClassLoader[] loaders = callGraph.getClassHierarchy().getLoaders();
+		for (IClassLoader loader : loaders) {
+			System.err.println("loader name:" + loader.getName());
+		}
 		
 		// System.err.println("methodSig:" + methodSig + ";"); // ";appJar:" + appJar + 
 		// System.exit(1);
 		
-		String descriptor = MethodSigToJDTDescriptor(methodSig); // "Source#Array1#foo#()V"
+		String descriptor = MethodSigToJDTDescriptor(methodSig, "Source"); // "Source#Array1#foo#()V"
 		
-		// System.err.println("methodSig:" + methodSig + ";" + "descriptor:" + descriptor); // ";appJar:" + appJar + 
-		// System.exit(1);
+		System.err.println("methodSig:" + methodSig + ";" + "descriptor:" + descriptor); // ";appJar:" + appJar + 
+		System.exit(1);
 		
 		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
 		CGNode node = callGraph.getNodes(mref).iterator().next();
@@ -260,7 +261,13 @@ public class OnePatchGenerator {
 		// return ir;
 	}
 	
-	private String MethodSigToJDTDescriptor(String methodSig)
+	/**
+	 * 
+	 * @param methodSig
+	 * @param loader. The value must be one of .
+	 * @return
+	 */
+	private String MethodSigToJDTDescriptor(String methodSig, String loader)
 	{
 		int msidx = methodSig.indexOf('(');
 		String pre = methodSig.substring(0, msidx);
@@ -268,7 +275,7 @@ public class OnePatchGenerator {
 		String prepre = pre.substring(0, psidx);
 		String prepost = pre.substring(psidx+1);
 		String post = methodSig.substring(msidx);
-		return prepre + "#" + prepost + "#" + post;
+		return loader + "#" + prepre + "#" + prepost + "#" + post;
 	}
 	
 }
