@@ -5,29 +5,24 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.ibm.wala.classLoader.IMethod;
-import com.ibm.wala.ipa.callgraph.AnalysisCache;
-import com.ibm.wala.ipa.callgraph.AnalysisOptions;
+import com.ibm.wala.cast.java.test.IRTests;
+import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
-import com.ibm.wala.ipa.callgraph.impl.Everywhere;
-import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSACFG;
-import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.types.MethodReference;
-import com.ibm.wala.util.debug.Assertions;
-import com.ibm.wala.util.strings.StringStuff;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
 public class OnePatchGenerator {
-	
-	IClassHierarchy cha = null;
-	
+
+	// IClassHierarchy cha = null;
+	CallGraph callGraph = null;
+
 	// String appJar = null;
 	ErrorTrace pct = null;
 	ErrorTrace rt = null;
@@ -36,44 +31,40 @@ public class OnePatchGenerator {
 	ErrorLocation r = null;
 	SameLockExclusivePatches ops = null;
 	boolean overlap = false;
-	int overlapflag = 0; // 0:at the same level. 1:r is lower level. 2:r is upper level and this situation should not be considered.
-	
+	int overlapflag = 0; // 0:at the same level. 1:r is lower level. 2:r is
+							// upper level and this situation should not be
+							// considered.
+
 	// String jar
-	public OnePatchGenerator(CallGraph callGraph, ErrorTrace p, ErrorTrace c, ErrorTrace r) throws Exception
-	{
+	public OnePatchGenerator(CallGraph callGraph, ErrorTrace p, ErrorTrace c, ErrorTrace r) throws Exception {
 		// this.appJar = jar;
+		this.callGraph = callGraph;
 		ErrorLocation pel = null;
 		ErrorLocation cel = null;
 		boolean stop = false;
 		Iterator<ErrorLocation> pitr = p.GetNegativeOrderIterator();
 		Iterator<ErrorLocation> pitrcl = p.GetNegativeOrderIterator();
-		while (pitr.hasNext())
-		{
+		while (pitr.hasNext()) {
 			pel = pitr.next();
 			pitrcl.next();
 			Iterator<ErrorLocation> citr = c.GetNegativeOrderIterator();
 			stop = false;
-			while (citr.hasNext())
-			{
+			while (citr.hasNext()) {
 				cel = citr.next();
-				if (pel.InSameMethod(cel))
-				{
+				if (pel.InSameMethod(cel)) {
 					stop = true;
 					break;
 				}
 			}
-			if (stop)
-			{
+			if (stop) {
 				break;
 			}
 		}
-		if (stop)
-		{
+		if (stop) {
 			this.p = pel;
 			this.c = cel;
 			pct = new ErrorTrace();
-			while (pitrcl.hasNext())
-			{
+			while (pitrcl.hasNext()) {
 				pct.AddLocationAtNegativeOrder(pitrcl.next());
 			}
 			// situation 1 : r and p is at same level.
@@ -81,32 +72,26 @@ public class OnePatchGenerator {
 			Iterator<ErrorLocation> ritr = r.GetNegativeOrderIterator();
 			ErrorLocation rel = ritr.next();
 			this.r = rel;
-			if (pel.InSameMethod(rel))
-			{
+			if (pel.InSameMethod(rel)) {
 				int pidx = this.p.getLine();
 				int cidx = this.c.getLine();
 				int ridx = rel.getLine();
-				if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx))
-				{
+				if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx)) {
 					overlap = true;
 					overlapflag = 0;
 					issitu1 = true;
 				}
 			}
 			// situation 2 : r is lower level.
-			if (!issitu1)
-			{
+			if (!issitu1) {
 				ErrorLocation tel = null;
-				while (ritr.hasNext())
-				{
+				while (ritr.hasNext()) {
 					tel = ritr.next();
-					if (pel.InSameMethod(tel))
-					{
+					if (pel.InSameMethod(tel)) {
 						int pidx = this.p.getLine();
 						int cidx = this.c.getLine();
 						int ridx = tel.getLine();
-						if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx))
-						{
+						if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx)) {
 							overlap = true;
 							overlapflag = 1;
 							this.r = tel;
@@ -116,51 +101,37 @@ public class OnePatchGenerator {
 				}
 			}
 			rt = new ErrorTrace();
-			while (ritr.hasNext())
-			{
+			while (ritr.hasNext()) {
 				rt.AddLocationAtNegativeOrder(ritr.next());
 			}
 			// situation 3 : r is upper level.
-			/*boolean issitu3 = false;
-			if (!issitu1 && !issitu2)
-			{
-				while (pitr.hasNext())
-				{
-					ErrorLocation tel = pitr.next();
-					if (rel.InSameMethod(tel))
-					{
-						overlap = true;
-						overlapflag = 2;
-						issitu3 = true;
-						this.p = tel;
-						this.r = tel;
-						break;
-					}
-				}
-			}*/
-		}
-		else
-		{
+			/*
+			 * boolean issitu3 = false; if (!issitu1 && !issitu2) { while
+			 * (pitr.hasNext()) { ErrorLocation tel = pitr.next(); if
+			 * (rel.InSameMethod(tel)) { overlap = true; overlapflag = 2;
+			 * issitu3 = true; this.p = tel; this.r = tel; break; } } }
+			 */
+		} else {
 			throw new NoOneScopePatchException("p and c can not put in one (parent) method scope.");
 		}
-		/*if (AFixCallGraph.isDirectory(appJar)) {
-			appJar = AFixCallGraph.findJarFiles(new String[] { appJar });
-		}*/
+		/*
+		 * if (AFixCallGraph.isDirectory(appJar)) { appJar =
+		 * AFixCallGraph.findJarFiles(new String[] { appJar }); }
+		 */
 		// cha = ClassHierarchyManager.GetClassHierarchy(appJar);
-		cha = callGraph.getClassHierarchy();
+		// cha = callGraph.getClassHierarchy();
 	}
-	
+
 	/**
 	 * 
-	 * @return if generated once, following invocations will only return the same patch.
-	 * @throws InvalidClassFileException 
+	 * @return if generated once, following invocations will only return the
+	 *         same patch.
+	 * @throws InvalidClassFileException
 	 */
-	public SameLockExclusivePatches GeneratePatch() throws InvalidClassFileException
-	{
+	public SameLockExclusivePatches GeneratePatch() throws InvalidClassFileException {
 		ops = new SameLockExclusivePatches();
-		
-		if (!overlap)
-		{
+
+		if (!overlap) {
 			// handle this.r
 			String methodSig = this.r.getSig();
 			int ridx = this.r.getLine();
@@ -174,40 +145,37 @@ public class OnePatchGenerator {
 			// op.AddUnlockAfterIndex(this.r.getBytecodel());
 			ops.AddPatches(op);
 		}
-		
+
 		// handle this.p this.c
 		String methodSig = this.p.getSig();
 		int pidx = this.p.getLine();
 		int cidx = this.c.getLine();
 		IR ir = GetMethodIR(methodSig);
 		SSACFG cfg = ir.getControlFlowGraph();
-		
-		if (methodSig.equals("demo.Example2.main([Ljava/lang/String;)V"))
-		{
+
+		if (methodSig.equals("demo.Example2.main([Ljava/lang/String;)V")) {
 			System.out.println("haha haha.");
 		}
-		
+
 		ISSABasicBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(pidx, ir);
 		ISSABasicBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(cidx, ir);
-		
-		if (pbk == null || cbk == null)
-		{
-			System.out.println("pmethodSig:"+methodSig+";cmethodSig:"+this.r.getSig()+";pbk:"+pbk+";cbk:"+cbk);
+
+		if (pbk == null || cbk == null) {
+			System.out.println(
+					"pmethodSig:" + methodSig + ";cmethodSig:" + this.r.getSig() + ";pbk:" + pbk + ";cbk:" + cbk);
 		}
-		
+
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		pset.add(pbk);
 		pset.add(cbk);
-		if (!pbk.equals(cbk))
-		{
+		if (!pbk.equals(cbk)) {
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			GetSearchSet(pbk, cfg, true, pset, cbk, visited);
 		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
 		cset.add(pbk);
 		cset.add(cbk);
-		if (!pbk.equals(cbk))
-		{
+		if (!pbk.equals(cbk)) {
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			GetSearchSet(cbk, cfg, false, cset, pbk, visited);
 		}
@@ -217,50 +185,41 @@ public class OnePatchGenerator {
 		ops.AddPatches(op);
 		return ops;
 	}
-	
-	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest, Set<ISSABasicBlock> visited)
-	{
+
+	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
+			final ISSABasicBlock dest, Set<ISSABasicBlock> visited) {
 		visited.add(nowbk);
 		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
 		boolean allres = false;
-		while (itr.hasNext())
-		{
+		while (itr.hasNext()) {
 			ISSABasicBlock ibb = itr.next();
 			// eliminate self cycle
-			if (visited.contains(ibb))
-			{
+			if (visited.contains(ibb)) {
 				continue;
 			}
-			if (ibb.equals(dest))
-			{
+			if (ibb.equals(dest)) {
 				return true;
 			}
-			if (pset.contains(ibb))
-			{
+			if (pset.contains(ibb)) {
 				return true;
 			}
 			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest, visited);
 			allres = allres || istodest;
-			if (istodest)
-			{
+			if (istodest) {
 				pset.add(ibb);
 			}
 		}
 		return allres;
 	}
-	
-	private Iterator<ISSABasicBlock> GetBlocks(ISSABasicBlock pbk, SSACFG cfg, boolean forward)
-	{
-		if (forward)
-		{
+
+	private Iterator<ISSABasicBlock> GetBlocks(ISSABasicBlock pbk, SSACFG cfg, boolean forward) {
+		if (forward) {
 			return cfg.getSuccNodes(pbk);
-		}
-		else
-		{
+		} else {
 			return cfg.getPredNodes(pbk);
 		}
 	}
-	
+
 	/**
 	 * @param appJar
 	 *            should be something like "c:/temp/testdata/java_cup.jar"
@@ -269,19 +228,26 @@ public class OnePatchGenerator {
 	 * @throws IOException
 	 */
 	private IR GetMethodIR(String methodSig) {
-		
-		// System.err.println("methodSig:"+methodSig + ";appJar:" + appJar + ";");
-		
-		MethodReference mr = StringStuff.makeMethodReference(methodSig);
-		IMethod m = cha.resolveMethod(mr);
-		if (m == null) {
-			Assertions.UNREACHABLE("could not resolve " + mr);
-		}
-		AnalysisOptions options = new AnalysisOptions();
-		options.getSSAOptions().setPiNodePolicy(SSAOptions.getAllBuiltInPiNodes());
-		AnalysisCache cache = new AnalysisCache();
-		IR ir = cache.getSSACache().findOrCreateIR(m, Everywhere.EVERYWHERE, options.getSSAOptions());
-		return ir;
+
+		System.err.println("methodSig:"+methodSig + ";"); // ";appJar:" + appJar + 
+		System.exit(1);
+
+		MethodReference mref = IRTests.descriptorToMethodRef("Source#Array1#foo#()V", callGraph.getClassHierarchy());
+		CGNode node = callGraph.getNodes(mref).iterator().next();
+		return node.getIR();
+
+		// MethodReference mr = StringStuff.makeMethodReference(methodSig);
+		// IMethod m = cha.resolveMethod(mr);
+		// if (m == null) {
+		// Assertions.UNREACHABLE("could not resolve " + mr + ";wrong
+		// methodsig:" + methodSig);
+		// }
+		// AnalysisOptions options = new AnalysisOptions();
+		// options.getSSAOptions().setPiNodePolicy(SSAOptions.getAllBuiltInPiNodes());
+		// AnalysisCache cache = new AnalysisCache();
+		// IR ir = cache.getSSACache().findOrCreateIR(m, Everywhere.EVERYWHERE,
+		// options.getSSAOptions());
+		// return ir;
 	}
-	
+
 }
