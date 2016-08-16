@@ -237,7 +237,7 @@ public class OnePatchGenerator {
 		// System.err.println("methodSig:" + methodSig + ";"); // ";appJar:" + appJar + 
 		// System.exit(1);
 		
-		String descriptor = MethodSigToJDTDescriptor(methodSig, "Source"); // "Source#Array1#foo#()V"
+		String descriptor = MethodSigToJDTDescriptor(methodSig, "Application"); // "Source#Array1#foo#()V"
 		
 		// System.err.println("methodSig:" + methodSig + ";" + "descriptor:" + descriptor); // ";appJar:" + appJar + 
 		// System.exit(1);
