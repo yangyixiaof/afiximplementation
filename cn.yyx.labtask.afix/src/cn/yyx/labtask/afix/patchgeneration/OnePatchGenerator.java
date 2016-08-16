@@ -228,11 +228,17 @@ public class OnePatchGenerator {
 	 * @throws IOException
 	 */
 	private IR GetMethodIR(String methodSig) {
-
-		System.err.println("methodSig:"+methodSig + ";"); // ";appJar:" + appJar + 
-		System.exit(1);
-
-		MethodReference mref = IRTests.descriptorToMethodRef("Source#Array1#foo#()V", callGraph.getClassHierarchy());
+		
+		// IClassLoader[] loaders = callGraph.getClassHierarchy().getLoaders();
+		// for (IClassLoader loader : loaders) {
+		//	System.err.println("loader name:" + loader.getName());
+		// }
+		
+		// System.err.println("methodSig:" + methodSig + ";"); // ";appJar:" + appJar + 
+		// System.exit(1);
+		
+		String descriptor = MethodSigToJDTDescriptor(methodSig); // "Source#Array1#foo#()V"
+		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
 		CGNode node = callGraph.getNodes(mref).iterator().next();
 		return node.getIR();
 
@@ -249,5 +255,16 @@ public class OnePatchGenerator {
 		// options.getSSAOptions());
 		// return ir;
 	}
-
+	
+	private String MethodSigToJDTDescriptor(String methodSig)
+	{
+		int msidx = methodSig.indexOf('(');
+		String pre = methodSig.substring(0, msidx);
+		int psidx = pre.lastIndexOf('.');
+		String prepre = pre.substring(0, psidx);
+		String prepost = pre.substring(psidx+1);
+		String post = methodSig.substring(msidx);
+		return prepre + "#" + prepost + "#" + post;
+	}
+	
 }
