@@ -1,5 +1,6 @@
 package cn.yyx.labtask.afix.patchgeneration;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.types.MethodReference;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
+import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
@@ -243,6 +245,22 @@ public class OnePatchGenerator {
 		// System.exit(1);
 		
 		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
+		
+		StringBuilder sb = new StringBuilder("");
+		Iterator<CGNode> cgitr = callGraph.iterator();
+		while (cgitr.hasNext())
+		{
+			CGNode cgn = cgitr.next();
+			sb.append(cgn.toString());
+			// System.err.println("CGNode:" + cgn);
+		}
+		try {
+			FileUtil.ContentToFile(new File("C:/test.txt"), sb.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.exit(1);
+		
 		CGNode node = callGraph.getNodes(mref).iterator().next();
 		return node.getIR();
 
