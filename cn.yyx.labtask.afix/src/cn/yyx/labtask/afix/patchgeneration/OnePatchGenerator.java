@@ -238,6 +238,10 @@ public class OnePatchGenerator {
 		// System.exit(1);
 		
 		String descriptor = MethodSigToJDTDescriptor(methodSig); // "Source#Array1#foo#()V"
+		
+		// System.err.println("methodSig:" + methodSig + ";" + "descriptor:" + descriptor); // ";appJar:" + appJar + 
+		// System.exit(1);
+		
 		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
 		CGNode node = callGraph.getNodes(mref).iterator().next();
 		return node.getIR();
