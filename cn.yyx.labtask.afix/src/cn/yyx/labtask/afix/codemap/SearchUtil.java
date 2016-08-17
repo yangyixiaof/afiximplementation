@@ -44,7 +44,7 @@ public class SearchUtil {
 	public static ISSABasicBlock GetBasicBlockAccordingToLineNumberInSourcecode(int sourceLineNumber, IR ir) throws InvalidClassFileException
 	{
 		// SSACFG sfg = ir.getControlFlowGraph();
-		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();
+		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		Iterator<SSAInstruction> iir = ir.iterateAllInstructions();
 		int mostcloseidx = -1;
 		SSAInstruction csi = null;

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.ibm.wala.classLoader.IBytecodeMethod;
+import com.ibm.wala.cast.java.loader.JavaSourceLoaderImpl.ConcreteJavaMethod;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
@@ -131,9 +131,9 @@ public class OnePatch implements Mergeable<OnePatch>{
 	
 	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getFirstInstructionIndex();
-		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		int bytecodeIndex = method.getBytecodeIndex(iidx);
-		int sourline = method.getLineNumber(bytecodeIndex);
+		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
+		// int bytecodeIndex = method.getBytecodeIndex(iidx);
+		int sourline = method.getLineNumber(iidx);// bytecodeIndex
 		return sourline;
 	}
 	
@@ -152,9 +152,9 @@ public class OnePatch implements Mergeable<OnePatch>{
 		int iidx = bbk.getLastInstructionIndex();
 		SSAInstruction is = bbk.getLastInstruction();
 		String content = is.toString();
-		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
-		int bytecodeIndex = method.getBytecodeIndex(iidx);
-		int sourline = method.getLineNumber(bytecodeIndex);
+		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
+		// int bytecodeIndex = method.getBytecodeIndex(iidx);
+		int sourline = method.getLineNumber(iidx);// bytecodeIndex
 		if (content.startsWith("return"))
 		{
 			sourline--;
