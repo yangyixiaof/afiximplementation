@@ -8,7 +8,6 @@ import com.ibm.wala.examples.drivers.PDFTypeHierarchy;
 import com.ibm.wala.examples.properties.WalaExamplesProperties;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
-import com.ibm.wala.properties.WalaProperties;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.util.WalaException;
 import com.ibm.wala.util.graph.Graph;
@@ -49,10 +48,10 @@ public class PrintUtil {
 
 	public static Process PrintIR(IClassHierarchy cha, IR ir) throws WalaException {
 		Properties wp = null;
-		wp = WalaProperties.loadProperties();
+		wp = WalaExamplesProperties.loadProperties();
 		/*try {
-			wp = WalaProperties.loadProperties();
-			wp.putAll(WalaExamplesProperties.loadProperties());
+			wp = WalaExamplesProperties.loadProperties();
+			wp.putAll(WalaProperties.loadProperties());
 		} catch (WalaException e) {
 			e.printStackTrace();
 			Assertions.UNREACHABLE();
