@@ -2,7 +2,7 @@ package cn.yyx.labtask.afix.codemap;
 
 import java.util.Iterator;
 
-import com.ibm.wala.classLoader.IBytecodeMethod;
+import com.ibm.wala.cast.java.loader.JavaSourceLoaderImpl.ConcreteJavaMethod;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
@@ -44,7 +44,7 @@ public class SearchUtil {
 	public static ISSABasicBlock GetBasicBlockAccordingToLineNumberInSourcecode(int sourceLineNumber, IR ir) throws InvalidClassFileException
 	{
 		// SSACFG sfg = ir.getControlFlowGraph();
-		IBytecodeMethod method = (IBytecodeMethod) ir.getMethod();
+		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();
 		Iterator<SSAInstruction> iir = ir.iterateAllInstructions();
 		int mostcloseidx = -1;
 		SSAInstruction csi = null;
@@ -55,8 +55,11 @@ public class SearchUtil {
 			int idx = si.iindex;
 			if (idx >= 0)
 			{
-				int bytecodeIndex = method.getBytecodeIndex(idx);
-				int sourceLineNum = method.getLineNumber(bytecodeIndex);
+				// int bytecodeIndex = method.getBytecodeIndex(idx);
+				int sourceLineNum = method.getLineNumber(idx);// bytecodeIndex
+				
+				System.err.println("sicnt:"+si+";sourceLineNum:"+sourceLineNum);
+				
 				if ((sourceLineNum < sourceLineNumber) && (mostcloseidx < sourceLineNum))
 				{
 					mostcloseidx = sourceLineNum;
