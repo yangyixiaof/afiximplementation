@@ -58,7 +58,7 @@ public class SearchUtil {
 				// int bytecodeIndex = method.getBytecodeIndex(idx);
 				int sourceLineNum = method.getLineNumber(idx);// bytecodeIndex
 				
-				System.err.println("sicnt:"+si+";sourceLineNum:"+sourceLineNum);
+				// System.err.println("sicnt:"+si+";sourceLineNum:"+sourceLineNum);
 				
 				if ((sourceLineNum < sourceLineNumber) && (mostcloseidx < sourceLineNum))
 				{
