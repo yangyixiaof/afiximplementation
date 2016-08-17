@@ -11,7 +11,6 @@ import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.properties.WalaProperties;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.util.WalaException;
-import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.graph.Graph;
 import com.ibm.wala.viz.DotUtil;
 import com.ibm.wala.viz.PDFViewUtil;
@@ -50,13 +49,14 @@ public class PrintUtil {
 
 	public static Process PrintIR(IClassHierarchy cha, IR ir) throws WalaException {
 		Properties wp = null;
-		try {
+		wp = WalaProperties.loadProperties();
+		/*try {
 			wp = WalaProperties.loadProperties();
 			wp.putAll(WalaExamplesProperties.loadProperties());
 		} catch (WalaException e) {
 			e.printStackTrace();
 			Assertions.UNREACHABLE();
-		}
+		}*/
 		String psFile = PDF_FILE;// wp.getProperty(WalaProperties.OUTPUT_DIR) + File.separatorChar + 
 		String dotFile = PDFTypeHierarchy.DOT_FILE;// wp.getProperty(WalaProperties.OUTPUT_DIR) + File.separatorChar + 
 		String dotExe = wp.getProperty(WalaExamplesProperties.DOT_EXE);
