@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -225,10 +224,9 @@ public class SourceFileModifier {
 			}
 		}
 		
-		// TODO
 		IFolder sourceFolder = project.getProject().getFolder("src");
 		// IPackageFragmentRoot root = project.getPackageFragmentRoot(sourceFolder);
-		IPackageFragment pack = project.getPackageFragmentRoot(sourceFolder).createPackageFragment("cn.yyx.labtask.afix", false, null);
+		IPackageFragment pack = project.getPackageFragmentRoot(sourceFolder).createPackageFragment("cn.yyx.labtask.afix", true, null);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("package " + pack.getElementName() + ";\n");
 		buffer.append("\n");
@@ -242,7 +240,7 @@ public class SourceFileModifier {
 			buffer.append("\t" + "public static" + " " + "Lock" + " " + lockname + " = new ReentrantLock();\n");
 		}
 		buffer.append("}\n");
-		ICompilationUnit cu = pack.createCompilationUnit("LockPool.java", buffer.toString(), false, null);
+		ICompilationUnit cu = pack.createCompilationUnit("LockPool.java", buffer.toString(), true, null);
 		assert cu != null;
 	}
 	
@@ -301,13 +299,13 @@ public class SourceFileModifier {
 			parser.setKind(ASTParser.K_COMPILATION_UNIT);
 			cu = (CompilationUnit) parser.createAST(null);
 			cus.put(f.getAbsolutePath(), cu);
-			AST ast = GetAST(msig);
-			ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
-			cu.recordModifications();
-			ImportDeclaration id = ast.newImportDeclaration();
-			id.setName(ast.newName(new String[] {"java", "util", "concurrent", "locks", "Lock"}));
-			ListRewrite lrw = aw.getListRewrite(cu, CompilationUnit.IMPORTS_PROPERTY);
-			lrw.insertLast(id, null);
+			// AST ast = GetAST(msig);
+			// ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
+			// cu.recordModifications();
+			// ImportDeclaration id = ast.newImportDeclaration();
+			// id.setName(ast.newName(new String[] {"java", "util", "concurrent", "locks", "Lock"}));
+			// ListRewrite lrw = aw.getListRewrite(cu, CompilationUnit.IMPORTS_PROPERTY);
+			// lrw.insertLast(id, null);
 		}
 		return cu;
 	}
