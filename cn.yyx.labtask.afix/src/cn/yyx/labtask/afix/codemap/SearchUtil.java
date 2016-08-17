@@ -41,7 +41,7 @@ public class SearchUtil {
 		return ir.getBasicBlockForInstruction(csi);
 	}*/
 	
-	public static ISSABasicBlock GetBasicBlockAccordingToLineNumberInSourcecode(int sourceLineNumber, IR ir) throws InvalidClassFileException
+	public static ISSABasicBlock GetBasicBlockAccordingToLineNumberInSourcecode(final int sourceLineNumber, IR ir) throws InvalidClassFileException
 	{
 		// SSACFG sfg = ir.getControlFlowGraph();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
@@ -56,18 +56,18 @@ public class SearchUtil {
 			if (idx >= 0)
 			{
 				// int bytecodeIndex = method.getBytecodeIndex(idx);
-				int sourceLineNum = method.getLineNumber(idx);// bytecodeIndex
+				int currSourceLine = method.getLineNumber(idx);// bytecodeIndex
 				
 				// System.err.println("sicnt:"+si+";sourceLineNum:"+sourceLineNum);
 				
-				if ((sourceLineNum < sourceLineNumber) && (mostcloseidx < sourceLineNum))
+				if ((currSourceLine < sourceLineNumber) && (mostcloseidx < currSourceLine))
 				{
-					mostcloseidx = sourceLineNum;
+					mostcloseidx = currSourceLine;
 					csi = si;
 				}
 				// int sourceLineNum = method.getLineNumber(bytecodeIndex);
 				// System.out.println("bytecodeIndex:"+bytecodeIndex+";sourceIndex:"+sourceLineNum);
-				if (sourceLineNum == sourceLineNumber)
+				if (currSourceLine == sourceLineNumber)
 				{
 					return ir.getBasicBlockForInstruction(si);
 				}

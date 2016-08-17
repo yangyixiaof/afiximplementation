@@ -150,15 +150,16 @@ public class OnePatch implements Mergeable<OnePatch>{
 	
 	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getLastInstructionIndex();
-		SSAInstruction is = bbk.getLastInstruction();
-		String content = is.toString();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		int sourline = method.getLineNumber(iidx);// bytecodeIndex
-		if (content.startsWith("return"))
-		{
-			sourline--;
-		}
+		// confirm.
+		// SSAInstruction is = bbk.getLastInstruction();
+		// String content = is.toString();
+		// if (content.startsWith("return"))
+		// {
+		//	sourline--;
+		// }
 		return sourline;
 	}
 	
