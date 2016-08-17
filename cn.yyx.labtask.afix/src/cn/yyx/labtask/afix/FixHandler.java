@@ -7,15 +7,12 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
 
-import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
-import com.ibm.wala.util.WalaException;
 
 import cn.yyx.labtask.afix.castir.JDTFrontEnd;
 import cn.yyx.labtask.afix.classmodification.SourceFileModifier;
 import cn.yyx.labtask.afix.commonutil.FileUtil;
 import cn.yyx.labtask.afix.commonutil.NameUtil;
-import cn.yyx.labtask.afix.controlflow.PrintUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 import cn.yyx.labtask.afix.errordetection.OneErrorInfo;
 import cn.yyx.labtask.afix.ideutil.EclipseHelper;
@@ -85,14 +82,15 @@ public class FixHandler {
 		CallGraph jdtcg = jdtfe.getCallGraph();
 		
 		// printing.
-		try {
+		/*try {
 			Iterator<CGNode> itr = jdtcg.iterator();
+			itr.next();
 			CGNode cgn = itr.next();
 			PrintUtil.PrintIR(cgn.getClassHierarchy(), cgn.getIR());
 		} catch (WalaException e1) {
 			e1.printStackTrace();
 		}
-		System.exit(1);
+		System.exit(1);*/
 		
 		// String inputjar = "TestInputJar/Example4.jar";
 		// String outputjar = "TestOutputJar/Example4.jar";
