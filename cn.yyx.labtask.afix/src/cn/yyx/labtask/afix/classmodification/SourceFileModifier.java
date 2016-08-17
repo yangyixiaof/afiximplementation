@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -37,6 +40,8 @@ import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
 public class SourceFileModifier {
 	
+	IJavaProject project = null;
+	
 	// String sourcefolder = null;
 	Map<String, File> allfiles = new TreeMap<String, File>();
 	Map<String, File> exactmatchfile = new TreeMap<String, File>();
@@ -55,6 +60,7 @@ public class SourceFileModifier {
 	
 	// String projectname
 	public SourceFileModifier(IJavaProject ijp) {
+		this.project = ijp;
 		String abspath = ijp.getProject().getLocation().toFile().getAbsolutePath();
 		File absf = new File(abspath + "/" + "src");
 		if (!absf.exists())
@@ -217,8 +223,27 @@ public class SourceFileModifier {
 				}
 				AFixFactory.AddEntry(new AFixEntity(lockname, pi ? "lock" : "unlock", lockfullnamelocation.substring(lidx + 1), lockfullnamelocation));
 			}
-			
 		}
+		
+		// TODO
+		IFolder sourceFolder = project.getProject().getFolder("src");
+		// IPackageFragmentRoot root = project.getPackageFragmentRoot(sourceFolder);
+		IPackageFragment pack = project.getPackageFragmentRoot(sourceFolder).createPackageFragment("cn.yyx.labtask.afix", false, null);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("package " + pack.getElementName() + ";\n");
+		buffer.append("\n");
+		buffer.append("import java.util.concurrent.locks.Lock;\n");
+		buffer.append("import java.util.concurrent.locks.ReentrantLock;\n");
+		buffer.append("\n");
+		buffer.append("public class LockPool {\n");
+		for (int i=0;i<lockidx;i++)
+		{
+			String lockname = "lock" + (i+1);
+			buffer.append("\t" + "public static" + " " + "Lock" + " " + lockname + " = new ReentrantLock();\n");
+		}
+		buffer.append("}\n");
+		ICompilationUnit cu = pack.createCompilationUnit("LockPool.java", buffer.toString(), false, null);
+		assert cu != null;
 	}
 	
 	private void HandleInitialAndActualPositions(int lineNumber, LinkedList<Integer> inip, LinkedList<Integer> ap, LinkedList<Boolean> pil, boolean islock)
