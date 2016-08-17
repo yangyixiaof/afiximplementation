@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.util.WalaException;
 
@@ -85,7 +86,9 @@ public class FixHandler {
 		
 		// printing.
 		try {
-			PrintUtil.PrintPDF(jdtcg);
+			Iterator<CGNode> itr = jdtcg.iterator();
+			CGNode cgn = itr.next();
+			PrintUtil.PrintIR(cgn.getClassHierarchy(), cgn.getIR());
 		} catch (WalaException e1) {
 			e1.printStackTrace();
 		}

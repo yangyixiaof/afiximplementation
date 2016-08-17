@@ -7,7 +7,7 @@ import java.util.Properties;
 import com.ibm.wala.examples.drivers.PDFTypeHierarchy;
 import com.ibm.wala.examples.properties.WalaExamplesProperties;
 import com.ibm.wala.ipa.callgraph.CGNode;
-import com.ibm.wala.ipa.cha.ClassHierarchy;
+import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.properties.WalaProperties;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.util.WalaException;
@@ -48,7 +48,7 @@ public class PrintUtil {
 		return PDFViewUtil.launchPDFView(pdfFile, gvExe);
 	}
 
-	public static Process PrintIR(ClassHierarchy cha, IR ir) throws WalaException {
+	public static Process PrintIR(IClassHierarchy cha, IR ir) throws WalaException {
 		Properties wp = null;
 		try {
 			wp = WalaProperties.loadProperties();
@@ -57,8 +57,8 @@ public class PrintUtil {
 			e.printStackTrace();
 			Assertions.UNREACHABLE();
 		}
-		String psFile = wp.getProperty(WalaProperties.OUTPUT_DIR) + File.separatorChar + AFixWalaIR.PDF_FILE;
-		String dotFile = wp.getProperty(WalaProperties.OUTPUT_DIR) + File.separatorChar + PDFTypeHierarchy.DOT_FILE;
+		String psFile = PDF_FILE;// wp.getProperty(WalaProperties.OUTPUT_DIR) + File.separatorChar + 
+		String dotFile = PDFTypeHierarchy.DOT_FILE;// wp.getProperty(WalaProperties.OUTPUT_DIR) + File.separatorChar + 
 		String dotExe = wp.getProperty(WalaExamplesProperties.DOT_EXE);
 		String gvExe = wp.getProperty(WalaExamplesProperties.PDFVIEW_EXE);
 
