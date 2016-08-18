@@ -18,7 +18,7 @@ import cn.yyx.labtask.afix.codemap.SearchUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
-public class OnePatch implements Mergeable<OnePatch>{
+public class OnePatch implements Mergeable<OnePatch> {
 	
 	ErrorTrace et = null;
 	private String methodsig = null;

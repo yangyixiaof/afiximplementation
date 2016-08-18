@@ -52,10 +52,13 @@ public class SourceFileModifier {
 	Map<String, CompilationUnit> cus = new TreeMap<String, CompilationUnit>();
 	Map<String, AST> asts = new TreeMap<String, AST>();
 	
-	Map<String, LinkedList<Integer>> initialpositions = new TreeMap<String, LinkedList<Integer>>();
-	Map<String, LinkedList<Integer>> actualpositions = new TreeMap<String, LinkedList<Integer>>();
-	Map<String, LinkedList<Boolean>> positionislock = new TreeMap<String, LinkedList<Boolean>>();
-	Map<String, String> positionlocknames = new TreeMap<String, String>();
+	// Map<String, LinkedList<Integer>> initialpositions = new TreeMap<String, LinkedList<Integer>>();
+	// Map<String, LinkedList<Integer>> actualpositions = new TreeMap<String, LinkedList<Integer>>();
+	// Map<String, LinkedList<Boolean>> positionislock = new TreeMap<String, LinkedList<Boolean>>();
+	// Map<String, String> positionlocknames = new TreeMap<String, String>();
+	
+	Map<String, LinkedList<ASTNode>> lockmap = new TreeMap<String, LinkedList<ASTNode>>();
+	Map<String, LinkedList<ASTNode>> unlockmap = new TreeMap<String, LinkedList<ASTNode>>();
 	
 	// String projectname
 	public SourceFileModifier(IJavaProject ijp) {
@@ -86,28 +89,26 @@ public class SourceFileModifier {
 				CompilationUnit cu = GetCompilationUnit(msig);
 				AST ast = GetAST(msig);
 				ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
-				String fileunique = GetFileUnique(mtype);
 				
-				LinkedList<Integer> inip = initialpositions.get(fileunique);
-				if (inip == null)
-				{
-					inip = new LinkedList<Integer>();
-					initialpositions.put(fileunique, inip);
-				}
-				
-				LinkedList<Integer> ap = actualpositions.get(fileunique);
-				if (ap == null)
-				{
-					ap = new LinkedList<Integer>();
-					actualpositions.put(fileunique, ap);
-				}
-				
-				LinkedList<Boolean> pil = positionislock.get(fileunique);
-				if (pil == null)
-				{
-					pil = new LinkedList<Boolean>();
-					positionislock.put(fileunique, pil);
-				}
+				// String fileunique = GetFileUnique(mtype);
+				// LinkedList<Integer> inip = initialpositions.get(fileunique);
+				// if (inip == null)
+				// {
+				//	inip = new LinkedList<Integer>();
+				//	initialpositions.put(fileunique, inip);
+				// }
+				// LinkedList<Integer> ap = actualpositions.get(fileunique);
+				// if (ap == null)
+				// {
+				//	ap = new LinkedList<Integer>();
+				//	actualpositions.put(fileunique, ap);
+				// }
+				// LinkedList<Boolean> pil = positionislock.get(fileunique);
+				// if (pil == null)
+				// {
+				//	pil = new LinkedList<Boolean>();
+				//	positionislock.put(fileunique, pil);
+				// }
 				
 				SearchOrder so = new SearchOrder(msig);
 				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
@@ -146,9 +147,10 @@ public class SourceFileModifier {
 						
 						listRewrite.insertBefore(newStatement, insertnode, null);
 						
-						int lineNumber = cu.getLineNumber(insertnode.getStartPosition() - 1) - 1;
-						positionlocknames.put(fileunique + ":" + lineNumber, lockname);
-						HandleInitialAndActualPositions(lineNumber, inip, ap, pil, true);
+						PutMapAndValueList(lockmap, lockname, insertnode);
+						// int lineNumber = cu.getLineNumber(insertnode.getStartPosition() - 1) - 1;
+						// positionlocknames.put(fileunique + ":" + lineNumber, lockname);
+						// HandleInitialAndActualPositions(lineNumber, inip, ap, pil, true);
 					}
 				}
 				
@@ -173,9 +175,10 @@ public class SourceFileModifier {
 						
 						listRewrite.insertAfter(newStatement, insertnode, null);
 						
-						int lineNumber = cu.getLineNumber(insertnode.getStartPosition() + insertnode.getLength()) - 1;
-						positionlocknames.put(fileunique + ":" + lineNumber, lockname);
-						HandleInitialAndActualPositions(lineNumber, inip, ap, pil, false);
+						PutMapAndValueList(unlockmap, lockname, insertnode);
+						// int lineNumber = cu.getLineNumber(insertnode.getStartPosition() + insertnode.getLength()) - 1;
+						// positionlocknames.put(fileunique + ":" + lineNumber, lockname);
+						// HandleInitialAndActualPositions(lineNumber, inip, ap, pil, false);
 					}
 				}
 			}
@@ -183,6 +186,8 @@ public class SourceFileModifier {
 		
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
+		
+		AFixFactory.CLear();
 		
 		Set<String> keys = allrewrites.keySet();
 		Iterator<String> kitr = keys.iterator();
@@ -193,37 +198,50 @@ public class SourceFileModifier {
 			Document document = docs.get(fabpath);
 			TextEdit edits = aw.rewriteAST(document, null);
 			edits.apply(document);
-			FileUtil.ClearAndWriteToFile(document.get(), new File(fabpath));
+			File df = new File(fabpath);
+			FileUtil.ClearAndWriteToFile(document.get(), df);
+			CompilationUnit dcu = GetCompilationUnit(df);
 			
-			AFixFactory.CLear();
-			LinkedList<Integer> inip = initialpositions.get(fabpath);
-			LinkedList<Integer> ap = actualpositions.get(fabpath);
-			LinkedList<Boolean> pil = positionislock.get(fabpath);
-			if (inip == null || ap == null || pil == null)
+			Set<String> lkeys = lockmap.keySet();
+			Iterator<String> litr = lkeys.iterator();
+			while (litr.hasNext())
 			{
-				System.err.println("No position?");
-				System.exit(1);
+				String lockname = litr.next();
+				LinkedList<ASTNode> ll = lockmap.get(lockname);
+				GenerateAFixEntries(lockname, dcu, ll, fabpath, true);
+				LinkedList<ASTNode> ul = unlockmap.get(lockname);
+				GenerateAFixEntries(lockname, dcu, ul, fabpath, false);
 			}
-			Iterator<Integer> iitr = inip.iterator();
-			Iterator<Integer> aitr = ap.iterator();
-			Iterator<Boolean> pitr = pil.iterator();
-			while (aitr.hasNext())
-			{
-				Integer ii = iitr.next();
-				Integer ai = aitr.next();
-				Boolean pi = pitr.next();
-				String lockfullnamekey = fabpath + ":" + ii;
-				String lockname = positionlocknames.get(lockfullnamekey);
-				String lockfullnamelocation = fabpath + ":" + ai;
-				int lidx = lockfullnamelocation.indexOf('/');
-				if (lidx == -1)
-				{
-					lidx = lockfullnamelocation.indexOf('\\');
-				}
-				AFixFactory.AddEntry(new AFixEntity(lockname, pi ? "lock" : "unlock", lockfullnamelocation.substring(lidx + 1), lockfullnamelocation));
-			}
+			
+			// LinkedList<Integer> inip = initialpositions.get(fabpath);
+			// LinkedList<Integer> ap = actualpositions.get(fabpath);
+			// LinkedList<Boolean> pil = positionislock.get(fabpath);
+			// if (inip == null || ap == null || pil == null)
+			// {
+			//	System.err.println("No position?");
+			//	System.exit(1);
+			// }
+			// Iterator<Integer> iitr = inip.iterator();
+			// Iterator<Integer> aitr = ap.iterator();
+			// Iterator<Boolean> pitr = pil.iterator();
+			// while (aitr.hasNext())
+			// {
+			//	Integer ii = iitr.next();
+			//	Integer ai = aitr.next();
+			//	Boolean pi = pitr.next();
+			//	String lockfullnamekey = fabpath + ":" + ii;
+			//	String lockname = positionlocknames.get(lockfullnamekey);
+			//	String lockfullnamelocation = fabpath + ":" + ai;
+			//	int lidx = lockfullnamelocation.indexOf('/');
+			//	if (lidx == -1)
+			//	{
+			//		lidx = lockfullnamelocation.indexOf('\\');
+			//	}
+			//	AFixFactory.AddEntry(new AFixEntity(lockname, pi ? "lock" : "unlock", lockfullnamelocation.substring(lidx + 1), lockfullnamelocation));
+			// }
 		}
 		
+		// set the content of LockPool.java.
 		IFolder sourceFolder = project.getProject().getFolder("src");
 		// IPackageFragmentRoot root = project.getPackageFragmentRoot(sourceFolder);
 		IPackageFragment pack = project.getPackageFragmentRoot(sourceFolder).createPackageFragment("cn.yyx.labtask.afix", true, null);
@@ -244,7 +262,35 @@ public class SourceFileModifier {
 		assert cu != null;
 	}
 	
-	private void HandleInitialAndActualPositions(int lineNumber, LinkedList<Integer> inip, LinkedList<Integer> ap, LinkedList<Boolean> pil, boolean islock)
+	private void GenerateAFixEntries(String lockname, CompilationUnit cu, LinkedList<ASTNode> llans, String fabpath, boolean islock)
+	{
+		Iterator<ASTNode> itr = llans.iterator();
+		while (itr.hasNext())
+		{
+			ASTNode astn = itr.next();
+			int linenumber = ASTHelper.GetASTNodeLineNumber(cu, astn);
+			String lockfullnamelocation = fabpath + ":" + linenumber;
+			int lidx = lockfullnamelocation.indexOf('/');
+			if (lidx == -1)
+			{
+				lidx = lockfullnamelocation.indexOf('\\');
+			}
+			AFixFactory.AddEntry(new AFixEntity(lockname, islock ? "lock" : "unlock", lockfullnamelocation.substring(lidx + 1), lockfullnamelocation));
+		}
+	}
+	
+	private void PutMapAndValueList(Map<String, LinkedList<ASTNode>> kmap, String lockname, ASTNode insertnode)
+	{
+		LinkedList<ASTNode> kl = kmap.get(lockname);
+		if (kl == null)
+		{
+			kl = new LinkedList<ASTNode>();
+			kmap.put(lockname, kl);
+		}
+		kl.add(insertnode);
+	}
+	
+	/*private void HandleInitialAndActualPositions(int lineNumber, LinkedList<Integer> inip, LinkedList<Integer> ap, LinkedList<Boolean> pil, boolean islock)
 	{
 		int idx = 0;
 		Iterator<Integer> iitr = inip.iterator();
@@ -271,7 +317,7 @@ public class SourceFileModifier {
 			}
 			aidx++;
 		}
-	}
+	}*/
 	
 	private AST GetAST(String msig) {
 		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
@@ -310,6 +356,16 @@ public class SourceFileModifier {
 		return cu;
 	}
 	
+	private CompilationUnit GetCompilationUnit(File df)
+	{
+		Document document = new Document(FileUtil.ReadFileByLines(df));
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		parser.setSource(document.get().toCharArray());
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+		return cu;
+	}
+	
 	private ASTRewrite GetASTRewriteAccordingToMethodSig(String msig, AST ast)
 	{
 		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
@@ -335,11 +391,11 @@ public class SourceFileModifier {
 		return fcontent;
 	}
 	
-	private String GetFileUnique(String mtype)
+	/*private String GetFileUnique(String mtype)
 	{
 		File f = GetMostMatchFile(mtype);
 		return f.getAbsolutePath();
-	}
+	}*/
 	
 	private File GetMostMatchFile(String mtype)
 	{
