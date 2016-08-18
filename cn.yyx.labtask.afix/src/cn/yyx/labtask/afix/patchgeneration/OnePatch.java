@@ -158,7 +158,7 @@ public class OnePatch implements Mergeable<OnePatch>{
 		int maxsl = GetMaxSourceLineOfBlock(bbk, method);
 		if (sourline != maxsl)
 		{
-			sourline = maxsl + 1;
+			sourline = maxsl;
 		}
 		// confirm.
 		// SSAInstruction is = bbk.getLastInstruction();
