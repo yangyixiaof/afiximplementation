@@ -136,6 +136,15 @@ public class OnePatchGenerator {
 			String methodSig = this.r.getSig();
 			int ridx = this.r.getLine();
 			IR ir = GetMethodIR(methodSig);
+
+			// printing.
+			/*try {
+				PrintUtil.PrintIR(callGraph.getClassHierarchy(), ir);
+			} catch (WalaException e) {
+				e.printStackTrace();
+			}
+			System.exit(1);*/
+			
 			SSACFG cfg = ir.getControlFlowGraph();
 			ISSABasicBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(ridx, ir);
 			Set<ISSABasicBlock> protectednodes = new HashSet<ISSABasicBlock>();
@@ -228,47 +237,49 @@ public class OnePatchGenerator {
 	 * @throws IOException
 	 */
 	private IR GetMethodIR(String methodSig) {
-		
+
 		// IClassLoader[] loaders = callGraph.getClassHierarchy().getLoaders();
 		// for (IClassLoader loader : loaders) {
-		//	System.err.println("loader name:" + loader.getName());
+		// System.err.println("loader name:" + loader.getName());
 		// }
-		
-		// System.err.println("methodSig:" + methodSig + ";"); // ";appJar:" + appJar + 
+
+		// System.err.println("methodSig:" + methodSig + ";"); // ";appJar:" +
+		// appJar +
 		// System.exit(1);
-		
+
 		String descriptor = MethodSigToJDTDescriptor(methodSig, "Source"); // "Source#Array1#foo#()V"
-		
-		// System.err.println("methodSig:" + methodSig + ";" + "descriptor:" + descriptor); // ";appJar:" + appJar + 
+
+		// System.err.println("methodSig:" + methodSig + ";" + "descriptor:" +
+		// descriptor); // ";appJar:" + appJar +
 		// System.exit(1);
-		
+
 		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
-		
+
 		// StringBuilder sb = new StringBuilder("");
 		// Iterator<CGNode> cgitr = callGraph.iterator();
 		// while (cgitr.hasNext())
 		// {
-		// 	CGNode cgn = cgitr.next();
-		// 	sb.append(cgn.toString());
-			// System.err.println("CGNode:" + cgn);
+		// CGNode cgn = cgitr.next();
+		// sb.append(cgn.toString());
+		// System.err.println("CGNode:" + cgn);
 		// }
 		// try {
-		// 	File tf = new File("test_info.txt");
-		// 	if (!tf.exists())
-		// 	{
-		// 		tf.createNewFile();
-		// 	}
-		// 	FileUtil.ContentToFile(tf, sb.toString());
+		// File tf = new File("test_info.txt");
+		// if (!tf.exists())
+		// {
+		// tf.createNewFile();
+		// }
+		// FileUtil.ContentToFile(tf, sb.toString());
 		// } catch (Exception e) {
-		// 	e.printStackTrace();
+		// e.printStackTrace();
 		// }
 		// System.exit(1);
-		
+
 		CGNode node = callGraph.getNodes(mref).iterator().next();
-		
+
 		// System.err.println(node);
 		// System.exit(1);
-		
+
 		return node.getIR();
 
 		// MethodReference mr = StringStuff.makeMethodReference(methodSig);
@@ -284,23 +295,24 @@ public class OnePatchGenerator {
 		// options.getSSAOptions());
 		// return ir;
 	}
-	
+
 	/**
 	 * 
 	 * @param methodSig
-	 * @param loader. The value must be one of Primordial, Extension, Application, Source and Synthetic.
+	 * @param loader.
+	 *            The value must be one of Primordial, Extension, Application,
+	 *            Source and Synthetic.
 	 * @return
 	 */
-	private String MethodSigToJDTDescriptor(String methodSig, String loader)
-	{
+	private String MethodSigToJDTDescriptor(String methodSig, String loader) {
 		methodSig = methodSig.replace('.', '/');
 		int msidx = methodSig.indexOf('(');
 		String pre = methodSig.substring(0, msidx);
 		String post = methodSig.substring(msidx);
 		int psidx = pre.lastIndexOf('/');
 		String prepre = pre.substring(0, psidx);
-		String prepost = pre.substring(psidx+1);
+		String prepost = pre.substring(psidx + 1);
 		return loader + "#" + prepre + "#" + prepost + "#" + post;
 	}
-	
+
 }

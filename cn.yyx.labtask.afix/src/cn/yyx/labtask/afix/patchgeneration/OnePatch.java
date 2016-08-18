@@ -130,6 +130,7 @@ public class OnePatch implements Mergeable<OnePatch>{
 	}
 	
 	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		// TODO
 		int iidx = bbk.getFirstInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
@@ -139,20 +140,26 @@ public class OnePatch implements Mergeable<OnePatch>{
 	
 	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getLastInstructionIndex();
-		SSAInstruction is = bbk.getLastInstruction();
+		/*SSAInstruction is = bbk.getLastInstruction();
 		String content = is.toString();
 		if (content.startsWith("return"))
 		{
 			iidx--;
-		}
+		}*/
 		return iidx;
 	}
 	
 	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		// TODO
 		int iidx = bbk.getLastInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		int sourline = method.getLineNumber(iidx);// bytecodeIndex
+		int maxsl = GetMaxSourceLineOfBlock(bbk, method);
+		if (sourline != maxsl)
+		{
+			sourline = maxsl + 1;
+		}
 		// confirm.
 		// SSAInstruction is = bbk.getLastInstruction();
 		// String content = is.toString();
@@ -161,6 +168,22 @@ public class OnePatch implements Mergeable<OnePatch>{
 		//	sourline--;
 		// }
 		return sourline;
+	}
+	
+	private int GetMaxSourceLineOfBlock(ISSABasicBlock bbk, ConcreteJavaMethod method)
+	{
+		int maxs = 0;
+		Iterator<SSAInstruction> itr = bbk.iterator();
+		while (itr.hasNext())
+		{
+			SSAInstruction si = itr.next();
+			int sourline = method.getLineNumber(si.iindex);
+			if (maxs < sourline)
+			{
+				maxs = sourline;
+			}
+		}
+		return maxs;
 	}
 	
 	public Iterator<Integer> GetInsertPosEndIterator() throws InvalidClassFileException
