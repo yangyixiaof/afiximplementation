@@ -34,6 +34,10 @@ public class FixHandler {
 	// String inputjar, String outputjar, , String projectname
 	private void HandleTraces(List<OneErrorInfo> oeilist, CallGraph callGraph) throws Exception {
 		ExclusivePatchesManager epm = new ExclusivePatchesManager();
+		
+		System.err.println("OneErrorInfo List size:" + oeilist.size());
+		// System.exit(1);
+		
 		Iterator<OneErrorInfo> itr = oeilist.iterator();
 		while (itr.hasNext())
 		{
