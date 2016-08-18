@@ -147,7 +147,7 @@ public class SourceFileModifier {
 						
 						listRewrite.insertBefore(newStatement, insertnode, null);
 						
-						PutMapAndValueList(lockmap, lockname, insertnode);
+						PutMapAndValueList(lockmap, lockname, newStatement);
 						// int lineNumber = cu.getLineNumber(insertnode.getStartPosition() - 1) - 1;
 						// positionlocknames.put(fileunique + ":" + lineNumber, lockname);
 						// HandleInitialAndActualPositions(lineNumber, inip, ap, pil, true);
@@ -175,7 +175,7 @@ public class SourceFileModifier {
 						
 						listRewrite.insertAfter(newStatement, insertnode, null);
 						
-						PutMapAndValueList(unlockmap, lockname, insertnode);
+						PutMapAndValueList(unlockmap, lockname, newStatement);
 						// int lineNumber = cu.getLineNumber(insertnode.getStartPosition() + insertnode.getLength()) - 1;
 						// positionlocknames.put(fileunique + ":" + lineNumber, lockname);
 						// HandleInitialAndActualPositions(lineNumber, inip, ap, pil, false);
