@@ -1,5 +1,8 @@
 package cn.yyx.labtask.afix.gui;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -45,6 +48,17 @@ public class AtomFixesView extends ViewPart {
 		getViewer().setContentProvider(new TableViewerContentProvider());
 		getViewer().setLabelProvider(new TableViewerLabelProvider());
 		getViewer().setInput(AFixFactory.list);
+		
+		getViewer().addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				// testing
+				ISelection sel = event.getSelection();
+				System.err.println("sel:" + sel.getClass());
+				AFixEntity afe = (AFixEntity) sel;
+				System.err.println("fullname location:" + afe.getLockfullnamelocation());
+			}
+		});
 		
 		// testing
 		IRGenerator.InitialLibs("classpathtest");
