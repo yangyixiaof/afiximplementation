@@ -10,8 +10,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
-import cn.yyx.labtask.afix.irengine.IRGenerator;
-
 public class AtomFixesView extends ViewPart {
 	
 	TableColumn typeCol = null;
@@ -59,9 +57,7 @@ public class AtomFixesView extends ViewPart {
 				System.err.println("fullname location:" + afe.getLockfullnamelocation());
 			}
 		});
-		
-		// testing
-		IRGenerator.InitialLibs("classpathtest");
+		// IRGenerator.InitialLibs("classpathtest");
 	}
 
 	@Override
