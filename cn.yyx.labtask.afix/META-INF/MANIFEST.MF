@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.wala.cast.java;bundle-version="1.3.9",
  com.ibm.wala.cast.java.test;bundle-version="1.3.9",
  com.ibm.wala.ide.jdt;bundle-version="1.3.9",
- org.eclipse.wst.jsdt.core
+ org.eclipse.wst.jsdt.core,
+ org.eclipse.jface
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: attrib4j-0.9.0.jar,
