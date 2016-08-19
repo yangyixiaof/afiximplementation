@@ -55,6 +55,7 @@ public class AtomFixesView extends ViewPart {
 				Object fe = sel.getFirstElement();
 				AFixEntity afe = (AFixEntity) fe;
 				
+				
 				System.err.println("fullname location:" + afe.getLockfullnamelocation());
 			}
 		});
