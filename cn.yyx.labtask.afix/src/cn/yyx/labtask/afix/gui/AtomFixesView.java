@@ -54,6 +54,7 @@ public class AtomFixesView extends ViewPart {
 				StructuredSelection sel = (StructuredSelection)event.getSelection();
 				Object fe = sel.getFirstElement();
 				AFixEntity afe = (AFixEntity) fe;
+				
 				System.err.println("fullname location:" + afe.getLockfullnamelocation());
 			}
 		});
