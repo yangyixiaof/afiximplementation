@@ -81,7 +81,7 @@ public class EclipseHelper {
 		}
 	}*/
 
-	public static void navigateToLine(IFile file, Integer line) {
+	public static void NavigateToLine(IFile file, Integer line) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IMarker.LINE_NUMBER, line);
 		IMarker marker = null;

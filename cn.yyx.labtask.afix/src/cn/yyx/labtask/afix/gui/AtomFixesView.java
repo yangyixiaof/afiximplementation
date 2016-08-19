@@ -1,5 +1,8 @@
 package cn.yyx.labtask.afix.gui;
 
+import java.io.File;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -9,6 +12,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
+
+import cn.yyx.labtask.afix.commonutil.FileUtil;
+import cn.yyx.labtask.afix.ideutil.EclipseHelper;
 
 public class AtomFixesView extends ViewPart {
 	
@@ -55,8 +61,14 @@ public class AtomFixesView extends ViewPart {
 				Object fe = sel.getFirstElement();
 				AFixEntity afe = (AFixEntity) fe;
 				
-				
-				System.err.println("fullname location:" + afe.getLockfullnamelocation());
+				String location = afe.getLockfullnamelocation();
+				int lidx = location.lastIndexOf(':');
+				String fileloc = location.substring(lidx+1);
+				int line = Integer.parseInt(fileloc);
+				String jfile = location.substring(0, lidx);
+				IFile ifile = FileUtil.FileToIFile(new File(jfile));
+				EclipseHelper.NavigateToLine(ifile, line);
+				// System.err.println("fullname location:" + afe.getLockfullnamelocation());
 			}
 		});
 		// IRGenerator.InitialLibs("classpathtest");
