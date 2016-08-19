@@ -16,12 +16,12 @@ public class AtomFixesView extends ViewPart {
 	TableColumn opCol = null;
 	TableColumn locCol = null;
 	
-	TableViewer viewer = null;
+	private static TableViewer viewer = null;
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
-		final Table table = viewer.getTable();
+		setViewer(new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
+		final Table table = getViewer().getTable();
 		
 		typeCol = new TableColumn(table, SWT.LEFT);
 		typeCol.setText("");
@@ -42,9 +42,9 @@ public class AtomFixesView extends ViewPart {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
-		viewer.setContentProvider(new TableViewerContentProvider());
-		viewer.setLabelProvider(new TableViewerLabelProvider());
-		viewer.setInput(AFixFactory.list);
+		getViewer().setContentProvider(new TableViewerContentProvider());
+		getViewer().setLabelProvider(new TableViewerLabelProvider());
+		getViewer().setInput(AFixFactory.list);
 		
 		// testing
 		IRGenerator.InitialLibs("classpathtest");
@@ -52,7 +52,23 @@ public class AtomFixesView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		viewer.getControl().setFocus();
+		getViewer().getControl().setFocus();
+	}
+
+	public static TableViewer getViewer() {
+		return viewer;
+	}
+
+	public static void setViewer(TableViewer viewer) {
+		AtomFixesView.viewer = viewer;
+	}
+	
+	public static void RefreshViewer()
+	{
+		if (viewer != null)
+		{
+			viewer.refresh();
+		}
 	}
 	
 }

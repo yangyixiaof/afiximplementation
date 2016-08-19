@@ -33,6 +33,7 @@ import cn.yyx.labtask.afix.commonutil.NameUtil;
 import cn.yyx.labtask.afix.commonutil.SearchOrder;
 import cn.yyx.labtask.afix.gui.AFixEntity;
 import cn.yyx.labtask.afix.gui.AFixFactory;
+import cn.yyx.labtask.afix.gui.AtomFixesView;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
 import cn.yyx.labtask.afix.patchgeneration.OnePatch;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
@@ -302,6 +303,8 @@ public class SourceFileModifier {
 		buffer.append("}\n");
 		ICompilationUnit cu = pack.createCompilationUnit("LockPool.java", buffer.toString(), true, null);
 		assert cu != null;
+		
+		AtomFixesView.RefreshViewer();
 	}
 
 	private void GenerateAFixEntries(CompilationUnit cu, TreeMap<String, Boolean> lks, String fabpath, boolean islock) {
