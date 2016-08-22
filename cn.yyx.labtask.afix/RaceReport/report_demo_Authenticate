@@ -1,0 +1,16 @@
+
+------------------ maximal-branch (z3): demo.Authenticate -------------------
+
+Race: <demo.Authenticate$MyThread: void run()>|i1 = <demo.Authenticate: int x>|82 - <demo.Authenticate: void main(java.lang.String[])>|<demo.Authenticate: int x> = 1|54
+Trace Size: 20
+Total #Threads: 2
+Total #SharedVariables: 3
+Total #Shared Read-Writes: 6
+Total #Local Read-Writes: 2
+Total #Initial Writes: 4
+Total #Synchronizations: 6
+Total #Branches: 2
+Total #Property Events: 0
+Total #Potential Violations: 1
+Total #Real Violations: 1
+Total Time: 487ms

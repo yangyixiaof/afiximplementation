@@ -1,0 +1,20 @@
+
+------------------ maximal-branch (z3): demo.Example2 -------------------
+
+Race: <demo.Example2$MyThread: void run()>|$i1 = <demo.Example2: int x>|84 - <demo.Example2: void main(java.lang.String[])>|<demo.Example2: int x> = 0|58
+Race: <demo.Example2$MyThread: void run()>|<demo.Example2: int x> = $i2|84 - <demo.Example2: void main(java.lang.String[])>|<demo.Example2: int x> = 0|58
+Race: <demo.Example2$MyThread: void run()>|$i0 = <demo.Example2: int x>|87 - <demo.Example2: void main(java.lang.String[])>|<demo.Example2: int x> = $i1|55
+Race: <demo.Example2$MyThread: void run()>|$i0 = <demo.Example2: int x>|87 - <demo.Example2: void main(java.lang.String[])>|<demo.Example2: int x> = 0|58
+Race: <demo.Example2$MyThread: void run()>|$i0 = <demo.Example2: int x>|87 - <demo.Example2$MyThread: void run()>|<demo.Example2: int x> = $i2|84
+Trace Size: 27
+Total #Threads: 3
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 9
+Total #Local Read-Writes: 3
+Total #Initial Writes: 2
+Total #Synchronizations: 10
+Total #Branches: 3
+Total #Property Events: 0
+Total #Potential Violations: 5
+Total #Real Violations: 5
+Total Time: 552ms
