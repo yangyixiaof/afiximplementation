@@ -107,7 +107,7 @@ public class MergeUtil {
 		Iterator<Mergeable> pitr = pts.iterator();
 		Mergeable firstpatch = pitr.next();
 		boolean merged = false;
-		while (!merged)
+		while (!merged && pitr.hasNext())
 		{
 			Mergeable lpatch = pitr.next();
 			Mergeable mres = null;
