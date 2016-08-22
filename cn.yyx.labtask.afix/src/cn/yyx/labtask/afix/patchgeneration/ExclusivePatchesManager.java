@@ -24,26 +24,25 @@ public class ExclusivePatchesManager {
 	
 	public void MergeSelf() throws Exception
 	{
-		LinkedList<SameLockExclusivePatches> finalresult = new LinkedList<SameLockExclusivePatches>();
-		boolean run = true;
-		while (run)
+		List<Mergeable> tempinput = new LinkedList<Mergeable>();
+		Iterator<SameLockExclusivePatches> itr2 = patches.iterator();
+		while (itr2.hasNext())
 		{
-			LinkedList<SameLockExclusivePatches> result = new LinkedList<SameLockExclusivePatches>();
-			boolean merged = FirstMergeToLeft(patches, result);
-			if (merged) {
-				patches = result;
-			} else {
-				finalresult.add(patches.get(0));
-				if (patches.size() > 1) {
-					patches = patches.subList(1, patches.size());
-				} else {
-					run = false;
-				}
-			}
+			tempinput.add(itr2.next());
 		}
+		LinkedList<SameLockExclusivePatches> realout = new LinkedList<SameLockExclusivePatches>();
+		List<Mergeable> tempout = MergeUtil.MergeList(tempinput);
+		Iterator<Mergeable> itr = tempout.iterator();
+		while (itr.hasNext())
+		{
+			realout.add((SameLockExclusivePatches) itr.next());
+		}
+		patches = realout;
+		// return realout;
+		// MergeUtil.MergeList(patches);
 	}
 	
-	private boolean FirstMergeToLeft(List<SameLockExclusivePatches> pts, List<SameLockExclusivePatches> result)
+	/*private boolean FirstMergeToLeft(List<SameLockExclusivePatches> pts, List<SameLockExclusivePatches> result)
 	{
 		if (pts.size() <= 1)
 		{
@@ -79,7 +78,7 @@ public class ExclusivePatchesManager {
 		return merged;
 	}
 	
-	/*public void MergeSelf() throws Exception
+	public void MergeSelf() throws Exception
 	{
 		List<SameLockExclusivePatches> res = new LinkedList<SameLockExclusivePatches>();
 		Iterator<SameLockExclusivePatches> itr = patches.iterator();

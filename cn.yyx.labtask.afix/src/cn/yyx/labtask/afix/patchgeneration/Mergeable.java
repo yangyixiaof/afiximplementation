@@ -1,7 +1,7 @@
 package cn.yyx.labtask.afix.patchgeneration;
 
-public interface Mergeable<T> {
+public interface Mergeable {
 	
-	public T Merge(T t) throws Exception;
+	public Mergeable Merge(Mergeable t) throws Exception;
 	
 }

@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MergeUtil<T> {
+public class MergeUtil {
 	
-	@SuppressWarnings("unchecked")
-	public List<Mergeable<T>> Merge(List<Mergeable<T>> onelist) throws Exception
+	/*@SuppressWarnings("unchecked")
+	public List<Mergeable> Merge(List<Mergeable> onelist) throws Exception
 	{
 		boolean intersected = true;
 		List<Mergeable<T>> temp = null;
@@ -53,10 +53,10 @@ public class MergeUtil<T> {
 					}
 				}
 				tempres.add(op);
-				/*if (!ophandled)
-				{
-					tempres.add(op);
-				}*/
+				// if (!ophandled)
+				// {
+				//	tempres.add(op);
+				// }
 			}
 		}
 		return temp;
@@ -73,6 +73,65 @@ public class MergeUtil<T> {
 			}
 		}
 		return false;
+	}*/
+	
+	// SameLockExclusivePatches
+	public static List<Mergeable> MergeList(List<Mergeable> patches) throws Exception
+	{
+		LinkedList<Mergeable> finalresult = new LinkedList<Mergeable>();
+		boolean run = true;
+		while (run)
+		{
+			LinkedList<Mergeable> result = new LinkedList<Mergeable>();
+			boolean merged = FirstMergeToLeft(patches, result);
+			if (merged) {
+				patches = result;
+			} else {
+				finalresult.add(patches.get(0));
+				if (patches.size() > 1) {
+					patches = patches.subList(1, patches.size());
+				} else {
+					run = false;
+				}
+			}
+		}
+		return finalresult;
+	}
+	
+	private static boolean FirstMergeToLeft(List<Mergeable> pts, List<Mergeable> result)
+	{
+		if (pts.size() <= 1)
+		{
+			return false;
+		}
+		Iterator<Mergeable> pitr = pts.iterator();
+		Mergeable firstpatch = pitr.next();
+		boolean merged = false;
+		while (!merged)
+		{
+			Mergeable lpatch = pitr.next();
+			Mergeable mres = null;
+			try {
+				mres = firstpatch.Merge(lpatch);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+			if (mres != null)
+			{
+				Iterator<Mergeable> itr = pts.iterator();
+				while (itr.hasNext())
+				{
+					Mergeable patch = itr.next();
+					if (patch != lpatch)
+					{
+						result.add(patch);
+					}
+				}
+				merged = true;
+			}
+		}
+		return merged;
 	}
 	
 }
