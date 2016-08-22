@@ -24,6 +24,63 @@ public class ExclusivePatchesManager {
 	
 	public void MergeSelf() throws Exception
 	{
+		LinkedList<SameLockExclusivePatches> finalresult = new LinkedList<SameLockExclusivePatches>();
+		boolean run = true;
+		while (run)
+		{
+			LinkedList<SameLockExclusivePatches> result = new LinkedList<SameLockExclusivePatches>();
+			boolean merged = FirstMergeToLeft(patches, result);
+			if (merged) {
+				patches = result;
+			} else {
+				finalresult.add(patches.get(0));
+				if (patches.size() > 1) {
+					patches = patches.subList(1, patches.size());
+				} else {
+					run = false;
+				}
+			}
+		}
+	}
+	
+	private boolean FirstMergeToLeft(List<SameLockExclusivePatches> pts, List<SameLockExclusivePatches> result)
+	{
+		if (pts.size() <= 1)
+		{
+			return false;
+		}
+		Iterator<SameLockExclusivePatches> pitr = pts.iterator();
+		SameLockExclusivePatches firstpatch = pitr.next();
+		boolean merged = false;
+		while (!merged)
+		{
+			SameLockExclusivePatches lpatch = pitr.next();
+			SameLockExclusivePatches mres = null;
+			try {
+				mres = firstpatch.Merge(lpatch);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+			if (mres != null)
+			{
+				Iterator<SameLockExclusivePatches> itr = pts.iterator();
+				while (itr.hasNext())
+				{
+					SameLockExclusivePatches patch = itr.next();
+					if (patch != lpatch)
+					{
+						result.add(patch);
+					}
+				}
+				merged = true;
+			}
+		}
+		return merged;
+	}
+	
+	/*public void MergeSelf() throws Exception
+	{
 		List<SameLockExclusivePatches> res = new LinkedList<SameLockExclusivePatches>();
 		Iterator<SameLockExclusivePatches> itr = patches.iterator();
 		int idx = 0;
@@ -78,7 +135,7 @@ public class ExclusivePatchesManager {
 			realout.add((SameLockExclusivePatches) itr.next());
 		}
 		return realout;
-	}
+	}*/
 
 	public int getSize() {
 		return patches.size();

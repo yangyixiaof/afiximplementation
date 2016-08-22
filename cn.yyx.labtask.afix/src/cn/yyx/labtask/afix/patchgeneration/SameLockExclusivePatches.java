@@ -108,7 +108,7 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 		return -1;
 	}
 	
-	private List<OnePatch> OneListMerge(List<OnePatch> tomergelist) throws Exception
+	/*private List<OnePatch> OneListMerge(List<OnePatch> tomergelist) throws Exception
 	{
 		List<Mergeable<OnePatch>> tempinput = new LinkedList<Mergeable<OnePatch>>();
 		Iterator<OnePatch> itr2 = tomergelist.iterator();
@@ -124,6 +124,6 @@ public class SameLockExclusivePatches implements Mergeable<SameLockExclusivePatc
 			realout.add((OnePatch) itr.next());
 		}
 		return realout;
-	}
+	}*/
 	
 }
