@@ -34,10 +34,10 @@ public class AFixHandler extends AbstractHandler {
 
 		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"),
 		//	"Demo_Authenticate", "demo.Authenticate");
-		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"),
-		//		"Demo_Example2", "demo.Example2");
-		FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"),
-				"Demo_Example", "demo.Example");
+		FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"),
+				"Demo_Example2", "demo.Example2");
+		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"),
+		//		"Demo_Example", "demo.Example");
 
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		MessageDialog.openInformation(window.getShell(), "Afix", "The process has been run over.");
