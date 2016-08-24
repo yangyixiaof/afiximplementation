@@ -164,7 +164,7 @@ public class SourceFileModifier {
 						
 						// TODO
 						// testing
-						System.err.println("insertnode:" + insertnode);
+						System.err.println("insertnode:" + insertnode + "\n;listrewrite block:" + ib);
 						
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
 						if (!addedlocks.containsKey(lockposition))
