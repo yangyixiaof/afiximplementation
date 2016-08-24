@@ -93,7 +93,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		{
 			this.insertnode = synnode;
 		}
-		ASTNode temp = insertnode.getParent();
+		ASTNode temp = this.insertnode.getParent();
 		while (!(temp instanceof Block))
 		{
 			temp = temp.getParent();
