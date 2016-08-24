@@ -173,7 +173,8 @@ public class OnePatchGenerator {
 			System.out.println(
 					"pmethodSig:" + methodSig + ";cmethodSig:" + this.r.getSig() + ";pbk:" + pbk + ";cbk:" + cbk);
 		}
-
+		
+		
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		pset.add(pbk);
 		pset.add(cbk);
@@ -190,9 +191,17 @@ public class OnePatchGenerator {
 		}
 		cset.retainAll(pset);
 		Set<ISSABasicBlock> protectednodes = cset;
+		
+		
+		RefineProtectedNodes(pbk, cbk, protectednodes);
+		
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg);
 		ops.AddPatches(op);
 		return ops;
+	}
+
+	private void RefineProtectedNodes(ISSABasicBlock pbk, ISSABasicBlock cbk, Set<ISSABasicBlock> protectednodes) {
+		
 	}
 
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
