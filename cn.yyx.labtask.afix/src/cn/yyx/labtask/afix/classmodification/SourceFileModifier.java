@@ -163,6 +163,9 @@ public class SourceFileModifier {
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
 						
 						// TODO
+						// testing
+						System.err.println("insertnode:" + insertnode);
+						
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
 						if (!addedlocks.containsKey(lockposition))
 						{
@@ -204,6 +207,9 @@ public class SourceFileModifier {
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
 						
 						// TODO
+						// testing
+						System.err.println("insertnode:" + insertnode);
+						
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
 						if (!addedunlocks.containsKey(lockposition))
 						{
