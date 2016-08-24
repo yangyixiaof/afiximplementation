@@ -6,6 +6,12 @@ public class Test {
 	{
 		int x = 0;
 		{
+			if (x == 1)
+			{
+				x = 6;
+			} else {
+				x = 5;
+			}
 			System.err.println(x);
 		}
 	}

@@ -193,17 +193,11 @@ public class OnePatchGenerator {
 		Set<ISSABasicBlock> protectednodes = cset;
 		
 		
-		RefineProtectedNodes(pbk, cbk, protectednodes);
-		
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg);
 		ops.AddPatches(op);
 		return ops;
 	}
-
-	private void RefineProtectedNodes(ISSABasicBlock pbk, ISSABasicBlock cbk, Set<ISSABasicBlock> protectednodes) {
-		
-	}
-
+	
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
 			final ISSABasicBlock dest, Set<ISSABasicBlock> visited) {
 		visited.add(nowbk);
