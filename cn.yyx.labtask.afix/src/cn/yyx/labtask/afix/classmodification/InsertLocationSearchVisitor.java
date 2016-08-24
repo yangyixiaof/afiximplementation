@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.SynchronizedStatement;
 
 public class InsertLocationSearchVisitor extends ASTVisitor {
 
@@ -80,13 +81,18 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		super.postVisit(node);
 	}
-
+	
 	public ASTNode getInsertnode() {
 		return insertnode;
 	}
-
+	
 	private void setInsertnodeAndBlock(ASTNode insertnode) {
 		this.insertnode = insertnode;
+		ASTNode synnode = GetMostFarSynchronizedNode(insertnode);
+		if (synnode != null)
+		{
+			this.insertnode = synnode;
+		}
 		ASTNode temp = insertnode.getParent();
 		while (!(temp instanceof Block))
 		{
@@ -94,9 +100,24 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		this.insertblock = (Block) temp;
 	}
-
+	
+	private ASTNode GetMostFarSynchronizedNode(ASTNode insertnode)
+	{
+		ASTNode synnode = null;
+		ASTNode temp = insertnode.getParent();
+		while (temp != null)
+		{
+			if (temp instanceof SynchronizedStatement)
+			{
+				synnode = temp;
+			}
+			temp = temp.getParent();
+		}
+		return synnode;
+	}
+	
 	public Block getInsertblock() {
 		return insertblock;
 	}
-
+	
 }

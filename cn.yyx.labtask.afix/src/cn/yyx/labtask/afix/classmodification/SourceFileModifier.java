@@ -68,7 +68,10 @@ public class SourceFileModifier {
 
 	Map<String, TreeMap<String, Boolean>> filelocks = new TreeMap<String, TreeMap<String, Boolean>>();
 	Map<String, TreeMap<String, Boolean>> fileunlocks = new TreeMap<String, TreeMap<String, Boolean>>();
-
+	
+	Map<String, Boolean> addedlocks = new TreeMap<String, Boolean>();
+	Map<String, Boolean> addedunlocks = new TreeMap<String, Boolean>();
+	
 	// String projectname
 	public SourceFileModifier(IJavaProject ijp) {
 		this.project = ijp;
@@ -153,15 +156,20 @@ public class SourceFileModifier {
 						newInvocation.setName(ast.newSimpleName("lock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
-
+						
 						// testing
 						System.out.println("msig:" + msig + ";posline:" + posline + ";insertnodeBegin:" + insertnode
 								+ ";insertnodestartpos:" + insertnode.getStartPosition() + ";insertnodeendpos:"
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
-
-						listRewrite.insertBefore(newStatement, insertnode, null);
-
-						PutMapAndValueList(filelocks, fileunique, lockname);
+						
+						// TODO
+						String lockposition = fileunique + ":" + insertnode.getStartPosition();
+						if (!addedlocks.containsKey(lockposition))
+						{
+							addedlocks.put(lockposition, true);
+							listRewrite.insertBefore(newStatement, insertnode, null);
+							PutMapAndValueList(filelocks, fileunique, lockname);
+						}
 						// PutMapAndValueList(lockmap, lockname, newStatement);
 						// int lineNumber =
 						// cu.getLineNumber(insertnode.getStartPosition() - 1) -
@@ -189,15 +197,20 @@ public class SourceFileModifier {
 						newInvocation.setName(ast.newSimpleName("unlock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
 						Statement newStatement = ast.newExpressionStatement(newInvocation);
-
+						
 						// testing
 						System.out.println("posline:" + posline + ";insertnodeEnd:" + insertnode
 								+ ";insertnodestartpos:" + insertnode.getStartPosition() + ";insertnodeendpos:"
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
-
-						listRewrite.insertAfter(newStatement, insertnode, null);
-
-						PutMapAndValueList(fileunlocks, fileunique, lockname);
+						
+						// TODO
+						String lockposition = fileunique + ":" + insertnode.getStartPosition();
+						if (!addedunlocks.containsKey(lockposition))
+						{
+							addedunlocks.put(lockposition, true);
+							listRewrite.insertAfter(newStatement, insertnode, null);
+							PutMapAndValueList(fileunlocks, fileunique, lockname);
+						}
 						// PutMapAndValueList(unlockmap, lockname,
 						// newStatement);
 						// int lineNumber =
