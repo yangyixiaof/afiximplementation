@@ -100,12 +100,12 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		this.insertblock = (Block) temp;
 	}
-	
+	// TODO
 	private ASTNode GetMostFarSynchronizedNode(ASTNode insertnode)
 	{
 		ASTNode synnode = null;
 		ASTNode temp = insertnode.getParent();
-		while (temp != null)
+		while (temp != null && temp != bigblock)
 		{
 			if (temp instanceof SynchronizedStatement)
 			{
