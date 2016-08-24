@@ -100,9 +100,9 @@ public class SourceFileModifier {
 				CompilationUnit cu = GetCompilationUnit(msig);
 				AST ast = GetAST(msig);
 				ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
-
+				
 				String fileunique = GetFileUnique(mtype);
-
+				
 				// LinkedList<Integer> inip = initialpositions.get(fileunique);
 				// if (inip == null)
 				// {
@@ -121,18 +121,18 @@ public class SourceFileModifier {
 				// pil = new LinkedList<Boolean>();
 				// positionislock.put(fileunique, pil);
 				// }
-
+				
 				SearchOrder so = new SearchOrder(msig);
 				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
 				cu.accept(blvisitor);
 				Block methodblock = blvisitor.getResult();
-
+				
 				if (methodblock == null) {
 					System.out.println("methodblock:" + methodblock);
 					new Exception("methodblock null, the system will exit.").printStackTrace();
 					System.exit(1);
 				}
-
+				
 				{
 					Iterator<Integer> sbitr = op.GetInsertPosBeginSourceIterator();
 					while (sbitr.hasNext()) {
