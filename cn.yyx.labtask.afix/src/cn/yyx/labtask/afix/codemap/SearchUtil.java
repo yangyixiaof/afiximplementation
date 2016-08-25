@@ -8,6 +8,8 @@ import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
 
+import cn.yyx.labtask.afix.patchgeneration.AFixBlock;
+
 public class SearchUtil {
 	
 	/*public static ISSABasicBlock GetBasicBlockAccordingToLineNumberInBytecode(int bytecodeLineNumber, IR ir) throws InvalidClassFileException
@@ -41,7 +43,8 @@ public class SearchUtil {
 		return ir.getBasicBlockForInstruction(csi);
 	}*/
 	
-	public static ISSABasicBlock GetBasicBlockAccordingToLineNumberInSourcecode(final int sourceLineNumber, IR ir) throws InvalidClassFileException
+	// ISSABasicBlock
+	public static AFixBlock GetBasicBlockAccordingToLineNumberInSourcecode(final int sourceLineNumber, IR ir) throws InvalidClassFileException
 	{
 		// SSACFG sfg = ir.getControlFlowGraph();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod

@@ -136,7 +136,7 @@ public class OnePatch implements Mergeable {
 	
 	// ISSABasicBlockISSABasicBlock
 	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
-		// TODO
+		// TODO wait for testing.
 		int iidx = bbk.getFirstInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
@@ -162,7 +162,7 @@ public class OnePatch implements Mergeable {
 	}
 	
 	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
-		// TODO
+		// TODO wait for testing.
 		int iidx = bbk.getLastInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
@@ -258,6 +258,7 @@ public class OnePatch implements Mergeable {
 					ISSABasicBlock ibb = itr.next();
 					protectednodes.add(ibb);
 				}
+				MergeSSABlockInfo(iop);
 				return this;
 			}
 		}
@@ -273,7 +274,8 @@ public class OnePatch implements Mergeable {
 				if (getMethodsig().equals(tel.getSig()))
 				{
 					// ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), ir);
-					ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(tel.getLine(), ir);
+					// ISSABasicBlock
+					AFixBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(tel.getLine(), ir);
 					if (protectednodes.contains(tbk))
 					{
 						intersected = true;
@@ -293,7 +295,8 @@ public class OnePatch implements Mergeable {
 					if (tmsig.equals(tel.getSig()))
 					{
 						// ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInBytecode(tel.getBytecodel(), iop.ir);
-						ISSABasicBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(tel.getLine(), iop.ir);
+						// ISSABasicBlock
+						AFixBlock tbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(tel.getLine(), iop.ir);
 						if (iop.protectednodes.contains(tbk))
 						{
 							intersected = true;
@@ -312,7 +315,19 @@ public class OnePatch implements Mergeable {
 		}
 		return null;
 	}
-
+	
+	private void MergeSSABlockInfo(OnePatch iop)
+	{
+		if (ssablockinfo == null) {
+			ssablockinfo = iop.ssablockinfo;
+		} else {
+			if (iop.ssablockinfo != null)
+			{
+				ssablockinfo.putAll(iop.ssablockinfo);
+			}
+		}
+	}
+	
 	public String getMethodsig() {
 		return methodsig;
 	}

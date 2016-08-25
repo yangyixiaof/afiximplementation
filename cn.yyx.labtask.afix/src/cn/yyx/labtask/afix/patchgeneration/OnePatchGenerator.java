@@ -1,8 +1,10 @@
 package cn.yyx.labtask.afix.patchgeneration;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import com.ibm.wala.cast.java.test.IRTests;
@@ -146,10 +148,16 @@ public class OnePatchGenerator {
 			System.exit(1);*/
 			
 			SSACFG cfg = ir.getControlFlowGraph();
-			ISSABasicBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(ridx, ir);
+			// ISSABasicBlock
+			AFixBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(ridx, ir);
 			Set<ISSABasicBlock> protectednodes = new HashSet<ISSABasicBlock>();
-			protectednodes.add(rbk);
-			OnePatch op = new OnePatch(rt, this.r.getSig(), protectednodes, ir, cfg);
+			protectednodes.add(rbk.getISSABasicBlock());
+			Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
+			if (rbk.getAFixSSABlockExtraInfo() != null)
+			{
+				ssablockinfo.put(rbk.getISSABasicBlock(), rbk.getAFixSSABlockExtraInfo());
+			}
+			OnePatch op = new OnePatch(rt, this.r.getSig(), protectednodes, ir, cfg, ssablockinfo);
 			// op.AddLockBeforeIndex(this.r.getBytecodel());
 			// op.AddUnlockAfterIndex(this.r.getBytecodel());
 			ops.AddPatches(op);
@@ -165,33 +173,43 @@ public class OnePatchGenerator {
 		if (methodSig.equals("demo.Example2.main([Ljava/lang/String;)V")) {
 			System.out.println("haha haha.");
 		}
+		
+		// ISSABasicBlock
+		AFixBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(pidx, ir);
+		AFixBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(cidx, ir);
 
-		ISSABasicBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(pidx, ir);
-		ISSABasicBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(cidx, ir);
-
-		if (pbk == null || cbk == null) {
+		if (pbk.getISSABasicBlock() == null || cbk.getISSABasicBlock() == null) {
 			System.out.println(
 					"pmethodSig:" + methodSig + ";cmethodSig:" + this.r.getSig() + ";pbk:" + pbk + ";cbk:" + cbk);
 		}
 		
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
-		pset.add(pbk);
-		pset.add(cbk);
+		pset.add(pbk.getISSABasicBlock());
+		pset.add(cbk.getISSABasicBlock());
 		if (!pbk.equals(cbk)) {
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
-			GetSearchSet(pbk, cfg, true, pset, cbk, visited);
+			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset, cbk.getISSABasicBlock(), visited);
 		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
-		cset.add(pbk);
-		cset.add(cbk);
+		cset.add(pbk.getISSABasicBlock());
+		cset.add(cbk.getISSABasicBlock());
 		if (!pbk.equals(cbk)) {
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
-			GetSearchSet(cbk, cfg, false, cset, pbk, visited);
+			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset, pbk.getISSABasicBlock(), visited);
 		}
 		cset.retainAll(pset);
 		Set<ISSABasicBlock> protectednodes = cset;
 		
-		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg);
+		Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
+		if (pbk.getAFixSSABlockExtraInfo() != null)
+		{
+			ssablockinfo.put(pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
+		}
+		if (cbk.getAFixSSABlockExtraInfo() != null)
+		{
+			ssablockinfo.put(cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
+		}
+		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg, ssablockinfo);
 		ops.AddPatches(op);
 		return ops;
 	}
