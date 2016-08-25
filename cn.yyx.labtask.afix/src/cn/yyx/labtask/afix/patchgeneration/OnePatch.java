@@ -54,7 +54,7 @@ public class OnePatch implements Mergeable {
 		insertsourceendidxs.add(sourceidx);
 	}
 	
-	private void CheckGenerateLockUnlockSolutions() throws InvalidClassFileException
+	public void CheckGenerateLockUnlockSolutions() throws InvalidClassFileException
 	{
 		/*if (methodsig.startsWith("demo.Example.main([Ljava/lang/String;)V"))
 		{
@@ -136,7 +136,6 @@ public class OnePatch implements Mergeable {
 	
 	// ISSABasicBlockISSABasicBlock
 	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
-		// TODO wait for testing.
 		int iidx = bbk.getFirstInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
@@ -162,7 +161,6 @@ public class OnePatch implements Mergeable {
 	}
 	
 	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
-		// TODO wait for testing.
 		int iidx = bbk.getLastInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
@@ -205,25 +203,25 @@ public class OnePatch implements Mergeable {
 	
 	public Iterator<Integer> GetInsertPosEndIterator() throws InvalidClassFileException
 	{
-		CheckGenerateLockUnlockSolutions();
+		// CheckGenerateLockUnlockSolutions();
 		return insertendidxs.iterator();
 	}
 	
 	public Iterator<Integer> GetInsertPosEndSourceIterator() throws InvalidClassFileException
 	{
-		CheckGenerateLockUnlockSolutions();
+		// CheckGenerateLockUnlockSolutions();
 		return insertsourceendidxs.iterator();
 	}
 	
 	public Iterator<Integer> GetInsertPosBeginIterator() throws InvalidClassFileException
 	{
-		CheckGenerateLockUnlockSolutions();
+		// CheckGenerateLockUnlockSolutions();
 		return insertbeginidxs.iterator();
 	}
 	
 	public Iterator<Integer> GetInsertPosBeginSourceIterator() throws InvalidClassFileException
 	{
-		CheckGenerateLockUnlockSolutions();
+		// CheckGenerateLockUnlockSolutions();
 		return insertsourcebeginidxs.iterator();
 	}
 	

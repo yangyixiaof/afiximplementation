@@ -95,6 +95,7 @@ public class SourceFileModifier {
 			Iterator<OnePatch> opitr = slep.GetIterator();
 			while (opitr.hasNext()) {
 				OnePatch op = opitr.next();
+				op.CheckGenerateLockUnlockSolutions();
 				String msig = op.getMethodsig();
 				String mtype = NameUtil.GetClassNameFromMethodSig(msig);
 				CompilationUnit cu = GetCompilationUnit(msig);
