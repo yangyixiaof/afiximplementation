@@ -149,7 +149,7 @@ public class OnePatchGenerator {
 			
 			SSACFG cfg = ir.getControlFlowGraph();
 			// ISSABasicBlock
-			AFixBlock rbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(ridx, ir);
+			AFixBlock rbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(ridx, ir, SearchUtil.UpAndDownDirection);
 			Set<ISSABasicBlock> protectednodes = new HashSet<ISSABasicBlock>();
 			protectednodes.add(rbk.getISSABasicBlock());
 			Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
@@ -175,8 +175,8 @@ public class OnePatchGenerator {
 		}
 		
 		// ISSABasicBlock
-		AFixBlock pbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(pidx, ir);
-		AFixBlock cbk = SearchUtil.GetBasicBlockAccordingToLineNumberInSourcecode(cidx, ir);
+		AFixBlock pbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(pidx, ir, SearchUtil.UpDirection);
+		AFixBlock cbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(cidx, ir, SearchUtil.DownDirection);
 
 		if (pbk.getISSABasicBlock() == null || cbk.getISSABasicBlock() == null) {
 			System.out.println(

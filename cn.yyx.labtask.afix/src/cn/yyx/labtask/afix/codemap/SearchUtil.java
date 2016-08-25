@@ -9,6 +9,7 @@ import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
 
 import cn.yyx.labtask.afix.patchgeneration.AFixBlock;
+import cn.yyx.labtask.afix.patchgeneration.AFixSSABlockExtraInfo;
 
 public class SearchUtil {
 	
@@ -43,8 +44,65 @@ public class SearchUtil {
 		return ir.getBasicBlockForInstruction(csi);
 	}*/
 	
-	// ISSABasicBlock
-	public static AFixBlock GetBasicBlockAccordingToLineNumberInSourcecode(final int sourceLineNumber, IR ir) throws InvalidClassFileException
+	public static final int UpAndDownDirection = 1;
+	public static final int UpDirection = 2;
+	public static final int DownDirection = 3;
+	
+	public static AFixBlock GetAFixBlockAccordingToLineNumberInSourcecode(final int sourceLineNumber, final IR ir, final int direction) throws InvalidClassFileException
+	{
+		// SSACFG sfg = ir.getControlFlowGraph();
+		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
+		Iterator<SSAInstruction> iir = ir.iterateAllInstructions();
+		int mostcloseidx = -1;
+		SSAInstruction csi = null;
+		while (iir.hasNext())
+		{
+			SSAInstruction si = iir.next();
+			// System.out.println("sicnt:"+si+";siindex:"+);
+			int idx = si.iindex;
+			if (idx >= 0)
+			{
+				// int bytecodeIndex = method.getBytecodeIndex(idx);
+				int currSourceLine = method.getLineNumber(idx);// bytecodeIndex
+				
+				// System.err.println("sicnt:"+si+";sourceLineNum:"+sourceLineNum);
+				
+				if ((currSourceLine < sourceLineNumber) && (mostcloseidx < currSourceLine))
+				{
+					mostcloseidx = currSourceLine;
+					csi = si;
+				}
+				// int sourceLineNum = method.getLineNumber(bytecodeIndex);
+				// System.out.println("bytecodeIndex:"+bytecodeIndex+";sourceIndex:"+sourceLineNum);
+				if (currSourceLine == sourceLineNumber)
+				{
+					csi = si;
+					break;
+					// return ir.getBasicBlockForInstruction(si);
+				}
+			}
+		}
+		AFixBlock result = null;
+		ISSABasicBlock issabk = ir.getBasicBlockForInstruction(csi);
+		switch (direction) {
+		case UpAndDownDirection:
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, csi));
+			break;
+		case UpDirection:
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, null));
+			break;
+		case DownDirection:
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(null, csi));
+			break;
+		default:
+			System.err.println("What the fuck Direction!");
+			System.exit(1);
+			break;
+		}
+		return result;
+	}
+	
+	public static ISSABasicBlock GetBasicBlockAccordingToLineNumberInSourcecode(final int sourceLineNumber, IR ir) throws InvalidClassFileException
 	{
 		// SSACFG sfg = ir.getControlFlowGraph();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
