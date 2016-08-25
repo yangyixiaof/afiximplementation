@@ -174,7 +174,6 @@ public class OnePatchGenerator {
 					"pmethodSig:" + methodSig + ";cmethodSig:" + this.r.getSig() + ";pbk:" + pbk + ";cbk:" + cbk);
 		}
 		
-		
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		pset.add(pbk);
 		pset.add(cbk);
@@ -191,7 +190,6 @@ public class OnePatchGenerator {
 		}
 		cset.retainAll(pset);
 		Set<ISSABasicBlock> protectednodes = cset;
-		
 		
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg);
 		ops.AddPatches(op);

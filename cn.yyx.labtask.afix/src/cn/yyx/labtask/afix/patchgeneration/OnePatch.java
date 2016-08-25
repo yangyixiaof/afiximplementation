@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.ibm.wala.cast.java.loader.JavaSourceLoaderImpl.ConcreteJavaMethod;
@@ -30,12 +31,15 @@ public class OnePatch implements Mergeable {
 	List<Integer> insertsourcebeginidxs = null;
 	List<Integer> insertsourceendidxs = null;
 	
-	public OnePatch(ErrorTrace et, String methodsig, Set<ISSABasicBlock> protectednodes, IR ir, SSACFG cfg) {
+	Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = null;
+	
+	public OnePatch(ErrorTrace et, String methodsig, Set<ISSABasicBlock> protectednodes, IR ir, SSACFG cfg, Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo) {
 		this.et = et;
 		this.setMethodsig(methodsig);
 		this.protectednodes = protectednodes;
 		this.ir = ir;
 		this.cfg = cfg;
+		this.ssablockinfo = ssablockinfo;
 	}
 	
 	private void AddLockBeforeIndex(Integer idx, Integer sourceidx)
@@ -132,10 +136,16 @@ public class OnePatch implements Mergeable {
 	
 	// ISSABasicBlockISSABasicBlock
 	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		// TODO
 		int iidx = bbk.getFirstInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		int sourline = method.getLineNumber(iidx);// bytecodeIndex
+		AFixSSABlockExtraInfo bbkinfo = ssablockinfo.get(bbk);
+		if (bbkinfo != null && bbkinfo.getUpboundinst() != null)
+		{
+			sourline = method.getLineNumber(bbkinfo.getUpboundinst().iindex);
+		}
 		return sourline;
 	}
 	
@@ -152,6 +162,7 @@ public class OnePatch implements Mergeable {
 	}
 	
 	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		// TODO
 		int iidx = bbk.getLastInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
@@ -160,6 +171,11 @@ public class OnePatch implements Mergeable {
 		if (sourline != maxsl)
 		{
 			sourline = maxsl;
+		}
+		AFixSSABlockExtraInfo bbkinfo = ssablockinfo.get(bbk);
+		if (bbkinfo != null && bbkinfo.getDownboundinst() != null)
+		{
+			sourline = method.getLineNumber(bbkinfo.getDownboundinst().iindex);
 		}
 		// confirm.
 		// SSAInstruction is = bbk.getLastInstruction();
