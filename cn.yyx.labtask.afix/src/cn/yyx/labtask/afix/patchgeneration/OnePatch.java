@@ -22,7 +22,7 @@ public class OnePatch implements Mergeable {
 	
 	ErrorTrace et = null;
 	private String methodsig = null;
-	Set<AFixSSABlock> protectednodes = null;// ISSABasicBlock
+	Set<ISSABasicBlock> protectednodes = null;
 	IR ir = null;
 	SSACFG cfg = null;
 	List<Integer> insertbeginidxs = null;
@@ -30,8 +30,7 @@ public class OnePatch implements Mergeable {
 	List<Integer> insertsourcebeginidxs = null;
 	List<Integer> insertsourceendidxs = null;
 	
-	// ISSABasicBlock
-	public OnePatch(ErrorTrace et, String methodsig, Set<AFixSSABlock> protectednodes, IR ir, SSACFG cfg) {
+	public OnePatch(ErrorTrace et, String methodsig, Set<ISSABasicBlock> protectednodes, IR ir, SSACFG cfg) {
 		this.et = et;
 		this.setMethodsig(methodsig);
 		this.protectednodes = protectednodes;
@@ -81,7 +80,7 @@ public class OnePatch implements Mergeable {
 	}
 	
 	// ISSABasicBlock
-	private void IterateBlockToAddLockAndUnlock(AFixSSABlock now, SSACFG cfg, Set<AFixSSABlock> protectnodes, Set<ISSABasicBlock> visited, Set<ISSABasicBlock> blockprelock, Set<ISSABasicBlock> blockafterunlock, IR ir, final BasicBlock ent, final BasicBlock ext) throws InvalidClassFileException
+	private void IterateBlockToAddLockAndUnlock(ISSABasicBlock now, SSACFG cfg, Set<ISSABasicBlock> protectnodes, Set<ISSABasicBlock> visited, Set<ISSABasicBlock> blockprelock, Set<ISSABasicBlock> blockafterunlock, IR ir, final BasicBlock ent, final BasicBlock ext) throws InvalidClassFileException
 	{
 		if (visited.contains(now))
 		{
@@ -126,16 +125,14 @@ public class OnePatch implements Mergeable {
 		}
 	}
 	
-	// ISSABasicBlock
-	private Integer GetBasicBlockBeforePosition(AFixSSABlock bbk, IR ir) throws InvalidClassFileException {
-		int iidx = bbk.getSsablock().getFirstInstructionIndex();
+	private Integer GetBasicBlockBeforePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getFirstInstructionIndex();
 		return iidx;
 	}
 	
 	// ISSABasicBlockISSABasicBlock
-	private Integer GetBasicBlockBeforeSourcePosition(AFixSSABlock bbk, IR ir) throws InvalidClassFileException {
-		// TODO
-		int iidx = bbk.getSsablock().getFirstInstructionIndex();
+	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getFirstInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		int sourline = method.getLineNumber(iidx);// bytecodeIndex
@@ -143,8 +140,8 @@ public class OnePatch implements Mergeable {
 	}
 	
 	// ISSABasicBlock
-	private Integer GetBasicBlockAfterPosition(AFixSSABlock bbk, IR ir) throws InvalidClassFileException {
-		int iidx = bbk.getSsablock().getLastInstructionIndex();
+	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getLastInstructionIndex();
 		/*SSAInstruction is = bbk.getLastInstruction();
 		String content = is.toString();
 		if (content.startsWith("return"))
@@ -154,10 +151,8 @@ public class OnePatch implements Mergeable {
 		return iidx;
 	}
 	
-	// ISSABasicBlock
-	private Integer GetBasicBlockAfterSourcePosition(AFixSSABlock bbk, IR ir) throws InvalidClassFileException {
-		// TODO
-		int iidx = bbk.getSsablock().getLastInstructionIndex();
+	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+		int iidx = bbk.getLastInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		int sourline = method.getLineNumber(iidx);// bytecodeIndex
@@ -176,11 +171,10 @@ public class OnePatch implements Mergeable {
 		return sourline;
 	}
 	
-	// ISSABasicBlock
-	private int GetMaxSourceLineOfBlock(AFixSSABlock bbk, ConcreteJavaMethod method)
+	private int GetMaxSourceLineOfBlock(ISSABasicBlock bbk, ConcreteJavaMethod method)
 	{
 		int maxs = 0;
-		Iterator<SSAInstruction> itr = bbk.getSsablock().iterator();
+		Iterator<SSAInstruction> itr = bbk.iterator();
 		while (itr.hasNext())
 		{
 			SSAInstruction si = itr.next();
@@ -230,11 +224,10 @@ public class OnePatch implements Mergeable {
 		// situation1: in same method and intersected.
 		if (getMethodsig().equals(iop.getMethodsig()))
 		{
-			// ISSABasicBlock
-			Iterator<AFixSSABlock> itr = iop.protectednodes.iterator();
+			Iterator<ISSABasicBlock> itr = iop.protectednodes.iterator();
 			while (itr.hasNext())
 			{
-				AFixSSABlock ibb = itr.next();
+				ISSABasicBlock ibb = itr.next();
 				if (protectednodes.contains(ibb))
 				{
 					intersected = true;
@@ -246,7 +239,7 @@ public class OnePatch implements Mergeable {
 				itr = iop.protectednodes.iterator();
 				while (itr.hasNext())
 				{
-					AFixSSABlock ibb = itr.next();
+					ISSABasicBlock ibb = itr.next();
 					protectednodes.add(ibb);
 				}
 				return this;
