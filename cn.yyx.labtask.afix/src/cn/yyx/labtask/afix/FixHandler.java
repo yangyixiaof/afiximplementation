@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.ibm.wala.ipa.callgraph.CallGraph;
@@ -32,32 +33,53 @@ public class FixHandler {
 	}
 	
 	// String inputjar, String outputjar, , String projectname
-	private void HandleTraces(List<OneErrorInfo> oeilist, CallGraph callGraph) throws Exception {
+	private void HandleTraces(List<OneErrorInfo> oeilist, CallGraph callGraph, IProgressMonitor monitor) throws Exception {
 		ExclusivePatchesManager epm = new ExclusivePatchesManager();
 		
 		System.err.println("OneErrorInfo List size:" + oeilist.size());
 		// System.exit(1);
 		
+		// 90% work here.
+		int idx = 0;
+		int totalidx = oeilist.size();
+		int temptotal = 0;
+		int avesize = 30/totalidx;
 		Iterator<OneErrorInfo> itr = oeilist.iterator();
 		while (itr.hasNext())
 		{
+			idx++;
+			
 			OneErrorInfo oei = itr.next();
 			ErrorTrace p = oei.getP();
 			ErrorTrace c = oei.getC();
 			ErrorTrace r = oei.getR();
 			// inputjar
+			
+			temptotal += avesize;
+			
+			monitor.subTask("Generate Patch:" + idx + "/" + totalidx + ".");
+			
 			OnePatchGenerator opg = new OnePatchGenerator(callGraph, p, c, r);
 			SameLockExclusivePatches sp = opg.GeneratePatch();
 			epm.AddOneExclusivePatch(sp);
+			
+			monitor.worked(avesize);
 		}
+		monitor.worked(30 - temptotal);
+		
+		monitor.subTask("Merge all patches......");
 		epm.MergeSelf();
+		monitor.worked(30);
+		
 		// JarModifier jm = new JarModifier(inputjar, outputjar);
 		// jm.HandleExclusivePatchesManager(epm);
+		monitor.subTask("Modify all source codes.");
 		SourceFileModifier sfm = new SourceFileModifier(ijp); // projectname
 		sfm.HandleExclusivePatchesManager(epm);
+		monitor.worked(30);
 	}
 	
-	public static void HandleRaceReport(String reportcontent, String javaprojectname, String mainclass)
+	public static void HandleRaceReport(String reportcontent, String javaprojectname, String mainclass, IProgressMonitor monitor)
 	{
 		File repf = new File("tempreport");
 		try {
@@ -66,12 +88,16 @@ public class FixHandler {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		HandleRaceReport(repf, javaprojectname, mainclass);
+		HandleRaceReport(repf, javaprojectname, mainclass, monitor);
 	}
 	
-	public static void HandleRaceReport(File reportfile, String javaprojectname, String mainclass)
+	public static void HandleRaceReport(File reportfile, String javaprojectname, String mainclass, IProgressMonitor monitor)
 	{
+		monitor.subTask("Transform main class name.");
 		mainclass = "L" + NameUtil.TranslateJVMNameToUnifiedForm(mainclass);
+		monitor.worked(1);
+		
+		monitor.subTask("Read race report.");
 		PCRPool pcr = null;
 		try {
 			// new File("RaceReport/report")
@@ -80,10 +106,16 @@ public class FixHandler {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		monitor.worked(3);
 		
+		monitor.subTask("Find suitable project.");
 		IJavaProject ijp = EclipseHelper.GetSpecifiedProject(javaprojectname);
+		monitor.worked(2);
+		
+		monitor.subTask("Build call graph.");
 		JDTFrontEnd jdtfe = new JDTFrontEnd(ijp, mainclass);
 		CallGraph jdtcg = jdtfe.getCallGraph();
+		monitor.worked(3);
 		
 		// printing.
 		/*try {
@@ -100,14 +132,18 @@ public class FixHandler {
 		// String outputjar = "TestOutputJar/Example4.jar";
 		// String projectname = "SourceDir";
 		
+		monitor.subTask("Get race traces.");
 		FixHandler fh = new FixHandler(ijp);
 		List<OneErrorInfo> oeilist = pcr.GetTraces(); // para: inputjar.
+		monitor.worked(1);
+		
 		try {
 			// fh.HandleTraces(oeilist, inputjar, outputjar, projectname);
-			fh.HandleTraces(oeilist, jdtcg);
+			fh.HandleTraces(oeilist, jdtcg, monitor);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		ClassHierarchyManager.Clear();
 	}
 	
