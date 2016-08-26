@@ -69,8 +69,8 @@ public class SourceFileModifier {
 	Map<String, TreeMap<String, Boolean>> filelocks = new TreeMap<String, TreeMap<String, Boolean>>();
 	Map<String, TreeMap<String, Boolean>> fileunlocks = new TreeMap<String, TreeMap<String, Boolean>>();
 	
-	Map<String, Boolean> addedlocks = new TreeMap<String, Boolean>();
-	Map<String, Boolean> addedunlocks = new TreeMap<String, Boolean>();
+	Map<String, Integer> addedlocks = new TreeMap<String, Integer>();
+	Map<String, Integer> addedunlocks = new TreeMap<String, Integer>();
 	
 	// String projectname
 	public SourceFileModifier(IJavaProject ijp) {
@@ -86,11 +86,16 @@ public class SourceFileModifier {
 
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm) throws InvalidClassFileException,
 			JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		
+		ModifyContent[] seps = new ModifyContent[epm.getSize()+1];
+		seps[0] = new ModifyContent(new IntegerWrapper(-1));
+		
 		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
 		int lockidx = 0;
 		while (itr.hasNext()) {
 			lockidx++;
-			String lockname = "lock" + lockidx;
+			final String lockname = "lock" + lockidx;
+			seps[lockidx] = new ModifyContent(new IntegerWrapper(lockidx));
 			SameLockExclusivePatches slep = itr.next();
 			Iterator<OnePatch> opitr = slep.GetIterator();
 			while (opitr.hasNext()) {
@@ -156,7 +161,7 @@ public class SourceFileModifier {
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("lock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
-						Statement newStatement = ast.newExpressionStatement(newInvocation);
+						// Statement newStatement = ast.newExpressionStatement(newInvocation);
 						
 						// testing
 						System.out.println("msig:" + msig + ";posline:" + posline + ";insertnodeBegin:" + insertnode
@@ -165,12 +170,20 @@ public class SourceFileModifier {
 						
 						// System.err.println("insertnode:" + insertnode + "\n;listrewrite block:" + ib);
 						
+						// TODO there is a big problem.
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
 						if (!addedlocks.containsKey(lockposition))
 						{
-							addedlocks.put(lockposition, true);
-							listRewrite.insertBefore(newStatement, insertnode, null);
+							addedlocks.put(lockposition, lockidx);
+							seps[lockidx].getOms().add(new OneModify(listRewrite, ast, newInvocation, insertnode, true));
+							// listRewrite.insertBefore(newStatement, insertnode, null);
 							PutMapAndValueList(filelocks, fileunique, lockname);
+						} else {
+							int tlidx = addedlocks.get(lockposition);
+							if (seps[tlidx].getLockidx() > seps[lockidx].getLockidx())
+							{
+								seps[tlidx].setLockidx(seps[lockidx].getLockidx());
+							}
 						}
 						// PutMapAndValueList(lockmap, lockname, newStatement);
 						// int lineNumber =
@@ -227,6 +240,8 @@ public class SourceFileModifier {
 				}
 			}
 		}
+		
+		// TODO handle variable seps.
 
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
