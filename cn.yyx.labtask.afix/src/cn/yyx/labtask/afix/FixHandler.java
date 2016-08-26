@@ -36,12 +36,17 @@ public class FixHandler {
 	private void HandleTraces(List<OneErrorInfo> oeilist, CallGraph callGraph, IProgressMonitor monitor) throws Exception {
 		ExclusivePatchesManager epm = new ExclusivePatchesManager();
 		
-		System.err.println("OneErrorInfo List size:" + oeilist.size());
+		int totalidx = oeilist.size();
+		System.err.println("OneErrorInfo List size:" + totalidx);
 		// System.exit(1);
 		
 		// 90% work here.
+		monitor.subTask("Start generating all patches, all size:" + totalidx + ".");
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		int idx = 0;
-		int totalidx = oeilist.size();
 		int temptotal = 0;
 		int avesize = 30/totalidx;
 		Iterator<OneErrorInfo> itr = oeilist.iterator();
@@ -57,23 +62,39 @@ public class FixHandler {
 			
 			temptotal += avesize;
 			
-			monitor.subTask("Generate Patch:" + idx + "/" + totalidx + ".");
+			monitor.subTask("Generate the patch:" + idx + "/" + totalidx + ".");
 			
 			OnePatchGenerator opg = new OnePatchGenerator(callGraph, p, c, r);
 			SameLockExclusivePatches sp = opg.GeneratePatch();
 			epm.AddOneExclusivePatch(sp);
 			
+			if (monitor.isCanceled())
+			{
+				return;
+			}
 			monitor.worked(avesize);
+		}
+		if (monitor.isCanceled())
+		{
+			return;
 		}
 		monitor.worked(30 - temptotal);
 		
 		monitor.subTask("Merge all patches......");
 		epm.MergeSelf();
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		monitor.worked(30);
 		
 		// JarModifier jm = new JarModifier(inputjar, outputjar);
 		// jm.HandleExclusivePatchesManager(epm);
 		monitor.subTask("Modify all source codes.");
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		SourceFileModifier sfm = new SourceFileModifier(ijp); // projectname
 		sfm.HandleExclusivePatchesManager(epm);
 		monitor.worked(30);
@@ -95,6 +116,10 @@ public class FixHandler {
 	{
 		monitor.subTask("Transform main class name.");
 		mainclass = "L" + NameUtil.TranslateJVMNameToUnifiedForm(mainclass);
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		monitor.worked(1);
 		
 		monitor.subTask("Read race report.");
@@ -106,15 +131,27 @@ public class FixHandler {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		monitor.worked(3);
 		
 		monitor.subTask("Find suitable project.");
 		IJavaProject ijp = EclipseHelper.GetSpecifiedProject(javaprojectname);
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		monitor.worked(2);
 		
 		monitor.subTask("Build call graph.");
 		JDTFrontEnd jdtfe = new JDTFrontEnd(ijp, mainclass);
 		CallGraph jdtcg = jdtfe.getCallGraph();
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		monitor.worked(3);
 		
 		// printing.
@@ -135,6 +172,10 @@ public class FixHandler {
 		monitor.subTask("Get race traces.");
 		FixHandler fh = new FixHandler(ijp);
 		List<OneErrorInfo> oeilist = pcr.GetTraces(); // para: inputjar.
+		if (monitor.isCanceled())
+		{
+			return;
+		}
 		monitor.worked(1);
 		
 		try {
