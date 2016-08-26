@@ -91,7 +91,10 @@ public class AtomFixesView extends ViewPart {
 	{
 		if (viewer != null)
 		{
-			viewer.refresh();
+			try {
+				viewer.refresh();
+			} catch (Exception e) {
+			}
 		}
 	}
 	
