@@ -57,8 +57,14 @@ public class AFixHandler extends AbstractHandler {
 					//		"Demo_Authenticate", "demo.Authenticate", monitor);
 					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"),
 					//		"Demo_Example2", "demo.Example2", monitor);
-					FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"),
-							"Demo_Example", "demo.Example", monitor);
+					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"),
+					//		"Demo_Example", "demo.Example", monitor);
+					FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"),
+							"Account_Account", "account.Account", monitor);
+					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"),
+					//		"Critical_Critical", "critical.Critical", monitor);
+					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"),
+					//		"Pingpong_PingPong", "pingpong.PingPong", monitor);
 					monitor.done();
 				}
 			});
