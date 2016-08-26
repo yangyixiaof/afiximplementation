@@ -1,0 +1,18 @@
+
+------------------ maximal-branch (z3): pingpong.PingPong -------------------
+
+Race: <pingpong.BuggedProgram: void pingPong()>|$r2 = r0.<pingpong.BuggedProgram: pingpong.PP pingPongPlayer>|85 - <pingpong.BuggedProgram: void pingPong()>|r0.<pingpong.BuggedProgram: pingpong.PP pingPongPlayer> = null|88
+Race: <pingpong.BuggedProgram: void pingPong()>|$i5 = r0.<pingpong.BuggedProgram: int bugAppearanceNumber>|93 - <pingpong.BuggedProgram: void pingPong()>|r0.<pingpong.BuggedProgram: int bugAppearanceNumber> = $i6|93
+Race: <pingpong.BuggedProgram: void pingPong()>|r0.<pingpong.BuggedProgram: int bugAppearanceNumber> = $i6|93 - <pingpong.BuggedProgram: void pingPong()>|r0.<pingpong.BuggedProgram: int bugAppearanceNumber> = $i6|93
+Trace Size: 188
+Total #Threads: 18
+Total #SharedVariables: 2
+Total #Shared Read-Writes: 51
+Total #Local Read-Writes: 39
+Total #Initial Writes: 25
+Total #Synchronizations: 17
+Total #Branches: 56
+Total #Property Events: 0
+Total #Potential Violations: 3
+Total #Real Violations: 3
+Total Time: 633ms
