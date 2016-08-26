@@ -1,11 +1,12 @@
 package cn.yyx.labtask.afix.classmodification;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class IntegerWrapper {
 	
-	private List<IntegerWrapper> connected = new LinkedList<IntegerWrapper>();
+	private Set<IntegerWrapper> connected = new HashSet<IntegerWrapper>();
 	private int iv = -1;
 	
 	public IntegerWrapper(int iv) {
@@ -19,9 +20,19 @@ public class IntegerWrapper {
 	private void setIv(int iv) {
 		this.iv = iv;
 	}
-
-	public List<IntegerWrapper> getConnected() {
-		return connected;
+	
+	public void AddConnectedIntegerWrapper(IntegerWrapper iw, boolean needreverse)
+	{
+		connected.add(iw);
+		if (needreverse)
+		{
+			iw.AddConnectedIntegerWrapper(this, false);
+		}
+	}
+	
+	public Iterator<IntegerWrapper> GetIterator()
+	{
+		return connected.iterator();
 	}
 	
 }

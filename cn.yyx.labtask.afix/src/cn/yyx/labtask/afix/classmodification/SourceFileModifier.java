@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -170,20 +169,16 @@ public class SourceFileModifier {
 						
 						// System.err.println("insertnode:" + insertnode + "\n;listrewrite block:" + ib);
 						
-						// TODO there is a big problem.
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
 						if (!addedlocks.containsKey(lockposition))
 						{
+							// listRewrite.insertBefore(newStatement, insertnode, null);
 							addedlocks.put(lockposition, lockidx);
 							seps[lockidx].getOms().add(new OneModify(listRewrite, ast, newInvocation, insertnode, true));
-							// listRewrite.insertBefore(newStatement, insertnode, null);
 							PutMapAndValueList(filelocks, fileunique, lockname);
 						} else {
 							int tlidx = addedlocks.get(lockposition);
-							if (seps[tlidx].getLockidx() > seps[lockidx].getLockidx())
-							{
-								seps[tlidx].setLockidx(seps[lockidx].getLockidx());
-							}
+							seps[tlidx].getLockidx().AddConnectedIntegerWrapper(seps[lockidx].getLockidx(), true);
 						}
 						// PutMapAndValueList(lockmap, lockname, newStatement);
 						// int lineNumber =
@@ -211,7 +206,7 @@ public class SourceFileModifier {
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("unlock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
-						Statement newStatement = ast.newExpressionStatement(newInvocation);
+						// Statement newStatement = ast.newExpressionStatement(newInvocation);
 						
 						// testing
 						System.out.println("posline:" + posline + ";insertnodeEnd:" + insertnode
@@ -221,11 +216,21 @@ public class SourceFileModifier {
 						// System.err.println("insertnode:" + insertnode);
 						
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
-						if (!addedunlocks.containsKey(lockposition))
+						/*if (!addedunlocks.containsKey(lockposition))
 						{
 							addedunlocks.put(lockposition, true);
 							listRewrite.insertAfter(newStatement, insertnode, null);
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
+						}*/
+						if (!addedunlocks.containsKey(lockposition))
+						{
+							// listRewrite.insertBefore(newStatement, insertnode, null);
+							addedunlocks.put(lockposition, lockidx);
+							seps[lockidx].getOms().add(new OneModify(listRewrite, ast, newInvocation, insertnode, false));
+							PutMapAndValueList(fileunlocks, fileunique, lockname);
+						} else {
+							int tlidx = addedunlocks.get(lockposition);
+							seps[tlidx].getLockidx().AddConnectedIntegerWrapper(seps[lockidx].getLockidx(), true);
 						}
 						// PutMapAndValueList(unlockmap, lockname,
 						// newStatement);
@@ -241,7 +246,7 @@ public class SourceFileModifier {
 			}
 		}
 		
-		// TODO handle variable seps.
+		// TODO handle variable seps, especially its IntegerWrapper.
 
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
