@@ -395,7 +395,12 @@ public class SourceFileModifier {
 				MethodInvocation newInvocation = om.getNewInvocation();
 				newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
 				Statement newStatement = ast.newExpressionStatement(newInvocation);
-				listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
+				if (om.isIsinsertbefore()) {
+					listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
+				} else {
+					listRewrite.insertAfter(newStatement, om.getInsertnode(), null);
+				}
+				
 			}
 		}
 	}
