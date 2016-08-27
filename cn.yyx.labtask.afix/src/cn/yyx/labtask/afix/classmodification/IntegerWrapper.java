@@ -4,8 +4,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class IntegerWrapper {
+public class IntegerWrapper implements Comparable<IntegerWrapper> {
 	
+	private ModifyContent mc = null;
 	private Set<IntegerWrapper> connected = new HashSet<IntegerWrapper>();
 	private int iv = -1;
 	
@@ -33,6 +34,19 @@ public class IntegerWrapper {
 	public Iterator<IntegerWrapper> GetIterator()
 	{
 		return connected.iterator();
+	}
+
+	@Override
+	public int compareTo(IntegerWrapper o) {
+		return new Integer(iv).compareTo(new Integer(o.iv));
+	}
+
+	public ModifyContent getMc() {
+		return mc;
+	}
+
+	public void setMc(ModifyContent mc) {
+		this.mc = mc;
 	}
 	
 }

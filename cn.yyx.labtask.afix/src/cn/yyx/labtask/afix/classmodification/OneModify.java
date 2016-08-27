@@ -29,7 +29,7 @@ public class OneModify {
 		this.listRewrite = listRewrite;
 	}
 
-	public MethodInvocation getNewStatement() {
+	public MethodInvocation getNewInvocation() {
 		return newInvocation;
 	}
 

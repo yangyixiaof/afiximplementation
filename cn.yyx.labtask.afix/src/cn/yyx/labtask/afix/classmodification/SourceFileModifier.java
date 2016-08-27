@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -18,6 +19,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -246,13 +248,25 @@ public class SourceFileModifier {
 			}
 		}
 		
-		// TODO handle variable seps, especially its IntegerWrapper.
-
+		// Handle variable seps, especially its IntegerWrapper.
+		Set<IntegerWrapper> alliterated = new TreeSet<IntegerWrapper>();
+		for (int i = 1;i < seps.length;i++)
+		{
+			Set<IntegerWrapper> oneiterated = new TreeSet<IntegerWrapper>();
+			ModifyContent tmc = seps[i];
+			IntegerWrapper tli = tmc.getLockidx();
+			if (!alliterated.contains(tli))
+			{
+				GenerateTheTrueRewrite(IterateToFindAllConnect(tli, oneiterated), oneiterated);
+				alliterated.addAll(oneiterated);
+			}
+		}
+		
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
-
+		
 		AFixFactory.CLear();
-
+		
 		Set<String> keys = allrewrites.keySet();
 		Iterator<String> kitr = keys.iterator();
 		while (kitr.hasNext()) {
@@ -264,7 +278,7 @@ public class SourceFileModifier {
 			File df = new File(fabpath);
 			FileUtil.ClearAndWriteToFile(document.get(), df);
 			CompilationUnit dcu = GetCompilationUnit(df);
-
+			
 			{
 				Set<String> lkeys = filelocks.keySet();
 				Iterator<String> litr = lkeys.iterator();
@@ -342,7 +356,50 @@ public class SourceFileModifier {
 		
 		AtomFixesView.RefreshViewer();
 	}
-
+	
+	private int IterateToFindAllConnect(IntegerWrapper start, Set<IntegerWrapper> iteraterecord)
+	{
+		int minlockidx = start.getIv();
+		iteraterecord.add(start);
+		Iterator<IntegerWrapper> itr = start.GetIterator();
+		while (itr.hasNext())
+		{
+			IntegerWrapper iw = itr.next();
+			if (iteraterecord.contains(iw))
+			{
+				continue;
+			}
+			int tempmin = IterateToFindAllConnect(iw, iteraterecord);
+			if (minlockidx > tempmin)
+			{
+				minlockidx = tempmin;
+			}
+		}
+		return minlockidx;
+	}
+	
+	private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord)
+	{
+		Iterator<IntegerWrapper> itr = iteraterecord.iterator();
+		while (itr.hasNext())
+		{
+			IntegerWrapper iw = itr.next();
+			ModifyContent mc = iw.getMc();
+			List<OneModify> oms = mc.getOms();
+			Iterator<OneModify> omitr = oms.iterator();
+			while (omitr.hasNext())
+			{
+				OneModify om = omitr.next();
+				ListRewrite listRewrite = om.getListRewrite();
+				AST ast = om.getAst();
+				MethodInvocation newInvocation = om.getNewInvocation();
+				newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
+				Statement newStatement = ast.newExpressionStatement(newInvocation);
+				listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
+			}
+		}
+	}
+	
 	private void GenerateAFixEntries(CompilationUnit cu, TreeMap<String, Boolean> lks, String fabpath, boolean islock) {
 		Set<String> ks = lks.keySet();
 		Iterator<String> itr = ks.iterator();
