@@ -129,16 +129,6 @@ public class AFixHandler extends AbstractHandler {
 	
 	private static void AddOneWholeRace(String content, String projectname, String mainclass)
 	{
-		// TODO
-		HandlerTreeNode input=new HandlerTreeNode("root");
-		HandlerTreeNode node1=new HandlerTreeNode("node1");
-		HandlerTreeNode node2=new HandlerTreeNode("node2");
-		input.setChildren(new TreeNode[]{node1,node2});
-	}
-	
-	private static void DeleteOneWholeRace(String projectname, String mainclass)
-	{
-		// TODO
 		boolean find = false;
 		HandlerTreeNode htn = null;
 		Iterator<HandlerTreeNode> hitr = hantasks1st.iterator();
@@ -148,19 +138,90 @@ public class AFixHandler extends AbstractHandler {
 			HandlerTask hantask = (HandlerTask) htn.getValue();
 			if (hantask.getProjectname().equals(projectname))
 			{
+				find = true;
 				break;
 			}
 		}
-		int removedidx = -1;
-		if (htn != null)
-		{
+		if (find) {
+			int findidx = -1;
 			TreeNode[] childs = htn.getChildren();
 			for (int i=0;i<childs.length;i++)
 			{
-				
+				TreeNode tn = childs[i];
+				HandlerTreeNode chtn = (HandlerTreeNode)tn;
+				HandlerTask hantask = (HandlerTask) chtn.getValue();
+				if (hantask.getMainclass().equals(mainclass))
+				{
+					findidx = i;
+					break;
+				}
+			}
+			if (findidx >= 0) {
+				childs[findidx] = new HandlerTreeNode(new HandlerStringTask(content, projectname, mainclass));
+			} else {
+				TreeNode[] newchilds = new HandlerTreeNode[childs.length+1];
+				for (int i=0;i<childs.length;i++)
+				{
+					newchilds[i] = childs[i];
+				}
+				newchilds[childs.length] = new HandlerTreeNode(new HandlerStringTask(content, projectname, mainclass));
+			}
+		} else {
+			HandlerTreeNode nhtn1st = new HandlerTreeNode(new HandlerStringTask(content, projectname, projectname));
+			HandlerTreeNode nhtn2nd = new HandlerTreeNode(new HandlerStringTask(content, projectname, mainclass));
+			nhtn1st.setChildren(new TreeNode[]{nhtn2nd});
+			hantasks1st.add(nhtn1st);
+		}
+	}
+	
+	private static void DeleteOneWholeRace(String projectname, String mainclass)
+	{
+		boolean find1st = false;
+		boolean find2nd = false;
+		HandlerTreeNode htn = null;
+		Iterator<HandlerTreeNode> hitr = hantasks1st.iterator();
+		while (hitr.hasNext())
+		{
+			htn = hitr.next();
+			HandlerTask hantask = (HandlerTask) htn.getValue();
+			if (hantask.getProjectname().equals(projectname))
+			{
+				find1st = true;
+				break;
 			}
 		}
-		if (!find)
+		if (find1st)
+		{
+			int removedidx = -1;
+			TreeNode[] childs = htn.getChildren();
+			for (int i=0;i<childs.length;i++)
+			{
+				TreeNode tn = childs[i];
+				HandlerTreeNode chtn = (HandlerTreeNode)tn;
+				HandlerTask hantask = (HandlerTask) chtn.getValue();
+				if (hantask.getMainclass().equals(mainclass))
+				{
+					find2nd = true;
+					removedidx = i;
+					break;
+				}
+			}
+			if (removedidx >= 0)
+			{
+				int idx = 0;
+				TreeNode[] newchilds = new HandlerTreeNode[childs.length-1];
+				for (int i=0;i<childs.length;i++)
+				{
+					if (i != removedidx)
+					{
+						newchilds[idx] = childs[i];
+						idx++;
+					}
+				}
+				htn.setChildren(newchilds);
+			}
+		}
+		if (!find2nd)
 		{
 			System.err.println("projectname:" + projectname + ";mainclass:" + mainclass + ", can not be found.");
 		}

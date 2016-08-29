@@ -1,6 +1,6 @@
 package cn.yyx.labtask.afix.handlers;
 
-public class HandlerTask implements Comparable<HandlerTask> {
+public abstract class HandlerTask implements Comparable<HandlerTask> {
 	
 	private String projectname = null;
 	private String mainclass = null;
