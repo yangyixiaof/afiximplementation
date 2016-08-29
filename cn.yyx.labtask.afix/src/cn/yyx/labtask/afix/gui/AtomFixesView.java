@@ -94,6 +94,7 @@ public class AtomFixesView extends ViewPart {
 			try {
 				viewer.refresh();
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
