@@ -201,15 +201,20 @@ public class AFixHandler extends AbstractHandler {
 				}
 			}
 			if (removedidx >= 0) {
-				int idx = 0;
-				TreeNode[] newchilds = new HandlerTreeNode[childs.length - 1];
-				for (int i = 0; i < childs.length; i++) {
-					if (i != removedidx) {
-						newchilds[idx] = childs[i];
-						idx++;
+				if (childs.length <= 1) {
+					// delete htn itself.
+					hantasks1st.remove(htn);
+				} else {
+					int idx = 0;
+					TreeNode[] newchilds = new HandlerTreeNode[childs.length - 1];
+					for (int i = 0; i < childs.length; i++) {
+						if (i != removedidx) {
+							newchilds[idx] = childs[i];
+							idx++;
+						}
 					}
+					htn.setChildren(newchilds);
 				}
-				htn.setChildren(newchilds);
 			}
 		}
 		if (!find2nd) {
