@@ -77,17 +77,20 @@ public class AFixHandler extends AbstractHandler {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					if (flag == Dialog.OK) {
 						Object obj = d.getFirstResult();
-						HandlerTreeNode tn = (HandlerTreeNode) obj;
-						HandlerTask hantask = (HandlerTask) tn.getValue();
-						monitor.beginTask("Start Task", 100);
-						if (hantask instanceof HandlerStringTask) {
-							HandlerStringTask strhantask = (HandlerStringTask) hantask;
-							FixHandler.HandleRaceReport(strhantask.getContent(), strhantask.getProjectname(),
-									strhantask.getMainclass(), monitor);
-						} else {
-							HandlerFileTask filehantask = (HandlerFileTask) hantask;
-							FixHandler.HandleRaceReport(filehantask.getReport_file(), filehantask.getProjectname(),
-									filehantask.getMainclass(), monitor);
+						if (obj != null)
+						{
+							HandlerTreeNode tn = (HandlerTreeNode) obj;
+							HandlerTask hantask = (HandlerTask) tn.getValue();
+							monitor.beginTask("Start Task", 100);
+							if (hantask instanceof HandlerStringTask) {
+								HandlerStringTask strhantask = (HandlerStringTask) hantask;
+								FixHandler.HandleRaceReport(strhantask.getContent(), strhantask.getProjectname(),
+										strhantask.getMainclass(), monitor);
+							} else {
+								HandlerFileTask filehantask = (HandlerFileTask) hantask;
+								FixHandler.HandleRaceReport(filehantask.getReport_file(), filehantask.getProjectname(),
+										filehantask.getMainclass(), monitor);
+							}
 						}
 						monitor.done();
 					}
