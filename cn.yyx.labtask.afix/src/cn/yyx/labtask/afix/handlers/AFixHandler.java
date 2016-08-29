@@ -1,6 +1,7 @@
 package cn.yyx.labtask.afix.handlers;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -138,6 +139,31 @@ public class AFixHandler extends AbstractHandler {
 	private static void DeleteOneWholeRace(String projectname, String mainclass)
 	{
 		// TODO
+		boolean find = false;
+		HandlerTreeNode htn = null;
+		Iterator<HandlerTreeNode> hitr = hantasks1st.iterator();
+		while (hitr.hasNext())
+		{
+			htn = hitr.next();
+			HandlerTask hantask = (HandlerTask) htn.getValue();
+			if (hantask.getProjectname().equals(projectname))
+			{
+				break;
+			}
+		}
+		int removedidx = -1;
+		if (htn != null)
+		{
+			TreeNode[] childs = htn.getChildren();
+			for (int i=0;i<childs.length;i++)
+			{
+				
+			}
+		}
+		if (!find)
+		{
+			System.err.println("projectname:" + projectname + ";mainclass:" + mainclass + ", can not be found.");
+		}
 	}
 	
 	private static TreeNode[] GenerateFirstLevelTreeNodes()
