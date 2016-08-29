@@ -64,12 +64,11 @@ public class AFixHandler extends AbstractHandler {
 				"critical.Critical");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "Pingpong_PingPong",
 				"pingpong.PingPong");
-
+		
 		System.err.println("Whole race size:" + hantasks1st.size());
-
+		
 		d.setInput(GenerateFirstLevelTreeNodes());// new TreeNode[]{input}
 		int flag = d.open();
-
 		if (flag == Dialog.OK) {
 			Object obj = d.getFirstResult();
 			if (obj != null) {
