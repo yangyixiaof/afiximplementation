@@ -1,11 +1,14 @@
 package cn.yyx.labtask.afix.handlers;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -26,6 +29,9 @@ import cn.yyx.labtask.afix.ideutil.EclipseHelper;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class AFixHandler extends AbstractHandler {
+	
+	private static Set<HandlerTreeNode> hantasks1st = new TreeSet<HandlerTreeNode>();
+	
 	/**
 	 * The constructor.
 	 */
@@ -48,16 +54,34 @@ public class AFixHandler extends AbstractHandler {
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					
-					ElementTreeSelectionDialog  d=new  ElementTreeSelectionDialog(window.getShell(), new LabelProvider(), new TreeNodeContentProvider());
-					TreeNode  input=new TreeNode("root");
-					TreeNode  node1=new TreeNode("node1");
-					TreeNode  node2=new TreeNode("node2");
-					 
-					input.setChildren(new TreeNode[]{node1,node2});
-					d.setInput(new TreeNode[]{input}); 
-					d.open();
+					ElementTreeSelectionDialog d = new ElementTreeSelectionDialog(window.getShell(), new LabelProvider(), new TreeNodeContentProvider());
 					
-					// TODO
+					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"), "Demo_Authenticate", "demo.Authenticate");
+					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"), "Demo_Example2", "demo.Example2");
+					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"), "Demo_Example", "demo.Example");
+					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"), "Account_Account", "account.Account");
+					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"), "Critical_Critical", "critical.Critical");
+					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "Pingpong_PingPong", "pingpong.PingPong");
+					
+					d.setInput(GenerateFirstLevelTreeNodes());// new TreeNode[]{input} 
+					d.open();
+					int flag = d.open();
+					if(flag == Dialog.OK) {
+						Object obj = d.getFirstResult();
+						HandlerTreeNode tn = (HandlerTreeNode)obj;
+						HandlerTask hantask = (HandlerTask) tn.getValue();
+						if (hantask instanceof HandlerStringTask) {
+							HandlerStringTask strhantask = (HandlerStringTask)hantask;
+							FixHandler.HandleRaceReport(strhantask.getContent(), strhantask.getProjectname(), strhantask.getMainclass(), monitor);
+							
+						} else {
+							HandlerFileTask filehantask = (HandlerFileTask)hantask;
+							FixHandler.HandleRaceReport(filehantask.getReport_file(), filehantask.getProjectname(), filehantask.getMainclass(), monitor);
+						}
+						System.err.println();
+					} else {
+						return;
+					}
 					
 					monitor.beginTask("Start Task", 100);
 					// example code.
@@ -83,6 +107,13 @@ public class AFixHandler extends AbstractHandler {
 					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"),
 					//		"Pingpong_PingPong", "pingpong.PingPong", monitor);
 					monitor.done();
+					
+					DeleteOneWholeRace("Demo_Authenticate", "demo.Authenticate");
+					DeleteOneWholeRace("Demo_Example2", "demo.Example2");
+					DeleteOneWholeRace("Demo_Example", "demo.Example");
+					DeleteOneWholeRace("Account_Account", "account.Account");
+					DeleteOneWholeRace("Critical_Critical", "critical.Critical");
+					DeleteOneWholeRace("Pingpong_PingPong", "pingpong.PingPong");
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -94,4 +125,24 @@ public class AFixHandler extends AbstractHandler {
 		MessageDialog.openInformation(window.getShell(), "Afix", "The process has been run over.");
 		return null;
 	}
+	
+	private static void AddOneWholeRace(String content, String projectname, String mainclass)
+	{
+		// TODO
+		HandlerTreeNode input=new HandlerTreeNode("root");
+		HandlerTreeNode node1=new HandlerTreeNode("node1");
+		HandlerTreeNode node2=new HandlerTreeNode("node2");
+		input.setChildren(new TreeNode[]{node1,node2});
+	}
+	
+	private static void DeleteOneWholeRace(String projectname, String mainclass)
+	{
+		// TODO
+	}
+	
+	private static TreeNode[] GenerateFirstLevelTreeNodes()
+	{
+		return (TreeNode[]) hantasks1st.toArray();
+	}
+	
 }
