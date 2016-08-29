@@ -64,6 +64,8 @@ public class AFixHandler extends AbstractHandler {
 					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"), "Critical_Critical", "critical.Critical");
 					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "Pingpong_PingPong", "pingpong.PingPong");
 					
+					System.err.println("Whole race size:" + hantasks1st.size());
+					
 					d.setInput(GenerateFirstLevelTreeNodes());// new TreeNode[]{input} 
 					d.open();
 					int flag = d.open();
@@ -72,19 +74,18 @@ public class AFixHandler extends AbstractHandler {
 						HandlerTreeNode tn = (HandlerTreeNode)obj;
 						HandlerTask hantask = (HandlerTask) tn.getValue();
 						if (hantask instanceof HandlerStringTask) {
+							monitor.beginTask("Start Task", 100);
 							HandlerStringTask strhantask = (HandlerStringTask)hantask;
 							FixHandler.HandleRaceReport(strhantask.getContent(), strhantask.getProjectname(), strhantask.getMainclass(), monitor);
-							
+							monitor.done();
 						} else {
+							monitor.beginTask("Start Task", 100);
 							HandlerFileTask filehantask = (HandlerFileTask)hantask;
 							FixHandler.HandleRaceReport(filehantask.getReport_file(), filehantask.getProjectname(), filehantask.getMainclass(), monitor);
+							monitor.done();
 						}
-						System.err.println();
-					} else {
-						return;
 					}
 					
-					monitor.beginTask("Start Task", 100);
 					// example code.
 					/*for (int i = 0; i < 100; i++) {
 						if (monitor.isCanceled()) {
@@ -107,7 +108,6 @@ public class AFixHandler extends AbstractHandler {
 					//		"Critical_Critical", "critical.Critical", monitor);
 					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"),
 					//		"Pingpong_PingPong", "pingpong.PingPong", monitor);
-					monitor.done();
 					
 					DeleteOneWholeRace("Demo_Authenticate", "demo.Authenticate");
 					DeleteOneWholeRace("Demo_Example2", "demo.Example2");
