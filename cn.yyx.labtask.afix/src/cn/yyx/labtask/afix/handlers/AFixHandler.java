@@ -30,9 +30,9 @@ import cn.yyx.labtask.afix.ideutil.EclipseHelper;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class AFixHandler extends AbstractHandler {
-	
+
 	private static Set<HandlerTreeNode> hantasks1st = new TreeSet<HandlerTreeNode>();
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -48,73 +48,49 @@ public class AFixHandler extends AbstractHandler {
 		// System.err.println("==================== split line in legend hahaha
 		// ====================");
 		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		
+
+		ElementTreeSelectionDialog d = new ElementTreeSelectionDialog(window.getShell(), new LabelProvider(),
+				new TreeNodeContentProvider());
+
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"), "Demo_Authenticate",
+				"demo.Authenticate");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"), "Demo_Example2",
+				"demo.Example2");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"), "Demo_Example",
+				"demo.Example");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"), "Account_Account",
+				"account.Account");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"), "Critical_Critical",
+				"critical.Critical");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "Pingpong_PingPong",
+				"pingpong.PingPong");
+
+		System.err.println("Whole race size:" + hantasks1st.size());
+
+		d.setInput(GenerateFirstLevelTreeNodes());// new TreeNode[]{input}
+		int flag = d.open();
+
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 		try {
 			dialog.run(true, true, new IRunnableWithProgress() {
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					
-					ElementTreeSelectionDialog d = new ElementTreeSelectionDialog(window.getShell(), new LabelProvider(), new TreeNodeContentProvider());
-					
-					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"), "Demo_Authenticate", "demo.Authenticate");
-					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"), "Demo_Example2", "demo.Example2");
-					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"), "Demo_Example", "demo.Example");
-					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"), "Account_Account", "account.Account");
-					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"), "Critical_Critical", "critical.Critical");
-					AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "Pingpong_PingPong", "pingpong.PingPong");
-					
-					System.err.println("Whole race size:" + hantasks1st.size());
-					
-					d.setInput(GenerateFirstLevelTreeNodes());// new TreeNode[]{input} 
-					d.open();
-					int flag = d.open();
-					if(flag == Dialog.OK) {
+					if (flag == Dialog.OK) {
 						Object obj = d.getFirstResult();
-						HandlerTreeNode tn = (HandlerTreeNode)obj;
+						HandlerTreeNode tn = (HandlerTreeNode) obj;
 						HandlerTask hantask = (HandlerTask) tn.getValue();
+						monitor.beginTask("Start Task", 100);
 						if (hantask instanceof HandlerStringTask) {
-							monitor.beginTask("Start Task", 100);
-							HandlerStringTask strhantask = (HandlerStringTask)hantask;
-							FixHandler.HandleRaceReport(strhantask.getContent(), strhantask.getProjectname(), strhantask.getMainclass(), monitor);
-							monitor.done();
+							HandlerStringTask strhantask = (HandlerStringTask) hantask;
+							FixHandler.HandleRaceReport(strhantask.getContent(), strhantask.getProjectname(),
+									strhantask.getMainclass(), monitor);
 						} else {
-							monitor.beginTask("Start Task", 100);
-							HandlerFileTask filehantask = (HandlerFileTask)hantask;
-							FixHandler.HandleRaceReport(filehantask.getReport_file(), filehantask.getProjectname(), filehantask.getMainclass(), monitor);
-							monitor.done();
+							HandlerFileTask filehantask = (HandlerFileTask) hantask;
+							FixHandler.HandleRaceReport(filehantask.getReport_file(), filehantask.getProjectname(),
+									filehantask.getMainclass(), monitor);
 						}
+						monitor.done();
 					}
-					
-					// example code.
-					/*for (int i = 0; i < 100; i++) {
-						if (monitor.isCanceled()) {
-							break;
-						}
-						TimeUnit.MILLISECONDS.sleep(200L);
-						monitor.subTask("Start sub task: " + i);
-						monitor.worked(1);
-					}*/
-					
-					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"),
-					//		"Demo_Authenticate", "demo.Authenticate", monitor);
-					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"),
-					//		"Demo_Example2", "demo.Example2", monitor);
-					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"),
-					//		"Demo_Example", "demo.Example", monitor);
-					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"),
-					//		"Account_Account", "account.Account", monitor);
-					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"),
-					//		"Critical_Critical", "critical.Critical", monitor);
-					// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"),
-					//		"Pingpong_PingPong", "pingpong.PingPong", monitor);
-					
-					DeleteOneWholeRace("Demo_Authenticate", "demo.Authenticate");
-					DeleteOneWholeRace("Demo_Example2", "demo.Example2");
-					DeleteOneWholeRace("Demo_Example", "demo.Example");
-					DeleteOneWholeRace("Account_Account", "account.Account");
-					DeleteOneWholeRace("Critical_Critical", "critical.Critical");
-					DeleteOneWholeRace("Pingpong_PingPong", "pingpong.PingPong");
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -122,22 +98,49 @@ public class AFixHandler extends AbstractHandler {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		MessageDialog.openInformation(window.getShell(), "Afix", "The process has been run over.");
+		// example code.
+		// for (int i = 0; i < 100; i++) {
+		// if (monitor.isCanceled()) {
+		// break;
+		// }
+		// TimeUnit.MILLISECONDS.sleep(200L);
+		// monitor.subTask("Start sub task: " + i);
+		// monitor.worked(1);
+		// }
+
+		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"),
+		// "Demo_Authenticate", "demo.Authenticate", monitor);
+		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"),
+		// "Demo_Example2", "demo.Example2", monitor);
+		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"),
+		// "Demo_Example", "demo.Example", monitor);
+		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"),
+		// "Account_Account", "account.Account", monitor);
+		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"),
+		// "Critical_Critical", "critical.Critical", monitor);
+		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"),
+		// "Pingpong_PingPong", "pingpong.PingPong", monitor);
+
+		DeleteOneWholeRace("Demo_Authenticate", "demo.Authenticate");
+		DeleteOneWholeRace("Demo_Example2", "demo.Example2");
+		DeleteOneWholeRace("Demo_Example", "demo.Example");
+		DeleteOneWholeRace("Account_Account", "account.Account");
+		DeleteOneWholeRace("Critical_Critical", "critical.Critical");
+		DeleteOneWholeRace("Pingpong_PingPong", "pingpong.PingPong");
+
 		return null;
 	}
-	
-	private static void AddOneWholeRace(String content, String projectname, String mainclass)
-	{
+
+	private static void AddOneWholeRace(String content, String projectname, String mainclass) {
 		boolean find = false;
 		HandlerTreeNode htn = null;
 		Iterator<HandlerTreeNode> hitr = hantasks1st.iterator();
-		while (hitr.hasNext())
-		{
+		while (hitr.hasNext()) {
 			htn = hitr.next();
 			HandlerTask hantask = (HandlerTask) htn.getValue();
-			if (hantask.getProjectname().equals(projectname))
-			{
+			if (hantask.getProjectname().equals(projectname)) {
 				find = true;
 				break;
 			}
@@ -145,13 +148,11 @@ public class AFixHandler extends AbstractHandler {
 		if (find) {
 			int findidx = -1;
 			TreeNode[] childs = htn.getChildren();
-			for (int i=0;i<childs.length;i++)
-			{
+			for (int i = 0; i < childs.length; i++) {
 				TreeNode tn = childs[i];
-				HandlerTreeNode chtn = (HandlerTreeNode)tn;
+				HandlerTreeNode chtn = (HandlerTreeNode) tn;
 				HandlerTask hantask = (HandlerTask) chtn.getValue();
-				if (hantask.getMainclass().equals(mainclass))
-				{
+				if (hantask.getMainclass().equals(mainclass)) {
 					findidx = i;
 					break;
 				}
@@ -159,9 +160,8 @@ public class AFixHandler extends AbstractHandler {
 			if (findidx >= 0) {
 				childs[findidx] = new HandlerTreeNode(new HandlerStringTask(content, projectname, mainclass));
 			} else {
-				TreeNode[] newchilds = new HandlerTreeNode[childs.length+1];
-				for (int i=0;i<childs.length;i++)
-				{
+				TreeNode[] newchilds = new HandlerTreeNode[childs.length + 1];
+				for (int i = 0; i < childs.length; i++) {
 					newchilds[i] = childs[i];
 				}
 				newchilds[childs.length] = new HandlerTreeNode(new HandlerStringTask(content, projectname, mainclass));
@@ -169,51 +169,42 @@ public class AFixHandler extends AbstractHandler {
 		} else {
 			HandlerTreeNode nhtn1st = new HandlerTreeNode(new HandlerStringTask(content, projectname, projectname));
 			HandlerTreeNode nhtn2nd = new HandlerTreeNode(new HandlerStringTask(content, projectname, mainclass));
-			nhtn1st.setChildren(new TreeNode[]{nhtn2nd});
+			nhtn1st.setChildren(new TreeNode[] { nhtn2nd });
 			hantasks1st.add(nhtn1st);
 		}
 	}
-	
-	private static void DeleteOneWholeRace(String projectname, String mainclass)
-	{
+
+	private static void DeleteOneWholeRace(String projectname, String mainclass) {
 		boolean find1st = false;
 		boolean find2nd = false;
 		HandlerTreeNode htn = null;
 		Iterator<HandlerTreeNode> hitr = hantasks1st.iterator();
-		while (hitr.hasNext())
-		{
+		while (hitr.hasNext()) {
 			htn = hitr.next();
 			HandlerTask hantask = (HandlerTask) htn.getValue();
-			if (hantask.getProjectname().equals(projectname))
-			{
+			if (hantask.getProjectname().equals(projectname)) {
 				find1st = true;
 				break;
 			}
 		}
-		if (find1st)
-		{
+		if (find1st) {
 			int removedidx = -1;
 			TreeNode[] childs = htn.getChildren();
-			for (int i=0;i<childs.length;i++)
-			{
+			for (int i = 0; i < childs.length; i++) {
 				TreeNode tn = childs[i];
-				HandlerTreeNode chtn = (HandlerTreeNode)tn;
+				HandlerTreeNode chtn = (HandlerTreeNode) tn;
 				HandlerTask hantask = (HandlerTask) chtn.getValue();
-				if (hantask.getMainclass().equals(mainclass))
-				{
+				if (hantask.getMainclass().equals(mainclass)) {
 					find2nd = true;
 					removedidx = i;
 					break;
 				}
 			}
-			if (removedidx >= 0)
-			{
+			if (removedidx >= 0) {
 				int idx = 0;
-				TreeNode[] newchilds = new HandlerTreeNode[childs.length-1];
-				for (int i=0;i<childs.length;i++)
-				{
-					if (i != removedidx)
-					{
+				TreeNode[] newchilds = new HandlerTreeNode[childs.length - 1];
+				for (int i = 0; i < childs.length; i++) {
+					if (i != removedidx) {
 						newchilds[idx] = childs[i];
 						idx++;
 					}
@@ -221,24 +212,21 @@ public class AFixHandler extends AbstractHandler {
 				htn.setChildren(newchilds);
 			}
 		}
-		if (!find2nd)
-		{
+		if (!find2nd) {
 			System.err.println("projectname:" + projectname + ";mainclass:" + mainclass + ", can not be found.");
 		}
 	}
-	
-	private static TreeNode[] GenerateFirstLevelTreeNodes()
-	{
+
+	private static TreeNode[] GenerateFirstLevelTreeNodes() {
 		TreeNode[] tns = new HandlerTreeNode[hantasks1st.size()];
 		Iterator<HandlerTreeNode> itr = hantasks1st.iterator();
 		int idx = 0;
-		while (itr.hasNext())
-		{
+		while (itr.hasNext()) {
 			HandlerTreeNode htn = itr.next();
 			tns[idx] = htn;
 			idx++;
 		}
 		return tns;
 	}
-	
+
 }
