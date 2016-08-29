@@ -22,6 +22,6 @@ idOrNumber : ID | NUMBER;
 
 NUMBER : [0-9]+;
 
-ID : [A-Za-z0-9\$\[\]\./\(\),]+;
+ID : [A-Za-z_0-9\$\[\]\./\(\),]+;
 
 WS : [ \t\r\n]+ -> skip;
