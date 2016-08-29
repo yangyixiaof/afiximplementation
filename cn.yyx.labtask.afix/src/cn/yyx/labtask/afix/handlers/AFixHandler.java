@@ -229,7 +229,16 @@ public class AFixHandler extends AbstractHandler {
 	
 	private static TreeNode[] GenerateFirstLevelTreeNodes()
 	{
-		return (TreeNode[]) hantasks1st.toArray();
+		TreeNode[] tns = new HandlerTreeNode[hantasks1st.size()];
+		Iterator<HandlerTreeNode> itr = hantasks1st.iterator();
+		int idx = 0;
+		while (itr.hasNext())
+		{
+			HandlerTreeNode htn = itr.next();
+			tns[idx] = htn;
+			idx++;
+		}
+		return tns;
 	}
 	
 }
