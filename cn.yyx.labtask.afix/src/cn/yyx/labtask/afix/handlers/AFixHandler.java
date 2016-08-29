@@ -70,15 +70,15 @@ public class AFixHandler extends AbstractHandler {
 		d.setInput(GenerateFirstLevelTreeNodes());// new TreeNode[]{input}
 		int flag = d.open();
 
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
-		try {
-			dialog.run(true, true, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					if (flag == Dialog.OK) {
-						Object obj = d.getFirstResult();
-						if (obj != null)
-						{
+		if (flag == Dialog.OK) {
+			Object obj = d.getFirstResult();
+			if (obj != null) {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
+				try {
+					dialog.run(true, true, new IRunnableWithProgress() {
+						@Override
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException, InterruptedException {
 							HandlerTreeNode tn = (HandlerTreeNode) obj;
 							HandlerTask hantask = (HandlerTask) tn.getValue();
 							monitor.beginTask("Start Task", 100);
@@ -91,18 +91,17 @@ public class AFixHandler extends AbstractHandler {
 								FixHandler.HandleRaceReport(filehantask.getReport_file(), filehantask.getProjectname(),
 										filehantask.getMainclass(), monitor);
 							}
+							monitor.done();
 						}
-						monitor.done();
-					}
+					});
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-			});
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+				MessageDialog.openInformation(window.getShell(), "Afix", "The process has been run over.");
+			}
 		}
-
-		MessageDialog.openInformation(window.getShell(), "Afix", "The process has been run over.");
 		// example code.
 		// for (int i = 0; i < 100; i++) {
 		// if (monitor.isCanceled()) {
