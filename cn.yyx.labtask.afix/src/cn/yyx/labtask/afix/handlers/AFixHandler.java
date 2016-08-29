@@ -71,14 +71,15 @@ public class AFixHandler extends AbstractHandler {
 		int flag = d.open();
 		if (flag == Dialog.OK) {
 			Object obj = d.getFirstResult();
-			if (obj != null) {
+			HandlerTreeNode tn = (HandlerTreeNode) obj;
+			
+			if (tn != null && !tn.hasChildren()) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 				try {
 					dialog.run(true, true, new IRunnableWithProgress() {
 						@Override
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException, InterruptedException {
-							HandlerTreeNode tn = (HandlerTreeNode) obj;
 							HandlerTask hantask = (HandlerTask) tn.getValue();
 							monitor.beginTask("Start Task", 100);
 							if (hantask instanceof HandlerStringTask) {
@@ -99,6 +100,8 @@ public class AFixHandler extends AbstractHandler {
 					e.printStackTrace();
 				}
 				MessageDialog.openInformation(window.getShell(), "Afix", "The process has been run over.");
+			} else {
+				MessageDialog.openInformation(window.getShell(), "Afix", "Invalid selection, the leaf tree node must be selected.");
 			}
 		}
 		// example code.
