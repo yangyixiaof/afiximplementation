@@ -101,7 +101,7 @@ public class AFixHandler extends AbstractHandler {
 				}
 				MessageDialog.openInformation(window.getShell(), "Afix", "The process has been run over.");
 			} else {
-				MessageDialog.openInformation(window.getShell(), "Afix", "Invalid selection, the leaf tree node must be selected.");
+				MessageDialog.openError(window.getShell(), "Afix", "Invalid selection, the leaf tree node must be selected.");
 			}
 		}
 		// example code.
