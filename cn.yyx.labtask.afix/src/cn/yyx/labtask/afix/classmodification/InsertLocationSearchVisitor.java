@@ -39,12 +39,15 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 						if (recordpos == -1) {
 							recordpos = startpos;
 							setInsertnodeAndBlock(node);
-						} else {
-							if (recordpos > startpos) {
-								recordpos = startpos;
-								setInsertnodeAndBlock(node);
-							}
+							return false;
 						}
+						// else
+						// {
+						//	if (recordpos > startpos) {
+						//		recordpos = startpos;
+						//		setInsertnodeAndBlock(node);
+						//	}
+						// }
 					}
 				} else {
 					if (endpos <= offsetfrombegining) {
@@ -58,11 +61,11 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 							}
 						}
 					} else {
-						if (offsetfrombegining >= startpos) {
-							recordpos = endpos;
-							setInsertnodeAndBlock(node);
-							return false;
-						}
+						// if (offsetfrombegining >= startpos) {
+						recordpos = endpos;
+						setInsertnodeAndBlock(node);
+						// }
+						return false;
 					}
 				}
 			}
