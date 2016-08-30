@@ -140,12 +140,15 @@ public class OnePatchGenerator {
 			IR ir = GetMethodIR(methodSig);
 
 			// printing.
-			/*try {
-				PrintUtil.PrintIR(callGraph.getClassHierarchy(), ir);
-			} catch (WalaException e) {
-				e.printStackTrace();
+			if (methodSig.equals("account.Account.Service(II)V"))
+			{
+				try {
+					cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), ir);
+				} catch (com.ibm.wala.util.WalaException e) {
+					e.printStackTrace();
+				}
+				System.exit(1);
 			}
-			System.exit(1);*/
 			
 			SSACFG cfg = ir.getControlFlowGraph();
 			// ISSABasicBlock
@@ -170,6 +173,7 @@ public class OnePatchGenerator {
 		IR ir = GetMethodIR(methodSig);
 		SSACFG cfg = ir.getControlFlowGraph();
 
+		// testing.
 		if (methodSig.equals("demo.Example2.main([Ljava/lang/String;)V")) {
 			System.out.println("haha haha.");
 		}
@@ -186,14 +190,14 @@ public class OnePatchGenerator {
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		pset.add(pbk.getISSABasicBlock());
 		pset.add(cbk.getISSABasicBlock());
-		if (!pbk.equals(cbk)) {
+		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset, cbk.getISSABasicBlock(), visited);
 		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
 		cset.add(pbk.getISSABasicBlock());
 		cset.add(cbk.getISSABasicBlock());
-		if (!pbk.equals(cbk)) {
+		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset, pbk.getISSABasicBlock(), visited);
 		}
