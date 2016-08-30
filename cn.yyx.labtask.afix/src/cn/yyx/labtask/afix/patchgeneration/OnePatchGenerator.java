@@ -138,9 +138,9 @@ public class OnePatchGenerator {
 			String methodSig = this.r.getSig();
 			int ridx = this.r.getLine();
 			IR ir = GetMethodIR(methodSig);
-
+			
 			// printing.
-			String pcmsig = this.p.getSig();
+			/*String pcmsig = this.p.getSig();
 			if (pcmsig.equals("account.Account.checkResult(I)V"))
 			{
 				try {
@@ -149,7 +149,7 @@ public class OnePatchGenerator {
 					e.printStackTrace();
 				}
 				System.exit(1);
-			}
+			}*/
 			
 			SSACFG cfg = ir.getControlFlowGraph();
 			// ISSABasicBlock
