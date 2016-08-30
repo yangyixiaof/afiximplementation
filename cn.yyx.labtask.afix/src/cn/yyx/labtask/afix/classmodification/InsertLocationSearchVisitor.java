@@ -24,70 +24,57 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 
 	@Override
 	public boolean preVisit2(ASTNode node) {
-		if (node != bigblock && node instanceof Statement) {
-			
+		if (before && node != bigblock && node instanceof Statement) {
 			// testing.
-			System.out.println("==========begin=========");
-			System.out.println("node:"+node);
-			System.out.println("offsetfrombegining:"+offsetfrombegining+";startpos:"+node.getStartPosition()+";endpos:"+(node.getStartPosition()+node.getLength()));
-			System.out.println("==========end=========");
-
+			// System.out.println("==========begin=========");
+			// System.out.println("node:" + node);
+			// System.out.println("offsetfrombegining:" + offsetfrombegining + ";startpos:" + node.getStartPosition()
+			//		+ ";endpos:" + (node.getStartPosition() + node.getLength()));
+			// System.out.println("==========end=========");
+			
 			int startpos = node.getStartPosition();
-			int endpos = node.getStartPosition() + node.getLength();
-
-			if (before) {
-				if (startpos >= offsetfrombegining) {
-					if (recordpos == -1) {
-						recordpos = startpos;
-						setProcessnode(node);
-					}
-					return false;
-					// else
-					// {
-					// if (recordpos > startpos) {
-					// recordpos = startpos;
-					// setInsertnodeAndBlock(node);
-					// }
-					// }
+			if (startpos >= offsetfrombegining) {
+				if (recordpos == -1) {
+					recordpos = startpos;
+					setProcessnode(node);
 				}
-			} else {
-				if (endpos <= offsetfrombegining) {
-					if (recordpos == -1) {
-						recordpos = endpos;
-						setProcessnode(node);
-					} else {
-						if (recordpos < endpos) {
-							recordpos = endpos;
-							setProcessnode(node);
-						}
-					}
-				} else {
-					if (offsetfrombegining >= startpos) {
-						recordpos = endpos;
-						setProcessnode(node);
-					}
-					return false;
-				}
+				return false;
+				// else
+				// {
+				// if (recordpos > startpos) {
+				// recordpos = startpos;
+				// setInsertnodeAndBlock(node);
+				// }
+				// }
 			}
 		}
 		return super.preVisit2(node);
 	}
 
-	// @Override
-	// public void postVisit(ASTNode node) {
-	// if (!before && node != bigblock)
-	// {
-	// if (node instanceof Statement) {
-	// System.out.println("==========begin=========");
-	// System.out.println("node:"+node);
-	// System.out.println("offsetfrombegining:"+offsetfrombegining+";start
-	// pos:"+node.getStartPosition()+";end
-	// pos:"+(node.getStartPosition()+node.getLength()));
-	// System.out.println("==========end=========");
-	// }
-	// }
-	// super.postVisit(node);
-	// }
+	@Override
+	public void postVisit(ASTNode node) {
+		if (!before && node != bigblock && node instanceof Statement && recordpos == -1) {
+			// System.out.println("==========begin=========");
+			// System.out.println("node:"+node);
+			// System.out.println("offsetfrombegining:"+offsetfrombegining+";start
+			// pos:"+node.getStartPosition()+";end
+			// pos:"+(node.getStartPosition()+node.getLength()));
+			// System.out.println("==========end=========");
+			
+			int startpos = node.getStartPosition();
+			int endpos = node.getStartPosition() + node.getLength();
+			if (endpos <= offsetfrombegining) {
+				recordpos = endpos;
+				setProcessnode(node);
+			} else {
+				if (offsetfrombegining >= startpos) {
+					recordpos = endpos;
+					setProcessnode(node);
+				}
+			}
+		}
+		super.postVisit(node);
+	}
 
 	public ASTNode getInsertnode() {
 		return insertnode;
