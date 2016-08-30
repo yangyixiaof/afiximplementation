@@ -49,7 +49,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 				}
 			} else {
 				int endpos = node.getStartPosition() + node.getLength();
-				if (endpos <= offsetfrombegining) {
+				if (endpos <= offsetfrombegining && recordpos < endpos) {
 					recordpos = endpos;
 					setProcessnode(node);
 					return false;
