@@ -92,7 +92,13 @@ public class AtomFixesView extends ViewPart {
 		if (viewer != null)
 		{
 			try {
-				viewer.refresh();
+				viewer.getTable().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						viewer.refresh();
+					}
+				});
+				// viewer.refresh();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
