@@ -203,6 +203,7 @@ public class SourceFileModifier {
 						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, false,
 								methodblock);
 						methodblock.accept(ilsv);
+						ilsv.ProcessInsertNode();
 						ASTNode insertnode = ilsv.getInsertnode();
 						Block ib = ilsv.getInsertblock();
 						ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
