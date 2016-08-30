@@ -24,28 +24,36 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 
 	@Override
 	public boolean preVisit2(ASTNode node) {
-		if (before && node != bigblock && node instanceof Statement) {
+		if (node != bigblock && node instanceof Statement) {
 			// testing.
 			// System.out.println("==========begin=========");
 			// System.out.println("node:" + node);
 			// System.out.println("offsetfrombegining:" + offsetfrombegining + ";startpos:" + node.getStartPosition()
 			//		+ ";endpos:" + (node.getStartPosition() + node.getLength()));
 			// System.out.println("==========end=========");
-			
-			int startpos = node.getStartPosition();
-			if (startpos >= offsetfrombegining) {
-				if (recordpos == -1) {
-					recordpos = startpos;
-					setProcessnode(node);
+			if (before) {
+				int startpos = node.getStartPosition();
+				if (startpos >= offsetfrombegining) {
+					if (recordpos == -1) {
+						recordpos = startpos;
+						setProcessnode(node);
+					}
+					return false;
+					// else
+					// {
+					// if (recordpos > startpos) {
+					// recordpos = startpos;
+					// setInsertnodeAndBlock(node);
+					// }
+					// }
 				}
-				return false;
-				// else
-				// {
-				// if (recordpos > startpos) {
-				// recordpos = startpos;
-				// setInsertnodeAndBlock(node);
-				// }
-				// }
+			} else {
+				int endpos = node.getStartPosition() + node.getLength();
+				if (endpos <= offsetfrombegining) {
+					recordpos = endpos;
+					setProcessnode(node);
+					return false;
+				}
 			}
 		}
 		return super.preVisit2(node);
@@ -53,7 +61,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 
 	@Override
 	public void postVisit(ASTNode node) {
-		if (!before && node != bigblock && node instanceof Statement && recordpos == -1) {
+		if (!before && node != bigblock && node instanceof Statement) {
 			// System.out.println("==========begin=========");
 			// System.out.println("node:"+node);
 			// System.out.println("offsetfrombegining:"+offsetfrombegining+";start
@@ -63,11 +71,9 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 			
 			int startpos = node.getStartPosition();
 			int endpos = node.getStartPosition() + node.getLength();
-			if (endpos <= offsetfrombegining) {
-				recordpos = endpos;
-				setProcessnode(node);
-			} else {
-				if (offsetfrombegining >= startpos) {
+			if (endpos >= offsetfrombegining && offsetfrombegining >= startpos) {
+				if (recordpos <= startpos)
+				{
 					recordpos = endpos;
 					setProcessnode(node);
 				}
