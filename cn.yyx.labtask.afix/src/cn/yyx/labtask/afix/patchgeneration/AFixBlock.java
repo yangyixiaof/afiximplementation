@@ -28,4 +28,9 @@ public class AFixBlock {
 		this.asbei = asbei;
 	}
 	
+	@Override
+	public String toString() {
+		return "BasicBlock:" + rbk + ";BlockExtraInfo:" + asbei;
+	}
+	
 }

@@ -28,4 +28,9 @@ public class AFixSSABlockExtraInfo {
 		this.downboundinst = downboundinst;
 	}
 	
+	@Override
+	public String toString() {
+		return "Up:" + upboundinst + ";Down:" + downboundinst;
+	}
+	
 }
