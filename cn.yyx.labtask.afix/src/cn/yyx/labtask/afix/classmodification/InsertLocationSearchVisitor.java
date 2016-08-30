@@ -9,15 +9,11 @@ import org.eclipse.jdt.core.dom.SynchronizedStatement;
 public class InsertLocationSearchVisitor extends ASTVisitor {
 
 	private ASTNode insertnode = null;
-	
+	private ASTNode processnode = null;
 	private Block insertblock = null;
-
 	int offsetfrombegining = -1;
-
 	boolean before = false;
-
 	int recordpos = -1;
-	
 	Block bigblock = null;
 
 	public InsertLocationSearchVisitor(int offsetfrombegining, boolean before, Block bigblock) {
@@ -27,10 +23,8 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	}
 	
 	@Override
-	public void preVisit(ASTNode node) {
-		if (before && node != bigblock)
-		{			
-			if (node instanceof Statement) {
+	public boolean preVisit2(ASTNode node) {
+			if (node != bigblock && node instanceof Statement) {
 				
 				// System.out.println("==========begin=========");
 				// System.out.println("node:"+node);
@@ -38,56 +32,68 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 				// System.out.println("==========end=========");
 				
 				int startpos = node.getStartPosition();
-				if (startpos >= offsetfrombegining) {
-					if (recordpos == -1) {
-						recordpos = startpos;
-						setInsertnodeAndBlock(node);
-					} else {
-						if (recordpos > startpos) {
+				int endpos = node.getStartPosition()+node.getLength();
+				
+				if (before) {
+					if (startpos >= offsetfrombegining) {
+						if (recordpos == -1) {
 							recordpos = startpos;
 							setInsertnodeAndBlock(node);
+						} else {
+							if (recordpos > startpos) {
+								recordpos = startpos;
+								setInsertnodeAndBlock(node);
+							}
+						}
+					}
+				} else {
+					if (endpos <= offsetfrombegining) {
+						if (recordpos == -1) {
+							recordpos = endpos;
+							setInsertnodeAndBlock(node);
+						} else {
+							if (recordpos < endpos) {
+								recordpos = endpos;
+								setInsertnodeAndBlock(node);
+							}
+						}
+					} else {
+						if (offsetfrombegining >= startpos) {
+							recordpos = endpos;
+							setInsertnodeAndBlock(node);
+							return false;
 						}
 					}
 				}
 			}
-		}
-		super.preVisit(node);
+		return super.preVisit2(node);
 	}
 
-	@Override
-	public void postVisit(ASTNode node) {
-		if (!before && node != bigblock)
-		{
-			if (node instanceof Statement) {
-				
+	// @Override
+	// public void postVisit(ASTNode node) {
+	//	if (!before && node != bigblock)
+	//	{
+	//		if (node instanceof Statement) {
 				// System.out.println("==========begin=========");
 				// System.out.println("node:"+node);
 				// System.out.println("offsetfrombegining:"+offsetfrombegining+";start pos:"+node.getStartPosition()+";end pos:"+(node.getStartPosition()+node.getLength()));
 				// System.out.println("==========end=========");
-				
-				int endpos = node.getStartPosition()+node.getLength();
-				if (endpos <= offsetfrombegining) {
-					if (recordpos == -1) {
-						recordpos = endpos;
-						setInsertnodeAndBlock(node);
-					} else {
-						if (recordpos < endpos) {
-							recordpos = endpos;
-							setInsertnodeAndBlock(node);
-						}
-					}
-				}
-			}
-		}
-		super.postVisit(node);
-	}
+	//		}
+	//	}
+	//	super.postVisit(node);
+	// }
 	
 	public ASTNode getInsertnode() {
 		return insertnode;
 	}
 	
 	private void setInsertnodeAndBlock(ASTNode insertnode) {
-		this.insertnode = insertnode;
+		this.processnode = insertnode;
+	}
+	
+	public void ProcessInsertNode()
+	{
+		this.insertnode = this.processnode;
 		ASTNode synnode = GetMostFarSynchronizedNode(insertnode);
 		if (synnode != null)
 		{
@@ -100,7 +106,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		this.insertblock = (Block) temp;
 	}
-	// TODO
+	
 	private ASTNode GetMostFarSynchronizedNode(ASTNode insertnode)
 	{
 		ASTNode synnode = null;
