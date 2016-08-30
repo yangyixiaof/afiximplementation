@@ -21,112 +21,110 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		this.before = before;
 		this.bigblock = bigblock;
 	}
-	
+
 	@Override
 	public boolean preVisit2(ASTNode node) {
-			if (node != bigblock && node instanceof Statement) {
-				
-				// System.out.println("==========begin=========");
-				// System.out.println("node:"+node);
-				// System.out.println("offsetfrombegining:"+offsetfrombegining+";start pos:"+node.getStartPosition()+";end pos:"+(node.getStartPosition()+node.getLength()));
-				// System.out.println("==========end=========");
-				
-				int startpos = node.getStartPosition();
-				int endpos = node.getStartPosition()+node.getLength();
-				
-				if (before) {
-					if (startpos >= offsetfrombegining) {
-						if (recordpos == -1) {
-							recordpos = startpos;
-							setInsertnodeAndBlock(node);
-							return false;
-						}
-						// else
-						// {
-						//	if (recordpos > startpos) {
-						//		recordpos = startpos;
-						//		setInsertnodeAndBlock(node);
-						//	}
-						// }
-					}
-				} else {
-					if (endpos <= offsetfrombegining) {
-						if (recordpos == -1) {
-							recordpos = endpos;
-							setInsertnodeAndBlock(node);
-						} else {
-							if (recordpos < endpos) {
-								recordpos = endpos;
-								setInsertnodeAndBlock(node);
-							}
-						}
-					} else {
-						// if (offsetfrombegining >= startpos) {
-						recordpos = endpos;
-						setInsertnodeAndBlock(node);
-						// }
+		if (node != bigblock && node instanceof Statement) {
+
+			// System.out.println("==========begin=========");
+			// System.out.println("node:"+node);
+			// System.out.println("offsetfrombegining:"+offsetfrombegining+";start
+			// pos:"+node.getStartPosition()+";end
+			// pos:"+(node.getStartPosition()+node.getLength()));
+			// System.out.println("==========end=========");
+
+			int startpos = node.getStartPosition();
+			int endpos = node.getStartPosition() + node.getLength();
+
+			if (before) {
+				if (startpos >= offsetfrombegining) {
+					if (recordpos == -1) {
+						recordpos = startpos;
+						setProcessnode(node);
 						return false;
 					}
+					// else
+					// {
+					// if (recordpos > startpos) {
+					// recordpos = startpos;
+					// setInsertnodeAndBlock(node);
+					// }
+					// }
+				}
+			} else {
+				if (endpos <= offsetfrombegining) {
+					if (recordpos == -1) {
+						recordpos = endpos;
+						setProcessnode(node);
+					} else {
+						if (recordpos < endpos) {
+							recordpos = endpos;
+							setProcessnode(node);
+						}
+					}
+				} else {
+					// if (offsetfrombegining >= startpos) {
+					recordpos = endpos;
+					setProcessnode(node);
+					// }
+					return false;
 				}
 			}
+		}
 		return super.preVisit2(node);
 	}
 
 	// @Override
 	// public void postVisit(ASTNode node) {
-	//	if (!before && node != bigblock)
-	//	{
-	//		if (node instanceof Statement) {
-				// System.out.println("==========begin=========");
-				// System.out.println("node:"+node);
-				// System.out.println("offsetfrombegining:"+offsetfrombegining+";start pos:"+node.getStartPosition()+";end pos:"+(node.getStartPosition()+node.getLength()));
-				// System.out.println("==========end=========");
-	//		}
-	//	}
-	//	super.postVisit(node);
+	// if (!before && node != bigblock)
+	// {
+	// if (node instanceof Statement) {
+	// System.out.println("==========begin=========");
+	// System.out.println("node:"+node);
+	// System.out.println("offsetfrombegining:"+offsetfrombegining+";start
+	// pos:"+node.getStartPosition()+";end
+	// pos:"+(node.getStartPosition()+node.getLength()));
+	// System.out.println("==========end=========");
 	// }
-	
+	// }
+	// super.postVisit(node);
+	// }
+
 	public ASTNode getInsertnode() {
 		return insertnode;
 	}
-	
-	private void setInsertnodeAndBlock(ASTNode insertnode) {
+
+	private void setProcessnode(ASTNode insertnode) {
 		this.processnode = insertnode;
 	}
-	
-	public void ProcessInsertNode()
-	{
+
+	public void ProcessInsertNode() {
 		this.insertnode = this.processnode;
 		ASTNode synnode = GetMostFarSynchronizedNode(insertnode);
-		if (synnode != null)
-		{
+		if (synnode != null) {
 			this.insertnode = synnode;
 		}
 		ASTNode temp = this.insertnode.getParent();
-		while (!(temp instanceof Block))
-		{
+		while (!(temp instanceof Block)) {
 			temp = temp.getParent();
 		}
 		this.insertblock = (Block) temp;
 	}
-	
-	private ASTNode GetMostFarSynchronizedNode(ASTNode insertnode)
-	{
+
+	private ASTNode GetMostFarSynchronizedNode(ASTNode insertnode) {
 		ASTNode synnode = null;
 		ASTNode temp = insertnode.getParent();
-		while (temp != null && temp != bigblock)
-		{
-			if (temp instanceof SynchronizedStatement)
-			{
+		while (temp != null && temp != bigblock) {
+			if (temp instanceof SynchronizedStatement) {
 				synnode = temp;
 			}
 			temp = temp.getParent();
 		}
 		return synnode;
 	}
-	
+
 	public Block getInsertblock() {
 		return insertblock;
 	}
-	
+
 }
