@@ -78,7 +78,7 @@ public class OnePatchGenerator {
 				int pidx = this.p.getLine();
 				int cidx = this.c.getLine();
 				int ridx = rel.getLine();
-				if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx)) {
+				if ((pidx <= ridx && ridx <= cidx) || (cidx <= ridx && ridx <= pidx)) {
 					overlap = true;
 					overlapflag = 0;
 					issitu1 = true;
@@ -93,7 +93,7 @@ public class OnePatchGenerator {
 						int pidx = this.p.getLine();
 						int cidx = this.c.getLine();
 						int ridx = tel.getLine();
-						if ((pidx < ridx && ridx < cidx) || (cidx < ridx && ridx < pidx)) {
+						if ((pidx <= ridx && ridx <= cidx) || (cidx <= ridx && ridx <= pidx)) {
 							overlap = true;
 							overlapflag = 1;
 							this.r = tel;
