@@ -140,10 +140,11 @@ public class OnePatchGenerator {
 			IR ir = GetMethodIR(methodSig);
 
 			// printing.
-			if (methodSig.equals("account.Account.Service(II)V"))
+			String pcmsig = this.p.getSig();
+			if (pcmsig.equals("account.Account.checkResult(I)V"))
 			{
 				try {
-					cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), ir);
+					cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), GetMethodIR(pcmsig));
 				} catch (com.ibm.wala.util.WalaException e) {
 					e.printStackTrace();
 				}
