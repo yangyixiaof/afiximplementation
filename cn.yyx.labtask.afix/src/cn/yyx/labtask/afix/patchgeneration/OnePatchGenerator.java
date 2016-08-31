@@ -209,11 +209,25 @@ public class OnePatchGenerator {
 		Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
 		if (pbk.getAFixSSABlockExtraInfo() != null)
 		{
-			ssablockinfo.put(pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
+			AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(pbk.getISSABasicBlock());
+			if (extrainfo == null) {
+				ssablockinfo.put(pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
+			} else {
+				if (extrainfo.getUpboundinst() == null) {
+					extrainfo.setUpboundinst(pbk.getAFixSSABlockExtraInfo().getUpboundinst());
+				}
+			}
 		}
 		if (cbk.getAFixSSABlockExtraInfo() != null)
 		{
-			ssablockinfo.put(cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
+			AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(cbk.getISSABasicBlock());
+			if (extrainfo == null) {
+				ssablockinfo.put(cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
+			} else {
+				if (extrainfo.getDownboundinst() == null) {
+					extrainfo.setDownboundinst(cbk.getAFixSSABlockExtraInfo().getDownboundinst());
+				}
+			}
 		}
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg, ssablockinfo);
 		ops.AddPatches(op);
