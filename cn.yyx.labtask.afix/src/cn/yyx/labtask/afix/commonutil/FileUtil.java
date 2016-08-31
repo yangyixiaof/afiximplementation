@@ -165,7 +165,8 @@ public class FileUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return totaloffset - soff - 1;
+		int finaloff = totaloffset - soff - 1;
+		return finaloff;
 	}
 	
 }

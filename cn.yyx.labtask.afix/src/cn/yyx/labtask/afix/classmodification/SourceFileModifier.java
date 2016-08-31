@@ -197,7 +197,7 @@ public class SourceFileModifier {
 						// pil, true);
 					}
 				}
-
+				
 				{
 					Iterator<Integer> seitr = op.GetInsertPosEndSourceIterator();
 					while (seitr.hasNext()) {
@@ -216,14 +216,14 @@ public class SourceFileModifier {
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
 						// Statement newStatement =
 						// ast.newExpressionStatement(newInvocation);
-
+						
 						// testing
 						System.out.println("posline:" + posline + ";insertnodeEnd:" + insertnode
 								+ ";insertnodestartpos:" + insertnode.getStartPosition() + ";insertnodeendpos:"
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
-
+						
 						// System.err.println("insertnode:" + insertnode);
-
+						
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
 						/*
 						 * if (!addedunlocks.containsKey(lockposition)) {
@@ -399,11 +399,16 @@ public class SourceFileModifier {
 					// try {
 					listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
 					// } catch (Exception e) {
-					// System.err.println("insert node:" + om.getInsertnode());
+					// System.err.println("insert before node:" + om.getInsertnode());
 					// throw e;
 					// }
 				} else {
-					listRewrite.insertAfter(newStatement, om.getInsertnode(), null);
+					try {
+						listRewrite.insertAfter(newStatement, om.getInsertnode(), null);
+					} catch (Exception e) {
+						System.err.println("insert after node:" + om.getInsertnode());
+						throw e;
+					}
 				}
 
 			}
