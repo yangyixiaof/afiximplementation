@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.channels.FileChannel;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -21,6 +23,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+
+import cn.yyx.labtask.afix.classmodification.ASTHelper;
 
 public class FileUtil {
 	
@@ -64,7 +72,29 @@ public class FileUtil {
 				GetAllFilesInADirectory(fs[i], map);
 			}
 		} else {
-			map.put(f.getAbsolutePath(), f);
+			if (f.getAbsolutePath().endsWith(".java"))
+			{
+				CompilationUnit cu = ASTHelper.GetCompilationUnit(f);
+				PackageDeclaration packetDec = cu.getPackage();
+				String packinfo = packetDec.getName().toString();
+				@SuppressWarnings("unchecked")
+				List<ASTNode> types = cu.types();
+				Iterator<ASTNode> titr = types.iterator();
+				while (titr.hasNext())
+				{
+					ASTNode astnode = titr.next();
+					if (astnode instanceof TypeDeclaration)
+					{
+						TypeDeclaration typeDec = (TypeDeclaration)astnode;
+						String fullname = packinfo + "." + typeDec.getName().toString();
+						
+						// testing
+						// System.err.println("test java file's class full name :" + fullname);
+						
+						map.put(fullname, f);
+					}
+				}
+			}
 		}
 	}
 

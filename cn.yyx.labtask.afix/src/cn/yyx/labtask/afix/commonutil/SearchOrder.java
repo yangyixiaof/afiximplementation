@@ -22,7 +22,7 @@ public class SearchOrder {
 	int classidx = 0;
 	boolean isrightclass = false;
 	
-	public SearchOrder(String msig) { 
+	public SearchOrder(String msig) {
 		int ll = msig.indexOf('(');
 		String type = msig.substring(0, ll);
 		int rd = type.lastIndexOf('.');

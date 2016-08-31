@@ -44,8 +44,9 @@ public class SourceFileModifier {
 	IJavaProject project = null;
 
 	// String sourcefolder = null;
+	// key is the qualified full name of a class.
 	Map<String, File> allfiles = new TreeMap<String, File>();
-	Map<String, File> exactmatchfile = new TreeMap<String, File>();
+	// Map<String, File> exactmatchfile = new TreeMap<String, File>();
 
 	// key is exact file absolute path
 	Map<String, String> filecontent = new TreeMap<String, String>();
@@ -69,10 +70,10 @@ public class SourceFileModifier {
 
 	Map<String, TreeMap<String, Boolean>> filelocks = new TreeMap<String, TreeMap<String, Boolean>>();
 	Map<String, TreeMap<String, Boolean>> fileunlocks = new TreeMap<String, TreeMap<String, Boolean>>();
-	
+
 	Map<String, Integer> addedlocks = new TreeMap<String, Integer>();
 	Map<String, Integer> addedunlocks = new TreeMap<String, Integer>();
-	
+
 	// String projectname
 	public SourceFileModifier(IJavaProject ijp) {
 		this.project = ijp;
@@ -87,10 +88,10 @@ public class SourceFileModifier {
 
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm) throws InvalidClassFileException,
 			JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
-		
-		ModifyContent[] seps = new ModifyContent[epm.getSize()+1];
+
+		ModifyContent[] seps = new ModifyContent[epm.getSize() + 1];
 		seps[0] = new ModifyContent(new IntegerWrapper(-1));
-		
+
 		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
 		int lockidx = 0;
 		while (itr.hasNext()) {
@@ -107,9 +108,9 @@ public class SourceFileModifier {
 				CompilationUnit cu = GetCompilationUnit(msig);
 				AST ast = GetAST(msig);
 				ASTRewrite aw = GetASTRewriteAccordingToMethodSig(msig, ast);
-				
+
 				String fileunique = GetFileUnique(mtype);
-				
+
 				// LinkedList<Integer> inip = initialpositions.get(fileunique);
 				// if (inip == null)
 				// {
@@ -128,18 +129,18 @@ public class SourceFileModifier {
 				// pil = new LinkedList<Boolean>();
 				// positionislock.put(fileunique, pil);
 				// }
-				
+
 				SearchOrder so = new SearchOrder(msig);
 				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
 				cu.accept(blvisitor);
 				Block methodblock = blvisitor.getResult();
-				
+
 				if (methodblock == null) {
 					System.out.println("methodblock:" + methodblock);
 					new Exception("methodblock null, the system will exit.").printStackTrace();
 					System.exit(1);
 				}
-				
+
 				{
 					Iterator<Integer> sbitr = op.GetInsertPosBeginSourceIterator();
 					while (sbitr.hasNext()) {
@@ -163,21 +164,24 @@ public class SourceFileModifier {
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("lock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
-						// Statement newStatement = ast.newExpressionStatement(newInvocation);
-						
+						// Statement newStatement =
+						// ast.newExpressionStatement(newInvocation);
+
 						// testing
 						System.out.println("msig:" + msig + ";posline:" + posline + ";insertnodeBegin:" + insertnode
 								+ ";insertnodestartpos:" + insertnode.getStartPosition() + ";insertnodeendpos:"
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
-						
-						// System.err.println("insertnode:" + insertnode + "\n;listrewrite block:" + ib);
-						
+
+						// System.err.println("insertnode:" + insertnode +
+						// "\n;listrewrite block:" + ib);
+
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
-						if (!addedlocks.containsKey(lockposition))
-						{
-							// listRewrite.insertBefore(newStatement, insertnode, null);
+						if (!addedlocks.containsKey(lockposition)) {
+							// listRewrite.insertBefore(newStatement,
+							// insertnode, null);
 							addedlocks.put(lockposition, lockidx);
-							seps[lockidx].getOms().add(new OneModify(listRewrite, ast, newInvocation, insertnode, true));
+							seps[lockidx].getOms()
+									.add(new OneModify(listRewrite, ast, newInvocation, insertnode, true));
 							PutMapAndValueList(filelocks, fileunique, lockname);
 						} else {
 							int tlidx = addedlocks.get(lockposition);
@@ -193,7 +197,7 @@ public class SourceFileModifier {
 						// pil, true);
 					}
 				}
-				
+
 				{
 					Iterator<Integer> seitr = op.GetInsertPosEndSourceIterator();
 					while (seitr.hasNext()) {
@@ -210,27 +214,30 @@ public class SourceFileModifier {
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("unlock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
-						// Statement newStatement = ast.newExpressionStatement(newInvocation);
-						
+						// Statement newStatement =
+						// ast.newExpressionStatement(newInvocation);
+
 						// testing
 						System.out.println("posline:" + posline + ";insertnodeEnd:" + insertnode
 								+ ";insertnodestartpos:" + insertnode.getStartPosition() + ";insertnodeendpos:"
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
-						
+
 						// System.err.println("insertnode:" + insertnode);
-						
+
 						String lockposition = fileunique + ":" + insertnode.getStartPosition();
-						/*if (!addedunlocks.containsKey(lockposition))
-						{
-							addedunlocks.put(lockposition, true);
-							listRewrite.insertAfter(newStatement, insertnode, null);
-							PutMapAndValueList(fileunlocks, fileunique, lockname);
-						}*/
-						if (!addedunlocks.containsKey(lockposition))
-						{
-							// listRewrite.insertBefore(newStatement, insertnode, null);
+						/*
+						 * if (!addedunlocks.containsKey(lockposition)) {
+						 * addedunlocks.put(lockposition, true);
+						 * listRewrite.insertAfter(newStatement, insertnode,
+						 * null); PutMapAndValueList(fileunlocks, fileunique,
+						 * lockname); }
+						 */
+						if (!addedunlocks.containsKey(lockposition)) {
+							// listRewrite.insertBefore(newStatement,
+							// insertnode, null);
 							addedunlocks.put(lockposition, lockidx);
-							seps[lockidx].getOms().add(new OneModify(listRewrite, ast, newInvocation, insertnode, false));
+							seps[lockidx].getOms()
+									.add(new OneModify(listRewrite, ast, newInvocation, insertnode, false));
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
 						} else {
 							int tlidx = addedunlocks.get(lockposition);
@@ -249,26 +256,24 @@ public class SourceFileModifier {
 				}
 			}
 		}
-		
+
 		// Handle variable seps, especially its IntegerWrapper.
 		Set<IntegerWrapper> alliterated = new TreeSet<IntegerWrapper>();
-		for (int i = 1;i < seps.length;i++)
-		{
+		for (int i = 1; i < seps.length; i++) {
 			Set<IntegerWrapper> oneiterated = new TreeSet<IntegerWrapper>();
 			ModifyContent tmc = seps[i];
 			IntegerWrapper tli = tmc.getLockidx();
-			if (!alliterated.contains(tli))
-			{
+			if (!alliterated.contains(tli)) {
 				GenerateTheTrueRewrite(IterateToFindAllConnect(tli, oneiterated), oneiterated);
 				alliterated.addAll(oneiterated);
 			}
 		}
-		
+
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
-		
+
 		AFixFactory.CLear();
-		
+
 		Set<String> keys = allrewrites.keySet();
 		Iterator<String> kitr = keys.iterator();
 		while (kitr.hasNext()) {
@@ -279,8 +284,8 @@ public class SourceFileModifier {
 			edits.apply(document);
 			File df = new File(fabpath);
 			FileUtil.ClearAndWriteToFile(document.get(), df);
-			CompilationUnit dcu = GetCompilationUnit(df);
-			
+			CompilationUnit dcu = ASTHelper.GetCompilationUnit(df);
+
 			{
 				Set<String> lkeys = filelocks.keySet();
 				Iterator<String> litr = lkeys.iterator();
@@ -355,42 +360,35 @@ public class SourceFileModifier {
 		buffer.append("}\n");
 		ICompilationUnit cu = pack.createCompilationUnit("LockPool.java", buffer.toString(), true, null);
 		assert cu != null;
-		
+
 		AtomFixesView.RefreshViewer();
 	}
-	
-	private int IterateToFindAllConnect(IntegerWrapper start, Set<IntegerWrapper> iteraterecord)
-	{
+
+	private int IterateToFindAllConnect(IntegerWrapper start, Set<IntegerWrapper> iteraterecord) {
 		int minlockidx = start.getIv();
 		iteraterecord.add(start);
 		Iterator<IntegerWrapper> itr = start.GetIterator();
-		while (itr.hasNext())
-		{
+		while (itr.hasNext()) {
 			IntegerWrapper iw = itr.next();
-			if (iteraterecord.contains(iw))
-			{
+			if (iteraterecord.contains(iw)) {
 				continue;
 			}
 			int tempmin = IterateToFindAllConnect(iw, iteraterecord);
-			if (minlockidx > tempmin)
-			{
+			if (minlockidx > tempmin) {
 				minlockidx = tempmin;
 			}
 		}
 		return minlockidx;
 	}
-	
-	private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord)
-	{
+
+	private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord) {
 		Iterator<IntegerWrapper> itr = iteraterecord.iterator();
-		while (itr.hasNext())
-		{
+		while (itr.hasNext()) {
 			IntegerWrapper iw = itr.next();
 			ModifyContent mc = iw.getMc();
 			List<OneModify> oms = mc.getOms();
 			Iterator<OneModify> omitr = oms.iterator();
-			while (omitr.hasNext())
-			{
+			while (omitr.hasNext()) {
 				OneModify om = omitr.next();
 				ListRewrite listRewrite = om.getListRewrite();
 				AST ast = om.getAst();
@@ -401,17 +399,17 @@ public class SourceFileModifier {
 					// try {
 					listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
 					// } catch (Exception e) {
-					//	System.err.println("insert node:" + om.getInsertnode());
-					//	throw e;
+					// System.err.println("insert node:" + om.getInsertnode());
+					// throw e;
 					// }
 				} else {
 					listRewrite.insertAfter(newStatement, om.getInsertnode(), null);
 				}
-				
+
 			}
 		}
 	}
-	
+
 	private void GenerateAFixEntries(CompilationUnit cu, TreeMap<String, Boolean> lks, String fabpath, boolean islock) {
 		Set<String> ks = lks.keySet();
 		Iterator<String> itr = ks.iterator();
@@ -498,15 +496,6 @@ public class SourceFileModifier {
 		return cu;
 	}
 
-	private CompilationUnit GetCompilationUnit(File df) {
-		Document document = new Document(FileUtil.ReadFileByLines(df));
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
-		parser.setSource(document.get().toCharArray());
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-		return cu;
-	}
-
 	private ASTRewrite GetASTRewriteAccordingToMethodSig(String msig, AST ast) {
 		String mtype = NameUtil.GetClassNameFromMethodSig(msig);
 		File f = GetMostMatchFile(mtype);
@@ -534,35 +523,34 @@ public class SourceFileModifier {
 	}
 
 	private File GetMostMatchFile(String mtype) {
-		System.out.println("mtype:" + mtype);
-		File f = exactmatchfile.get(mtype);
-		if (f == null) {
-			String rawpath = mtype.replace('.', '/');
-			int idx = rawpath.indexOf('$');
-			if (idx != -1) {
-				rawpath = rawpath.substring(0, idx);
-			}
-			String path = rawpath + ".java";
-			Set<String> keys = allfiles.keySet();
-			Iterator<String> itr = keys.iterator();
-			f = null;
-			while (itr.hasNext()) {
-				String fpath = itr.next();
-
-				System.out.println("fpath:" + fpath);
-
-				if (fpath.endsWith(path)) {
-					f = allfiles.get(fpath);
-				}
-			}
-			if (f == null) {
-				System.err.println("There is no corresponding source file in directory of class:" + mtype
-						+ ". The system will exit.");
-				new Exception().printStackTrace();
-				System.exit(1);
-			}
-			exactmatchfile.put(mtype, f);
+		// System.out.println("mtype:" + mtype);
+		// File f = exactmatchfile.get(mtype);
+		// if (f == null) {
+		// String rawpath = mtype.replace('.', '/');
+		int idx = mtype.indexOf('$');
+		if (idx != -1) {
+			mtype = mtype.substring(0, idx);
 		}
+		// String path = rawpath + ".java";
+		// Set<String> keys = allfiles.keySet();
+		// Iterator<String> itr = keys.iterator();
+		// f = null;
+		// while (itr.hasNext()) {
+		// String fpath = itr.next();
+		// System.out.println("fpath:" + fpath);
+		// if (fpath.endsWith(path)) {
+		// f = allfiles.get(fpath);
+		// }
+		// }
+		File f = allfiles.get(mtype);
+		if (f == null) {
+			System.err.println(
+					"There is no corresponding source file in directory of class:" + mtype + ". The system will exit.");
+			new Exception().printStackTrace();
+			System.exit(1);
+		}
+		// exactmatchfile.put(mtype, f);
+		// }
 		return f;
 	}
 

@@ -1,12 +1,18 @@
 package cn.yyx.labtask.afix.classmodification;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jface.text.Document;
+
+import cn.yyx.labtask.afix.commonutil.FileUtil;
 
 public class ASTHelper {
 
@@ -52,5 +58,14 @@ public class ASTHelper {
 		});
 		return ils;
 	}
-
+	
+	public static CompilationUnit GetCompilationUnit(File df) {
+		Document document = new Document(FileUtil.ReadFileByLines(df));
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		parser.setSource(document.get().toCharArray());
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+		return cu;
+	}
+	
 }
