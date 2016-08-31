@@ -30,13 +30,13 @@ public class BlockLocationSearchVisitor extends ASTVisitor{
 	
 	@Override
 	public boolean visit(TypeDeclaration node) {
-		boolean ctn = so.HandleCurrentClass(node.getName().toString());
+		boolean ctn = so.HandleCurrentClass(node);
 		return ctn && super.visit(node);
 	}
 	
 	@Override
 	public void endVisit(TypeDeclaration node) {
-		so.DecreaseLevel();
+		so.DeHandleCurrentClass(node);
 		super.endVisit(node);
 	}
 	

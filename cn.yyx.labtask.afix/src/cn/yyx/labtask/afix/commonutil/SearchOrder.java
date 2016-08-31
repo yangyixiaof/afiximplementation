@@ -2,11 +2,14 @@ package cn.yyx.labtask.afix.commonutil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.ibm.wala.types.TypeName;
 import com.ibm.wala.util.strings.StringStuff;
@@ -19,6 +22,7 @@ public class SearchOrder {
 	private String methodreturntype = null;
 	private ArrayList<String> methodparam = new ArrayList<String>();
 	
+	Map<TypeDeclaration, Boolean> classidxincreased = new HashMap<TypeDeclaration, Boolean>();
 	int classidx = 0;
 	boolean isrightclass = false;
 	
@@ -47,6 +51,12 @@ public class SearchOrder {
 		{
 			System.out.println("class:" + classlist.get(j));
 		}*/
+		
+		// debugging.
+		// System.err.println("test begin.");
+		// System.err.println("msig:" + msig);
+		// System.err.println("classes:" + classlist);
+		// System.err.println("test end.");
 	}
 	
 	/*public static void main(String[] args) {
@@ -77,8 +87,8 @@ public class SearchOrder {
 		this.methodparam = methodparam;
 	}
 
-	public boolean HandleCurrentClass(String rawclass) {
-		
+	public boolean HandleCurrentClass(TypeDeclaration node) {
+		String rawclass = node.getName().toString();
 		// testing
 		System.out.println("rawclass:"+rawclass+";classidx:"+classidx+";classlistsize:"+classlist.size());
 		
@@ -95,15 +105,19 @@ public class SearchOrder {
 		if (classname.endsWith(rawclass))
 		{
 			classidx++;
+			classidxincreased.put(node, true);
 			isrightclass = true;
 			return true;
 		}
 		return false;
 	}
 	
-	public void DecreaseLevel()
+	public void DeHandleCurrentClass(TypeDeclaration node)
 	{
-		classidx--;
+		if (classidxincreased.get(node) != null && classidxincreased.get(node) == true)
+		{
+			classidx--;
+		}
 		isrightclass = false;
 	}
 
