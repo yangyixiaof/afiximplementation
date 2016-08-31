@@ -14,6 +14,9 @@ public class Test {
 			}
 			System.err.println(x);
 		}
+		
+		java.util.concurrent.Semaphore semaphore = new java.util.concurrent.Semaphore(Integer.MAX_VALUE);
+		System.err.println(semaphore);
 	}
 	
 }
