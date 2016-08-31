@@ -54,7 +54,7 @@ public class OnePatch implements Mergeable {
 		insertsourceendidxs.add(sourceidx);
 	}
 	
-	public void CheckGenerateLockUnlockSolutions() throws InvalidClassFileException
+	public void GenerateLockUnlockSolutions() throws InvalidClassFileException
 	{
 		/*if (methodsig.startsWith("demo.Example.main([Ljava/lang/String;)V"))
 		{
@@ -91,7 +91,7 @@ public class OnePatch implements Mergeable {
 			return;
 		}
 		visited.add(now);
-		Iterator<ISSABasicBlock> itr = cfg.getNormalSuccessors(now).iterator();// .getSuccNodes(now)
+		Iterator<ISSABasicBlock> itr = cfg.getSuccNodes(now);// .getNormalSuccessors(now).iterator();
 		while (itr.hasNext())
 		{
 			ISSABasicBlock ibb = itr.next();
