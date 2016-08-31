@@ -131,25 +131,26 @@ public class OnePatchGenerator {
 	 * @throws InvalidClassFileException
 	 */
 	public SameLockExclusivePatches GeneratePatch() throws InvalidClassFileException {
+		
+		// printing.
+		/*String pcmsig = this.p.getSig();
+		if (pcmsig.equals("pingpong.BuggedProgram.pingPong()V"))
+		{
+			try {
+				cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), GetMethodIR(pcmsig));
+			} catch (com.ibm.wala.util.WalaException e) {
+				e.printStackTrace();
+			}
+			System.exit(1);
+		}*/
+		
 		ops = new SameLockExclusivePatches();
-
+		
 		if (!overlap) {
 			// handle this.r
 			String methodSig = this.r.getSig();
 			int ridx = this.r.getLine();
 			IR ir = GetMethodIR(methodSig);
-			
-			// printing.
-			/*String pcmsig = this.p.getSig();
-			if (pcmsig.equals("account.Account.checkResult(I)V"))
-			{
-				try {
-					cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), GetMethodIR(pcmsig));
-				} catch (com.ibm.wala.util.WalaException e) {
-					e.printStackTrace();
-				}
-				System.exit(1);
-			}*/
 			
 			SSACFG cfg = ir.getControlFlowGraph();
 			// ISSABasicBlock
