@@ -86,13 +86,13 @@ public class SearchUtil {
 		ISSABasicBlock issabk = ir.getBasicBlockForInstruction(csi);
 		switch (direction) {
 		case UpAndDownDirection:
-			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, csi, racevar));
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, racevar, csi, racevar));
 			break;
 		case UpDirection:
-			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, null, racevar));
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, racevar, null, null));
 			break;
 		case DownDirection:
-			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(null, csi, racevar));
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(null, null, csi, racevar));
 			break;
 		default:
 			System.err.println("What the fuck Direction!");

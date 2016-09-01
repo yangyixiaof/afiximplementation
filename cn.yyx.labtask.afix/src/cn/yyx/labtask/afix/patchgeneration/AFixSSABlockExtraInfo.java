@@ -5,13 +5,15 @@ import com.ibm.wala.ssa.SSAInstruction;
 public class AFixSSABlockExtraInfo {
 	
 	private SSAInstruction upboundinst = null;
+	private String upvarname = null;
 	private SSAInstruction downboundinst = null;
-	private String varname = null;
+	private String downvarname = null;
 	
-	public AFixSSABlockExtraInfo(SSAInstruction upboundinst, SSAInstruction downboundinst, String varname) {
+	public AFixSSABlockExtraInfo(SSAInstruction upboundinst, String upvarname, SSAInstruction downboundinst, String downvarname) {
 		this.setUpboundinst(upboundinst);
+		this.setUpvarname(upvarname);
 		this.setDownboundinst(downboundinst);
-		this.setVarname(varname);
+		this.setDownvarname(downvarname);
 	}
 
 	public SSAInstruction getUpboundinst() {
@@ -32,15 +34,23 @@ public class AFixSSABlockExtraInfo {
 	
 	@Override
 	public String toString() {
-		return "Up:" + upboundinst + ";Down:" + downboundinst;
+		return "Up:" + upboundinst + ";UpVar:" + upvarname + ";Down:" + downboundinst + "DownVar:" + downvarname;
 	}
 
-	public String getVarname() {
-		return varname;
+	public String getUpvarname() {
+		return upvarname;
 	}
 
-	public void setVarname(String varname) {
-		this.varname = varname;
+	public void setUpvarname(String upvarname) {
+		this.upvarname = upvarname;
+	}
+
+	public String getDownvarname() {
+		return downvarname;
+	}
+
+	public void setDownvarname(String downvarname) {
+		this.downvarname = downvarname;
 	}
 	
 }
