@@ -4,11 +4,13 @@ public class ErrorLocation {
 	
 	private String sig = null;
 	private int line = -1;
+	private String racevar = null;
 	
-	public ErrorLocation(String sig, int line)
+	public ErrorLocation(String sig, int line, String racevar)
 	{
 		this.setSig(sig);
 		this.setLine(line);
+		this.setRacevar(racevar);
 	}
 
 	public String getSig() {
@@ -51,6 +53,14 @@ public class ErrorLocation {
 	@Override
 	public String toString() {
 		return "methodsig:" + sig + ";line:" + line;
+	}
+
+	public String getRacevar() {
+		return racevar;
+	}
+
+	public void setRacevar(String racevar) {
+		this.racevar = racevar;
 	}
 	
 }

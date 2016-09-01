@@ -41,6 +41,7 @@ public class PCRPool {
 			System.err.println("Wrong CGNode.");
 			System.exit(1);
 		}*/
+		// info format: where + "." + msig + "#" + vartype + "#" + var + "#" + line
 		
 		List<OneErrorInfo> oeilist = new LinkedList<OneErrorInfo>();
 		Set<String> ks = pcrs.keySet();
@@ -50,7 +51,7 @@ public class PCRPool {
 			String rinfo = ritr.next();
 			String[] rs = rinfo.split("#");
 			ErrorTrace r = new ErrorTrace();
-			r.AddLocationAtPositiveOrder(new ErrorLocation(rs[0], Integer.parseInt(rs[3])));
+			r.AddLocationAtPositiveOrder(new ErrorLocation(rs[0], Integer.parseInt(rs[3]), rs[2]));
 			
 			TreeMap<String, Boolean> pcs = pcrs.get(rinfo);
 			Set<String> pcks = pcs.keySet();
@@ -64,7 +65,7 @@ public class PCRPool {
 				ErrorTrace p = new ErrorTrace();
 				String ps0 = ps[0];
 				int ps3 = Integer.parseInt(ps[3]);
-				p.AddLocationAtPositiveOrder(new ErrorLocation(ps0, ps3));
+				p.AddLocationAtPositiveOrder(new ErrorLocation(ps0, ps3, ps[2]));
 				oeilist.add(new OneErrorInfo(p, p, r));
 				Iterator<String> pck2 = pcks.iterator();
 				int id2 = 0;
@@ -80,7 +81,7 @@ public class PCRPool {
 					ErrorTrace c = new ErrorTrace();
 					String cs0 = cs[0];
 					int cs3 = Integer.parseInt(cs[3]);
-					c.AddLocationAtPositiveOrder(new ErrorLocation(cs0, cs3));
+					c.AddLocationAtPositiveOrder(new ErrorLocation(cs0, cs3, cs[2]));
 					if (ps0.equals(cs0))
 					{
 						if (ps3 < cs3)

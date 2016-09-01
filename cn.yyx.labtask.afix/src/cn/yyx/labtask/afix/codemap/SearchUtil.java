@@ -48,7 +48,7 @@ public class SearchUtil {
 	public static final int UpDirection = 2;
 	public static final int DownDirection = 3;
 	
-	public static AFixBlock GetAFixBlockAccordingToLineNumberInSourcecode(final int sourceLineNumber, final IR ir, final int direction) throws InvalidClassFileException
+	public static AFixBlock GetAFixBlockAccordingToLineNumberInSourcecode(final String racevar, final int sourceLineNumber, final IR ir, final int direction) throws InvalidClassFileException
 	{
 		// SSACFG sfg = ir.getControlFlowGraph();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
@@ -86,13 +86,13 @@ public class SearchUtil {
 		ISSABasicBlock issabk = ir.getBasicBlockForInstruction(csi);
 		switch (direction) {
 		case UpAndDownDirection:
-			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, csi));
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, csi, racevar));
 			break;
 		case UpDirection:
-			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, null));
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(csi, null, racevar));
 			break;
 		case DownDirection:
-			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(null, csi));
+			result = new AFixBlock(issabk, new AFixSSABlockExtraInfo(null, csi, racevar));
 			break;
 		default:
 			System.err.println("What the fuck Direction!");

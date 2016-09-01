@@ -24,7 +24,7 @@ public class OnePatchGenerator {
 
 	// IClassHierarchy cha = null;
 	CallGraph callGraph = null;
-
+	
 	// String appJar = null;
 	ErrorTrace pct = null;
 	ErrorTrace rt = null;
@@ -148,19 +148,22 @@ public class OnePatchGenerator {
 		
 		if (!overlap) {
 			// handle this.r
+			String rracevar = this.r.getRacevar();
 			String methodSig = this.r.getSig();
 			int ridx = this.r.getLine();
 			IR ir = GetMethodIR(methodSig);
 			
+			// how to set ssablockinfo needs to be thought carefully.
+			
 			SSACFG cfg = ir.getControlFlowGraph();
 			// ISSABasicBlock
-			AFixBlock rbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(ridx, ir, SearchUtil.UpAndDownDirection);
+			AFixBlock rbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(rracevar, ridx, ir, SearchUtil.UpAndDownDirection);
 			Set<ISSABasicBlock> protectednodes = new HashSet<ISSABasicBlock>();
 			protectednodes.add(rbk.getISSABasicBlock());
 			Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
 			if (rbk.getAFixSSABlockExtraInfo() != null)
 			{
-				ssablockinfo.put(rbk.getISSABasicBlock(), rbk.getAFixSSABlockExtraInfo());
+				SetSSABlockInfo(ssablockinfo, rbk.getISSABasicBlock(), rbk.getAFixSSABlockExtraInfo());
 			}
 			OnePatch op = new OnePatch(rt, this.r.getSig(), protectednodes, ir, cfg, ssablockinfo);
 			// op.AddLockBeforeIndex(this.r.getBytecodel());
@@ -170,7 +173,9 @@ public class OnePatchGenerator {
 
 		// handle this.p this.c
 		String methodSig = this.p.getSig();
+		String pracevar = this.p.getRacevar();
 		int pidx = this.p.getLine();
+		String cracevar = this.c.getRacevar();
 		int cidx = this.c.getLine();
 		IR ir = GetMethodIR(methodSig);
 		SSACFG cfg = ir.getControlFlowGraph();
@@ -181,8 +186,8 @@ public class OnePatchGenerator {
 		}
 		
 		// ISSABasicBlock
-		AFixBlock pbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(pidx, ir, SearchUtil.UpDirection);
-		AFixBlock cbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(cidx, ir, SearchUtil.DownDirection);
+		AFixBlock pbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(pracevar, pidx, ir, SearchUtil.UpDirection);
+		AFixBlock cbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(cracevar, cidx, ir, SearchUtil.DownDirection);
 
 		if (pbk.getISSABasicBlock() == null || cbk.getISSABasicBlock() == null) {
 			System.out.println(
@@ -209,6 +214,7 @@ public class OnePatchGenerator {
 		Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
 		if (pbk.getAFixSSABlockExtraInfo() != null)
 		{
+			// TODO
 			AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(pbk.getISSABasicBlock());
 			if (extrainfo == null) {
 				ssablockinfo.put(pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
@@ -220,6 +226,7 @@ public class OnePatchGenerator {
 		}
 		if (cbk.getAFixSSABlockExtraInfo() != null)
 		{
+			// TODO
 			AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(cbk.getISSABasicBlock());
 			if (extrainfo == null) {
 				ssablockinfo.put(cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
@@ -234,6 +241,12 @@ public class OnePatchGenerator {
 		return ops;
 	}
 	
+	private void SetSSABlockInfo(Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo, ISSABasicBlock ib, AFixSSABlockExtraInfo ibextrainfo) {
+		// TODO
+		ssablockinfo.put(ib, ibextrainfo);
+		
+	}
+
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
 			final ISSABasicBlock dest, Set<ISSABasicBlock> visited) {
 		visited.add(nowbk);

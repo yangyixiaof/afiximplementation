@@ -6,10 +6,12 @@ public class AFixSSABlockExtraInfo {
 	
 	private SSAInstruction upboundinst = null;
 	private SSAInstruction downboundinst = null;
+	private String varname = null;
 	
-	public AFixSSABlockExtraInfo(SSAInstruction upboundinst, SSAInstruction downboundinst) {
+	public AFixSSABlockExtraInfo(SSAInstruction upboundinst, SSAInstruction downboundinst, String varname) {
 		this.setUpboundinst(upboundinst);
 		this.setDownboundinst(downboundinst);
+		this.setVarname(varname);
 	}
 
 	public SSAInstruction getUpboundinst() {
@@ -31,6 +33,14 @@ public class AFixSSABlockExtraInfo {
 	@Override
 	public String toString() {
 		return "Up:" + upboundinst + ";Down:" + downboundinst;
+	}
+
+	public String getVarname() {
+		return varname;
+	}
+
+	public void setVarname(String varname) {
+		this.varname = varname;
 	}
 	
 }
