@@ -26,10 +26,10 @@ public class OnePatch implements Mergeable {
 	Set<ISSABasicBlock> protectednodes = null;
 	IR ir = null;
 	SSACFG cfg = null;
-	List<InsertPosition> insertbeginidxs = null;
-	List<InsertPosition> insertendidxs = null;
-	List<InsertPosition> insertsourcebeginidxs = null;
-	List<InsertPosition> insertsourceendidxs = null;
+	List<Integer> insertbeginidxs = null;
+	List<Integer> insertendidxs = null;
+	List<Integer> insertsourcebeginidxs = null;
+	List<Integer> insertsourceendidxs = null;
 	
 	Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = null;
 	
@@ -42,17 +42,15 @@ public class OnePatch implements Mergeable {
 		this.ssablockinfo = ssablockinfo;
 	}
 	
-	// Integer idx, Integer 
-	private void AddLockBeforeIndex(InsertPosition sourceidx)
+	private void AddLockBeforeIndex(Integer idx, Integer sourceidx)
 	{
-		// insertbeginidxs.add(idx);
+		insertbeginidxs.add(idx);
 		insertsourcebeginidxs.add(sourceidx);
 	}
 	
-	// Integer idx, Integer 
-	private void AddUnlockAfterIndex(InsertPosition sourceidx)
+	private void AddUnlockAfterIndex(Integer idx, Integer sourceidx)
 	{
-		// insertendidxs.add(idx);
+		insertendidxs.add(idx);
 		insertsourceendidxs.add(sourceidx);
 	}
 	
@@ -64,22 +62,19 @@ public class OnePatch implements Mergeable {
 		}*/
 		if (insertbeginidxs == null)
 		{
-			// Integer
-			insertbeginidxs = new LinkedList<InsertPosition>();
-			insertendidxs = new LinkedList<InsertPosition>();
-			insertsourcebeginidxs = new LinkedList<InsertPosition>();
-			insertsourceendidxs = new LinkedList<InsertPosition>();
+			insertbeginidxs = new LinkedList<Integer>();
+			insertendidxs = new LinkedList<Integer>();
+			insertsourcebeginidxs = new LinkedList<Integer>();
+			insertsourceendidxs = new LinkedList<Integer>();
 			BasicBlock ent = cfg.entry();
 			if (protectednodes.contains(ent))
 			{
-				// GetBasicBlockBeforePosition(ent, ir), 
-				AddLockBeforeIndex(GetBasicBlockBeforeSourcePosition(ent, ir));
+				AddLockBeforeIndex(GetBasicBlockBeforePosition(ent, ir), GetBasicBlockBeforeSourcePosition(ent, ir));
 			}
 			BasicBlock ext = cfg.exit();
 			if (protectednodes.contains(ext))
 			{
-				// GetBasicBlockAfterPosition(ext, ir), 
-				AddUnlockAfterIndex(GetBasicBlockAfterSourcePosition(ext, ir));
+				AddUnlockAfterIndex(GetBasicBlockAfterPosition(ext, ir), GetBasicBlockAfterSourcePosition(ext, ir));
 			}
 			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			Set<ISSABasicBlock> blockprelock = new HashSet<ISSABasicBlock>();
@@ -118,8 +113,7 @@ public class OnePatch implements Mergeable {
 							bk = now;
 						}
 					}*/
-					// GetBasicBlockAfterPosition(now, ir), 
-					AddUnlockAfterIndex(GetBasicBlockAfterSourcePosition(now, ir));
+					AddUnlockAfterIndex(GetBasicBlockAfterPosition(now, ir), GetBasicBlockAfterSourcePosition(now, ir));
 					blockafterunlock.add(now);
 				}
 			}
@@ -127,8 +121,7 @@ public class OnePatch implements Mergeable {
 			{
 				if (!blockprelock.contains(ibb))
 				{
-					// GetBasicBlockBeforePosition(ibb, ir), 
-					AddLockBeforeIndex(GetBasicBlockBeforeSourcePosition(ibb, ir));
+					AddLockBeforeIndex(GetBasicBlockBeforePosition(ibb, ir), GetBasicBlockBeforeSourcePosition(ibb, ir));
 					blockprelock.add(ibb);
 				}
 			}
@@ -136,46 +129,42 @@ public class OnePatch implements Mergeable {
 		}
 	}
 	
-	/*private Integer GetBasicBlockBeforePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+	private Integer GetBasicBlockBeforePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getFirstInstructionIndex();
 		return iidx;
-	}*/
+	}
 	
-	// ISSABasicBlockISSABasicBlock Integer
-	private InsertPosition GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+	// ISSABasicBlockISSABasicBlock
+	private Integer GetBasicBlockBeforeSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getFirstInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		int sourline = method.getLineNumber(iidx);// bytecodeIndex
-		String racevar = null;
 		AFixSSABlockExtraInfo bbkinfo = ssablockinfo.get(bbk);
 		if (bbkinfo != null && bbkinfo.getUpboundinst() != null)
 		{
 			sourline = method.getLineNumber(bbkinfo.getUpboundinst().iindex);
-			racevar = bbkinfo.getUpvarname();
 		}
-		return new InsertPosition(sourline, racevar);
+		return sourline;
 	}
 	
 	// ISSABasicBlock
-	/*private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+	private Integer GetBasicBlockAfterPosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getLastInstructionIndex();
-		SSAInstruction is = bbk.getLastInstruction();
+		/*SSAInstruction is = bbk.getLastInstruction();
 		String content = is.toString();
 		if (content.startsWith("return"))
 		{
 			iidx--;
-		}
+		}*/
 		return iidx;
-	}*/
+	}
 	
-	// Integer
-	private InsertPosition GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
+	private Integer GetBasicBlockAfterSourcePosition(ISSABasicBlock bbk, IR ir) throws InvalidClassFileException {
 		int iidx = bbk.getLastInstructionIndex();
 		ConcreteJavaMethod method = (ConcreteJavaMethod) ir.getMethod();// IBytecodeMethod
 		// int bytecodeIndex = method.getBytecodeIndex(iidx);
 		int sourline = method.getLineNumber(iidx);// bytecodeIndex
-		String racevar = null;
 		int maxsl = GetMaxSourceLineOfBlock(bbk, method);
 		if (sourline != maxsl)
 		{
@@ -185,7 +174,6 @@ public class OnePatch implements Mergeable {
 		if (bbkinfo != null && bbkinfo.getDownboundinst() != null)
 		{
 			sourline = method.getLineNumber(bbkinfo.getDownboundinst().iindex);
-			racevar = bbkinfo.getDownvarname();
 		}
 		// confirm.
 		// SSAInstruction is = bbk.getLastInstruction();
@@ -194,7 +182,7 @@ public class OnePatch implements Mergeable {
 		// {
 		//	sourline--;
 		// }
-		return new InsertPosition(sourline, racevar);
+		return sourline;
 	}
 	
 	private int GetMaxSourceLineOfBlock(ISSABasicBlock bbk, ConcreteJavaMethod method)
@@ -213,29 +201,25 @@ public class OnePatch implements Mergeable {
 		return maxs;
 	}
 	
-	// Integer
-	public Iterator<InsertPosition> GetInsertPosEndIterator() throws InvalidClassFileException
+	public Iterator<Integer> GetInsertPosEndIterator() throws InvalidClassFileException
 	{
 		// CheckGenerateLockUnlockSolutions();
 		return insertendidxs.iterator();
 	}
 	
-	// Integer
-	public Iterator<InsertPosition> GetInsertPosEndSourceIterator() throws InvalidClassFileException
+	public Iterator<Integer> GetInsertPosEndSourceIterator() throws InvalidClassFileException
 	{
 		// CheckGenerateLockUnlockSolutions();
 		return insertsourceendidxs.iterator();
 	}
 	
-	// Integer
-	public Iterator<InsertPosition> GetInsertPosBeginIterator() throws InvalidClassFileException
+	public Iterator<Integer> GetInsertPosBeginIterator() throws InvalidClassFileException
 	{
 		// CheckGenerateLockUnlockSolutions();
 		return insertbeginidxs.iterator();
 	}
 	
-	// Integer
-	public Iterator<InsertPosition> GetInsertPosBeginSourceIterator() throws InvalidClassFileException
+	public Iterator<Integer> GetInsertPosBeginSourceIterator() throws InvalidClassFileException
 	{
 		// CheckGenerateLockUnlockSolutions();
 		return insertsourcebeginidxs.iterator();

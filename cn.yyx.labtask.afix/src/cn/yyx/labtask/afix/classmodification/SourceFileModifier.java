@@ -36,6 +36,7 @@ import cn.yyx.labtask.afix.gui.AFixEntity;
 import cn.yyx.labtask.afix.gui.AFixFactory;
 import cn.yyx.labtask.afix.gui.AtomFixesView;
 import cn.yyx.labtask.afix.patchgeneration.ExclusivePatchesManager;
+import cn.yyx.labtask.afix.patchgeneration.InsertPosition;
 import cn.yyx.labtask.afix.patchgeneration.OnePatch;
 import cn.yyx.labtask.afix.patchgeneration.SameLockExclusivePatches;
 
@@ -142,9 +143,11 @@ public class SourceFileModifier {
 				}
 
 				{
-					Iterator<Integer> sbitr = op.GetInsertPosBeginSourceIterator();
+					// Integer
+					Iterator<InsertPosition> sbitr = op.GetInsertPosBeginSourceIterator();
 					while (sbitr.hasNext()) {
-						int posline = sbitr.next() - 1;
+						InsertPosition ip = sbitr.next();
+						int posline = ip.getPosition() - 1;
 						int poslineoff = FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline - 1,
 								GetFileContent(mtype));
 						// testing
@@ -154,7 +157,7 @@ public class SourceFileModifier {
 						// testing
 						// System.out.println("cu start
 						// pos:"+cu.getStartPosition()+";beginpos:"+posline+";poslineoff:"+poslineoff+";filecontent:"+GetFileContent(mtype));
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, true,
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(ip.getRacevar(), poslineoff, true,
 								methodblock);
 						methodblock.accept(ilsv);
 						ilsv.ProcessInsertNode();
@@ -199,12 +202,14 @@ public class SourceFileModifier {
 				}
 				
 				{
-					Iterator<Integer> seitr = op.GetInsertPosEndSourceIterator();
+					// Integer
+					Iterator<InsertPosition> seitr = op.GetInsertPosEndSourceIterator();
 					while (seitr.hasNext()) {
-						int posline = seitr.next() - 1;
+						InsertPosition ip = seitr.next();
+						int posline = ip.getPosition() - 1;
 						int poslineoff = FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline,
 								GetFileContent(mtype));
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(poslineoff, false,
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(ip.getRacevar(), poslineoff, false,
 								methodblock);
 						methodblock.accept(ilsv);
 						ilsv.ProcessInsertNode();

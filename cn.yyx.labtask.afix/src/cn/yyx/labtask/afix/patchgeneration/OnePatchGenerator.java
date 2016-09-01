@@ -214,27 +214,11 @@ public class OnePatchGenerator {
 		Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
 		if (pbk.getAFixSSABlockExtraInfo() != null)
 		{
-			// TODO
-			AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(pbk.getISSABasicBlock());
-			if (extrainfo == null) {
-				ssablockinfo.put(pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
-			} else {
-				if (extrainfo.getUpboundinst() == null) {
-					extrainfo.setUpboundinst(pbk.getAFixSSABlockExtraInfo().getUpboundinst());
-				}
-			}
+			SetSSABlockInfo(ssablockinfo, pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
 		}
 		if (cbk.getAFixSSABlockExtraInfo() != null)
 		{
-			// TODO
-			AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(cbk.getISSABasicBlock());
-			if (extrainfo == null) {
-				ssablockinfo.put(cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
-			} else {
-				if (extrainfo.getDownboundinst() == null) {
-					extrainfo.setDownboundinst(cbk.getAFixSSABlockExtraInfo().getDownboundinst());
-				}
-			}
+			SetSSABlockInfo(ssablockinfo, cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
 		}
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg, ssablockinfo);
 		ops.AddPatches(op);
@@ -242,7 +226,6 @@ public class OnePatchGenerator {
 	}
 	
 	private void SetSSABlockInfo(Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo, ISSABasicBlock ib, AFixSSABlockExtraInfo ibextrainfo) {
-		// TODO
 		AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(ib);
 		if (extrainfo == null) {
 			ssablockinfo.put(ib, ibextrainfo);
@@ -259,16 +242,21 @@ public class OnePatchGenerator {
 					}
 				}
 			}
-			// TODO
-			look here.
 			if (extrainfo.getUpboundinst() == null) {
 				extrainfo.setUpboundinst(ibextrainfo.getUpboundinst());
+			} else {
+				if (ibextrainfo.getUpboundinst() != null)
+				{
+					if (extrainfo.getUpboundinst().iindex > ibextrainfo.getUpboundinst().iindex)
+					{
+						extrainfo.setUpboundinst(ibextrainfo.getUpboundinst());
+						extrainfo.setUpvarname(ibextrainfo.getUpvarname());
+					}
+				}
 			}
 		}
-		
-		
 	}
-
+	
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
 			final ISSABasicBlock dest, Set<ISSABasicBlock> visited) {
 		visited.add(nowbk);

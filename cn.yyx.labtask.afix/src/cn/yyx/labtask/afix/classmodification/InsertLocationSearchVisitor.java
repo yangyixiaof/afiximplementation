@@ -11,17 +11,19 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private ASTNode insertnode = null;
 	private ASTNode processnode = null;
 	private Block insertblock = null;
+	String racevar = null;
 	int offsetfrombegining = -1;
 	boolean before = false;
 	int recordpos = -1;
 	Block bigblock = null;
 
-	public InsertLocationSearchVisitor(int offsetfrombegining, boolean before, Block bigblock) {
+	public InsertLocationSearchVisitor(String racevar, int offsetfrombegining, boolean before, Block bigblock) {
+		this.racevar = racevar;
 		this.offsetfrombegining = offsetfrombegining;
 		this.before = before;
 		this.bigblock = bigblock;
 	}
-
+	look here!
 	@Override
 	public boolean preVisit2(ASTNode node) {
 		if (node != bigblock && node instanceof Statement) {
@@ -58,7 +60,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		return super.preVisit2(node);
 	}
-
+	look here!
 	@Override
 	public void postVisit(ASTNode node) {
 		if (!before && node != bigblock && node instanceof Statement) {
