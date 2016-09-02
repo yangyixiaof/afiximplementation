@@ -147,9 +147,9 @@ public class SourceFileModifier {
 					Iterator<InsertPosition> sbitr = op.GetInsertPosBeginSourceIterator();
 					while (sbitr.hasNext()) {
 						InsertPosition ip = sbitr.next();
-						int posline = ip.getPosition() - 1;
-						int poslineoff = FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline - 1,
-								GetFileContent(mtype));
+						// int posline = ip.getPosition() - 1;
+						// int poslineoff = FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline - 1,
+						//		GetFileContent(mtype));
 						// testing
 						// poslineoff =
 						// FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(),
@@ -157,7 +157,7 @@ public class SourceFileModifier {
 						// testing
 						// System.out.println("cu start
 						// pos:"+cu.getStartPosition()+";beginpos:"+posline+";poslineoff:"+poslineoff+";filecontent:"+GetFileContent(mtype));
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(cu, ip.getRacevar(), poslineoff, true,
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(cu, ip.getRacevar(), ip.getLineNumber(), true,
 								methodblock);
 						methodblock.accept(ilsv);
 						ilsv.ProcessInsertNode();
@@ -171,7 +171,7 @@ public class SourceFileModifier {
 						// ast.newExpressionStatement(newInvocation);
 
 						// testing
-						System.out.println("msig:" + msig + ";posline:" + posline + ";insertnodeBegin:" + insertnode
+						System.out.println("msig:" + msig + ";posline:" + ip.getLineNumber() + ";insertnodeBegin:" + insertnode
 								+ ";insertnodestartpos:" + insertnode.getStartPosition() + ";insertnodeendpos:"
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
 
@@ -206,10 +206,10 @@ public class SourceFileModifier {
 					Iterator<InsertPosition> seitr = op.GetInsertPosEndSourceIterator();
 					while (seitr.hasNext()) {
 						InsertPosition ip = seitr.next();
-						int posline = ip.getPosition() - 1;
-						int poslineoff = FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline,
-								GetFileContent(mtype));
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(cu, ip.getRacevar(), poslineoff, false,
+						// int posline = ip.getLineNumber() - 1;
+						// int poslineoff = FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline,
+						//		GetFileContent(mtype));
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(cu, ip.getRacevar(), ip.getLineNumber(), false,
 								methodblock);
 						methodblock.accept(ilsv);
 						ilsv.ProcessInsertNode();
@@ -223,7 +223,7 @@ public class SourceFileModifier {
 						// ast.newExpressionStatement(newInvocation);
 						
 						// testing
-						System.out.println("posline:" + posline + ";insertnodeEnd:" + insertnode
+						System.out.println("posline:" + ip.getLineNumber() + ";insertnodeEnd:" + insertnode
 								+ ";insertnodestartpos:" + insertnode.getStartPosition() + ";insertnodeendpos:"
 								+ (insertnode.getStartPosition() + insertnode.getLength()));
 						

@@ -10,11 +10,11 @@ public class InsertPosition {
 		this.racevar = racevar;
 	}
 
-	public int getPosition() {
+	public int getLineNumber() {
 		return position;
 	}
 
-	public void setPosition(int position) {
+	public void setLineNumber(int position) {
 		this.position = position;
 	}
 
