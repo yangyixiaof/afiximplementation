@@ -27,7 +27,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		CompilationUnit cu = ASTHelper.GetCompilationUnit(new File("SourceBackDir/IRGenerator.java"));
-		System.err.println("line:" + cu.getLineNumber(0) + ";position:" + cu.getPosition(3, 0) + ";col:" + cu.getColumnNumber(37));
+		System.err.println("total length:" + cu.getLength() + ";57,1 position:" + cu.getPosition(57, 1) + ";1,55 position:" + cu.getPosition(1, 55) + ";line:" + cu.getLineNumber(0) + ";position:" + cu.getPosition(3, 0) + ";col:" + cu.getColumnNumber(37));
 	}
 	
 }
