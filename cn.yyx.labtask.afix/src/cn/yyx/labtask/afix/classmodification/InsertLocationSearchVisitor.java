@@ -3,27 +3,30 @@ package cn.yyx.labtask.afix.classmodification;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 
 public class InsertLocationSearchVisitor extends ASTVisitor {
-
+	
+	private CompilationUnit compileunit = null;
 	private ASTNode insertnode = null;
 	private ASTNode processnode = null;
 	private Block insertblock = null;
-	String racevar = null;
-	int offsetfrombegining = -1;
-	boolean before = false;
-	int recordpos = -1;
-	Block bigblock = null;
+	private String racevar = null;
+	private int offsetfrombegining = -1;
+	private boolean before = false;
+	private int recordpos = -1;
+	private Block bigblock = null;
 
-	public InsertLocationSearchVisitor(String racevar, int offsetfrombegining, boolean before, Block bigblock) {
+	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int offsetfrombegining, boolean before, Block bigblock) {
+		this.compileunit = cu;
 		this.racevar = racevar;
 		this.offsetfrombegining = offsetfrombegining;
 		this.before = before;
 		this.bigblock = bigblock;
 	}
-	look here!
+	
 	@Override
 	public boolean preVisit2(ASTNode node) {
 		if (node != bigblock && node instanceof Statement) {
@@ -60,7 +63,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		return super.preVisit2(node);
 	}
-	look here!
+	
 	@Override
 	public void postVisit(ASTNode node) {
 		if (!before && node != bigblock && node instanceof Statement) {
@@ -83,11 +86,11 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		super.postVisit(node);
 	}
-
+	
 	public ASTNode getInsertnode() {
 		return insertnode;
 	}
-
+	
 	private void setProcessnode(ASTNode processnode) {
 		this.processnode = processnode;
 	}

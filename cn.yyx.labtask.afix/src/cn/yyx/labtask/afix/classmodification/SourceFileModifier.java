@@ -157,7 +157,7 @@ public class SourceFileModifier {
 						// testing
 						// System.out.println("cu start
 						// pos:"+cu.getStartPosition()+";beginpos:"+posline+";poslineoff:"+poslineoff+";filecontent:"+GetFileContent(mtype));
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(ip.getRacevar(), poslineoff, true,
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(cu, ip.getRacevar(), poslineoff, true,
 								methodblock);
 						methodblock.accept(ilsv);
 						ilsv.ProcessInsertNode();
@@ -209,7 +209,7 @@ public class SourceFileModifier {
 						int posline = ip.getPosition() - 1;
 						int poslineoff = FileUtil.GetTotalOffsetOfLineEnd(cu.getStartPosition(), posline,
 								GetFileContent(mtype));
-						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(ip.getRacevar(), poslineoff, false,
+						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(cu, ip.getRacevar(), poslineoff, false,
 								methodblock);
 						methodblock.accept(ilsv);
 						ilsv.ProcessInsertNode();
