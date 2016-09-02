@@ -22,6 +22,8 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private int statpos = -1;
 	private int endpos = -1;
 	private boolean sanalyze = false;
+	private boolean sanalyzeend = false;
+	private int currlevel = 0;
 
 	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int linenumber, boolean before, Block bigblock) {
 		this.compileunit = cu;
@@ -48,16 +50,13 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	}
 	
 	public boolean preVisit2(ASTNode node) {
+		currlevel++;
+		if (sanalyzeend) {
+			return false;
+		}
 		if (node == bigblock)
 		{
 			sanalyze = true;
-		}
-		if (node instanceof Statement && sanalyze)
-		{
-			if (IsIntersected(statpos, endpos, node.getStartPosition(), node.getStartPosition()+node.getLength()-1))
-			{
-				
-			}
 		}
 		return super.preVisit2(node);
 	}
@@ -76,7 +75,16 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		if (node == bigblock)
 		{
 			sanalyze = false;
+			sanalyzeend = true;
 		}
+		if (node instanceof Statement && sanalyze)
+		{
+			if (IsIntersected(statpos, endpos, node.getStartPosition(), node.getStartPosition()+node.getLength()-1))
+			{
+				return true;
+			}
+		}
+		currlevel--;
 		super.postVisit(node);
 	}
 	
