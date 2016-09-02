@@ -14,15 +14,15 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private ASTNode processnode = null;
 	private Block insertblock = null;
 	private String racevar = null;
-	private int offsetfrombegining = -1;
+	private int linenumber = -1;
 	private boolean before = false;
 	private int recordpos = -1;
 	private Block bigblock = null;
 
-	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int offsetfrombegining, boolean before, Block bigblock) {
+	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int linenumber, boolean before, Block bigblock) {
 		this.compileunit = cu;
 		this.racevar = racevar;
-		this.offsetfrombegining = offsetfrombegining;
+		this.linenumber = linenumber;
 		this.before = before;
 		this.bigblock = bigblock;
 	}
@@ -38,7 +38,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 			// System.out.println("==========end=========");
 			if (before) {
 				int startpos = node.getStartPosition();
-				if (startpos >= offsetfrombegining) {
+				if (startpos >= linenumber) {
 					if (recordpos == -1) {
 						recordpos = startpos;
 						setProcessnode(node);
@@ -54,7 +54,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 				}
 			} else {
 				int endpos = node.getStartPosition() + node.getLength();
-				if (endpos <= offsetfrombegining && recordpos < endpos) {
+				if (endpos <= linenumber && recordpos < endpos) {
 					recordpos = endpos;
 					setProcessnode(node);
 					return false;
@@ -76,7 +76,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 			
 			int startpos = node.getStartPosition();
 			int endpos = node.getStartPosition() + node.getLength();
-			if (endpos >= offsetfrombegining && offsetfrombegining >= startpos) {
+			if (endpos >= linenumber && linenumber >= startpos) {
 				if (recordpos <= startpos)
 				{
 					recordpos = endpos;
