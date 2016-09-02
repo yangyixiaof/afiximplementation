@@ -1,10 +1,15 @@
 package cn.yyx.labtask.afix.classmodification;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 
@@ -17,14 +22,16 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private String racevar = null;
 	private int linenumber = -1;
 	private boolean before = false;
-	private int recordpos = -1;
 	private Block bigblock = null;
-	private int statpos = -1;
+	private int startpos = -1;
 	private int endpos = -1;
 	private boolean sanalyze = false;
 	private boolean sanalyzeend = false;
 	private int currlevel = 0;
-
+	private boolean runover = false;
+	private Set<ASTNode> lowlevelnamenodes = new HashSet<ASTNode>();
+	private Set<ASTNode> meetstatementnamenodes = new HashSet<ASTNode>();
+	
 	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int linenumber, boolean before, Block bigblock) {
 		this.compileunit = cu;
 		this.racevar = racevar;
@@ -36,7 +43,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	
 	private void InitialAnalysisRange()
 	{
-		statpos = compileunit.getPosition(linenumber, 0);
+		startpos = compileunit.getPosition(linenumber, 0);
 		endpos = compileunit.getPosition(linenumber+1, 0);
 		if (endpos == -1) {
 			endpos = compileunit.getLength()-1;
@@ -58,6 +65,10 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		{
 			sanalyze = true;
 		}
+		if (node instanceof Name)
+		{
+			return false;
+		}
 		return super.preVisit2(node);
 	}
 	
@@ -77,15 +88,60 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 			sanalyze = false;
 			sanalyzeend = true;
 		}
-		if (node instanceof Statement && sanalyze)
+		if (node instanceof Name && sanalyze && racevar != null)
 		{
-			if (IsIntersected(statpos, endpos, node.getStartPosition(), node.getStartPosition()+node.getLength()-1))
+			if (((Name)node).toString().endsWith(racevar))
 			{
-				return true;
+				lowlevelnamenodes.add(node);
+			}
+		}
+		if (!runover && node instanceof Statement && sanalyze)
+		{
+			if (IsIntersected(startpos, endpos, node.getStartPosition(), node.getStartPosition()+node.getLength()-1))
+			{
+				if (racevar == null) {
+					runover = true;
+					setProcessnode(node);
+				} else {
+					if (before) {
+						if (IsParentOfOneNode(lowlevelnamenodes, node))
+						{
+							runover = true;
+							setProcessnode(node);
+						}
+					} else {
+						if (IsParentOfOneNode(lowlevelnamenodes, node))
+						{
+							if (!IsParentOfOneNode(meetstatementnamenodes, node))
+							{
+								setProcessnode(node);
+								meetstatementnamenodes.add(node);
+							}
+						}
+					}
+				}
 			}
 		}
 		currlevel--;
 		super.postVisit(node);
+	}
+	
+	private boolean IsParentOfOneNode(Set<ASTNode> anodes, ASTNode node)
+	{
+		Iterator<ASTNode> itr = anodes.iterator();
+		while (itr.hasNext())
+		{
+			ASTNode an = itr.next();
+			ASTNode anparent = an.getParent();
+			while (anparent != bigblock)
+			{
+				if (anparent == node)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	// @Override
