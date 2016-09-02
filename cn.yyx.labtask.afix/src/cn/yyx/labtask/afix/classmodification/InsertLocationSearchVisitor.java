@@ -20,9 +20,6 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private Block bigblock = null;
 
 	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int offsetfrombegining, boolean before, Block bigblock) {
-		
-		System.err.println("line:" + cu.getLineNumber(0) + ";position:" + cu.getPosition(1, 2));
-		
 		this.compileunit = cu;
 		this.racevar = racevar;
 		this.offsetfrombegining = offsetfrombegining;
