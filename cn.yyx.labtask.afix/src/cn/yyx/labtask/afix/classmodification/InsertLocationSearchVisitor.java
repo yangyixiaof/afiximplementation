@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
@@ -27,7 +26,6 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private int endpos = -1;
 	private boolean sanalyze = false;
 	private boolean sanalyzeend = false;
-	private int currlevel = 0;
 	private boolean runover = false;
 	private Set<ASTNode> lowlevelnamenodes = new HashSet<ASTNode>();
 	private Set<ASTNode> meetstatementnamenodes = new HashSet<ASTNode>();
@@ -57,7 +55,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	}
 	
 	public boolean preVisit2(ASTNode node) {
-		currlevel++;
+		// currlevel++;
 		if (sanalyzeend) {
 			return false;
 		}
@@ -122,7 +120,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 				}
 			}
 		}
-		currlevel--;
+		// currlevel--;
 		super.postVisit(node);
 	}
 	
@@ -139,6 +137,7 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 				{
 					return true;
 				}
+				anparent = anparent.getParent();
 			}
 		}
 		return false;
