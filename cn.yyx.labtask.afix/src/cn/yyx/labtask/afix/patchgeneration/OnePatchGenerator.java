@@ -17,6 +17,7 @@ import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.types.MethodReference;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
+import cn.yyx.labtask.afix.commonutil.SSABlockUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
@@ -163,7 +164,7 @@ public class OnePatchGenerator {
 			Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
 			if (rbk.getAFixSSABlockExtraInfo() != null)
 			{
-				SetSSABlockInfo(ssablockinfo, rbk.getISSABasicBlock(), rbk.getAFixSSABlockExtraInfo());
+				SSABlockUtil.SetSSABlockInfo(ssablockinfo, rbk.getISSABasicBlock(), rbk.getAFixSSABlockExtraInfo());
 			}
 			OnePatch op = new OnePatch(rt, this.r.getSig(), protectednodes, ir, cfg, ssablockinfo);
 			// op.AddLockBeforeIndex(this.r.getBytecodel());
@@ -214,47 +215,15 @@ public class OnePatchGenerator {
 		Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
 		if (pbk.getAFixSSABlockExtraInfo() != null)
 		{
-			SetSSABlockInfo(ssablockinfo, pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
+			SSABlockUtil.SetSSABlockInfo(ssablockinfo, pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
 		}
 		if (cbk.getAFixSSABlockExtraInfo() != null)
 		{
-			SetSSABlockInfo(ssablockinfo, cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
+			SSABlockUtil.SetSSABlockInfo(ssablockinfo, cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
 		}
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg, ssablockinfo);
 		ops.AddPatches(op);
 		return ops;
-	}
-	
-	private void SetSSABlockInfo(Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo, ISSABasicBlock ib, AFixSSABlockExtraInfo ibextrainfo) {
-		AFixSSABlockExtraInfo extrainfo = ssablockinfo.get(ib);
-		if (extrainfo == null) {
-			ssablockinfo.put(ib, ibextrainfo);
-		} else {
-			if (extrainfo.getDownboundinst() == null) {
-				extrainfo.setDownboundinst(ibextrainfo.getDownboundinst());
-			} else {
-				if (ibextrainfo.getDownboundinst() != null)
-				{
-					if (extrainfo.getDownboundinst().iindex < ibextrainfo.getDownboundinst().iindex)
-					{
-						extrainfo.setDownboundinst(ibextrainfo.getDownboundinst());
-						extrainfo.setDownvarname(ibextrainfo.getDownvarname());
-					}
-				}
-			}
-			if (extrainfo.getUpboundinst() == null) {
-				extrainfo.setUpboundinst(ibextrainfo.getUpboundinst());
-			} else {
-				if (ibextrainfo.getUpboundinst() != null)
-				{
-					if (extrainfo.getUpboundinst().iindex > ibextrainfo.getUpboundinst().iindex)
-					{
-						extrainfo.setUpboundinst(ibextrainfo.getUpboundinst());
-						extrainfo.setUpvarname(ibextrainfo.getUpvarname());
-					}
-				}
-			}
-		}
 	}
 	
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,

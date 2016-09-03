@@ -16,6 +16,7 @@ import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
 
 import cn.yyx.labtask.afix.codemap.SearchUtil;
+import cn.yyx.labtask.afix.commonutil.SSABlockUtil;
 import cn.yyx.labtask.afix.errordetection.ErrorLocation;
 import cn.yyx.labtask.afix.errordetection.ErrorTrace;
 
@@ -335,7 +336,14 @@ public class OnePatch implements Mergeable {
 		} else {
 			if (iop.ssablockinfo != null)
 			{
-				ssablockinfo.putAll(iop.ssablockinfo);
+				Set<ISSABasicBlock> keys = iop.ssablockinfo.keySet();
+				Iterator<ISSABasicBlock> kitr = keys.iterator();
+				while (kitr.hasNext())
+				{
+					ISSABasicBlock isbb = kitr.next();
+					SSABlockUtil.SetSSABlockInfo(ssablockinfo, isbb, iop.ssablockinfo.get(isbb));
+				}
+				// ssablockinfo.putAll(iop.ssablockinfo);
 			}
 		}
 	}
