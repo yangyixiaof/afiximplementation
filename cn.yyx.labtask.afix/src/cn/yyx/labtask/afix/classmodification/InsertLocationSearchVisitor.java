@@ -64,9 +64,23 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		if (node instanceof Name) {
 			return false;
 		}
+		if (IsTwoFullBehindOne(startpos, endpos, node.getStartPosition(),
+				node.getStartPosition() + node.getLength() - 1))
+		{
+			return false;
+		}
 		return super.preVisit2(node);
 	}
-
+	
+	private boolean IsTwoFullBehindOne(int onestart, int oneend, int twostart, int twoend)
+	{
+		if (twostart >= oneend)
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	private boolean IsIntersected(int onestart, int oneend, int twostart, int twoend) {
 		if ((onestart >= twostart && onestart <= twoend) || (oneend >= twostart && oneend <= twoend)
 				|| (onestart >= twostart && oneend <= twoend) || (twostart >= onestart && twoend <= oneend)) {
