@@ -13,7 +13,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 
 public class InsertLocationSearchVisitor extends ASTVisitor {
-	
+
 	private CompilationUnit compileunit = null;
 	private ASTNode insertnode = null;
 	private ASTNode processnode = null;
@@ -29,8 +29,9 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private boolean runover = false;
 	private Set<ASTNode> lowlevelnamenodes = new HashSet<ASTNode>();
 	private Set<ASTNode> meetstatementnamenodes = new HashSet<ASTNode>();
-	
-	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int linenumber, boolean before, Block bigblock) {
+
+	public InsertLocationSearchVisitor(CompilationUnit cu, String racevar, int linenumber, boolean before,
+			Block bigblock) {
 		this.compileunit = cu;
 		this.racevar = racevar;
 		this.linenumber = linenumber;
@@ -38,83 +39,70 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		this.bigblock = bigblock;
 		InitialAnalysisRange();
 	}
-	
-	private void InitialAnalysisRange()
-	{
+
+	private void InitialAnalysisRange() {
 		startpos = compileunit.getPosition(linenumber, 0);
-		endpos = compileunit.getPosition(linenumber+1, 0);
+		endpos = compileunit.getPosition(linenumber + 1, 0);
 		if (endpos == -1) {
-			endpos = compileunit.getLength()-1;
+			endpos = compileunit.getLength() - 1;
 		} else {
 			endpos--;
 		}
-		if (endpos < 0)
-		{
+		if (endpos < 0) {
 			System.err.println("What the fuck! what the range?");
 		}
 	}
-	
+
 	public boolean preVisit2(ASTNode node) {
 		// currlevel++;
-		if (sanalyzeend) {
+		if (sanalyzeend || runover) {
 			return false;
 		}
-		if (node == bigblock)
-		{
+		if (node == bigblock) {
 			sanalyze = true;
 		}
-		if (node instanceof Name)
-		{
+		if (node instanceof Name) {
 			return false;
 		}
 		return super.preVisit2(node);
 	}
-	
-	private boolean IsIntersected(int onestart, int oneend, int twostart, int twoend)
-	{
-		if((onestart>=twostart&&onestart<=twoend)||(oneend>=twostart&&oneend<=twoend)||(onestart>=twostart&&oneend<=twoend)||(twostart>=onestart&&twoend<=oneend))
-		{
+
+	private boolean IsIntersected(int onestart, int oneend, int twostart, int twoend) {
+		if ((onestart >= twostart && onestart <= twoend) || (oneend >= twostart && oneend <= twoend)
+				|| (onestart >= twostart && oneend <= twoend) || (twostart >= onestart && twoend <= oneend)) {
 			return true;
-        }
+		}
 		return false;
 	}
-	
+
 	@Override
 	public void postVisit(ASTNode node) {
-		if (node == bigblock)
-		{
+		if (node == bigblock) {
 			sanalyze = false;
 			sanalyzeend = true;
 		}
-		if (node instanceof Name && sanalyze && racevar != null)
-		{
-			if (((Name)node).toString().endsWith(racevar))
-			{
+		boolean intersected = IsIntersected(startpos, endpos, node.getStartPosition(),
+				node.getStartPosition() + node.getLength() - 1);
+		if (!runover && node instanceof Name && sanalyze && racevar != null && intersected) {
+			if (((Name) node).toString().endsWith(racevar)) {
 				lowlevelnamenodes.add(node);
 			}
 		}
-		if (!runover && node instanceof Statement && sanalyze)
-		{
-			if (IsIntersected(startpos, endpos, node.getStartPosition(), node.getStartPosition()+node.getLength()-1))
-			{
-				if (racevar == null) {
-					runover = true;
-					setProcessnode(node);
+		if (!runover && node instanceof Statement && sanalyze && intersected) {
+			if (racevar == null) {
+				runover = true;
+				setProcessnode(node);
+			} else {
+				if (before) {
+					if (IsParentOfOneNode(lowlevelnamenodes, node)) {
+						runover = true;
+						setProcessnode(node);
+					}
 				} else {
-					if (before) {
-						if (IsParentOfOneNode(lowlevelnamenodes, node))
-						{
-							runover = true;
+					if (IsParentOfOneNode(lowlevelnamenodes, node)) {
+						if (!IsParentOfOneNode(meetstatementnamenodes, node)) {
 							setProcessnode(node);
-						}
-					} else {
-						if (IsParentOfOneNode(lowlevelnamenodes, node))
-						{
-							if (!IsParentOfOneNode(meetstatementnamenodes, node))
-							{
-								setProcessnode(node);
-								meetstatementnamenodes.add(node);
-							}
+							meetstatementnamenodes.add(node);
 						}
 					}
 				}
@@ -123,18 +111,14 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		// currlevel--;
 		super.postVisit(node);
 	}
-	
-	private boolean IsParentOfOneNode(Set<ASTNode> anodes, ASTNode node)
-	{
+
+	private boolean IsParentOfOneNode(Set<ASTNode> anodes, ASTNode node) {
 		Iterator<ASTNode> itr = anodes.iterator();
-		while (itr.hasNext())
-		{
+		while (itr.hasNext()) {
 			ASTNode an = itr.next();
 			ASTNode anparent = an.getParent();
-			while (anparent != bigblock)
-			{
-				if (anparent == node)
-				{
+			while (anparent != bigblock) {
+				if (anparent == node) {
 					return true;
 				}
 				anparent = anparent.getParent();
@@ -142,71 +126,72 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	// @Override
 	// public boolean preVisit2(ASTNode node) {
-	//	if (node != bigblock && node instanceof Statement) {
-			// testing.
-			// System.out.println("==========begin=========");
-			// System.out.println("node:" + node);
-			// System.out.println("offsetfrombegining:" + offsetfrombegining + ";startpos:" + node.getStartPosition()
-			//		+ ";endpos:" + (node.getStartPosition() + node.getLength()));
-			// System.out.println("==========end=========");
-	//		if (before) {
-	//			int startpos = node.getStartPosition();
-	//			if (startpos >= linenumber) {
-	//				if (recordpos == -1) {
-	//					recordpos = startpos;
-	//					setProcessnode(node);
-	//				}
-	//				return false;
-					// else
-					// {
-					// if (recordpos > startpos) {
-					// recordpos = startpos;
-					// setInsertnodeAndBlock(node);
-					// }
-					// }
-	//			}
-	//		} else {
-	//			int endpos = node.getStartPosition() + node.getLength();
-	//			if (endpos <= linenumber && recordpos < endpos) {
-	//				recordpos = endpos;
-	//				setProcessnode(node);
-	//				return false;
-	//			}
-	//		}
-	//	}
-	//	return super.preVisit2(node);
+	// if (node != bigblock && node instanceof Statement) {
+	// testing.
+	// System.out.println("==========begin=========");
+	// System.out.println("node:" + node);
+	// System.out.println("offsetfrombegining:" + offsetfrombegining +
+	// ";startpos:" + node.getStartPosition()
+	// + ";endpos:" + (node.getStartPosition() + node.getLength()));
+	// System.out.println("==========end=========");
+	// if (before) {
+	// int startpos = node.getStartPosition();
+	// if (startpos >= linenumber) {
+	// if (recordpos == -1) {
+	// recordpos = startpos;
+	// setProcessnode(node);
 	// }
-	
+	// return false;
+	// else
+	// {
+	// if (recordpos > startpos) {
+	// recordpos = startpos;
+	// setInsertnodeAndBlock(node);
+	// }
+	// }
+	// }
+	// } else {
+	// int endpos = node.getStartPosition() + node.getLength();
+	// if (endpos <= linenumber && recordpos < endpos) {
+	// recordpos = endpos;
+	// setProcessnode(node);
+	// return false;
+	// }
+	// }
+	// }
+	// return super.preVisit2(node);
+	// }
+
 	// @Override
 	// public void postVisit(ASTNode node) {
-	//	if (!before && node != bigblock && node instanceof Statement) {
-			// System.out.println("==========begin=========");
-			// System.out.println("node:"+node);
-			// System.out.println("offsetfrombegining:"+offsetfrombegining+";start
-			// pos:"+node.getStartPosition()+";end
-			// pos:"+(node.getStartPosition()+node.getLength()));
-			// System.out.println("==========end=========");
-			
-	//		int startpos = node.getStartPosition();
-	//		int endpos = node.getStartPosition() + node.getLength();
-	//		if (endpos >= linenumber && linenumber >= startpos) {
-	//			if (recordpos <= startpos)
-	//			{
-	//				recordpos = endpos;
-	//				setProcessnode(node);
-	//			}
-	//		}
-	//	}
-	//	super.postVisit(node);
+	// if (!before && node != bigblock && node instanceof Statement) {
+	// System.out.println("==========begin=========");
+	// System.out.println("node:"+node);
+	// System.out.println("offsetfrombegining:"+offsetfrombegining+";start
+	// pos:"+node.getStartPosition()+";end
+	// pos:"+(node.getStartPosition()+node.getLength()));
+	// System.out.println("==========end=========");
+
+	// int startpos = node.getStartPosition();
+	// int endpos = node.getStartPosition() + node.getLength();
+	// if (endpos >= linenumber && linenumber >= startpos) {
+	// if (recordpos <= startpos)
+	// {
+	// recordpos = endpos;
+	// setProcessnode(node);
 	// }
-	
+	// }
+	// }
+	// super.postVisit(node);
+	// }
+
 	public ASTNode getInsertnode() {
 		return insertnode;
 	}
-	
+
 	private void setProcessnode(ASTNode processnode) {
 		this.processnode = processnode;
 	}
@@ -235,9 +220,9 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		}
 		return synnode;
 	}
-	
+
 	public Block getInsertblock() {
 		return insertblock;
 	}
-	
+
 }
