@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
@@ -98,11 +99,12 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 		boolean intersected = IsIntersected(startpos, endpos, node.getStartPosition(),
 				node.getStartPosition() + node.getLength() - 1);
 		if (!runover && node instanceof Name && sanalyze && racevar != null && intersected) {
-			if (((Name) node).toString().endsWith(racevar)) {
+			String nstr = ((Name) node).toString();
+			if (nstr.endsWith("." + racevar) || nstr.equals(racevar)) {
 				lowlevelnamenodes.add(node);
 			}
 		}
-		if (!runover && node instanceof Statement && sanalyze && intersected) {
+		if (!runover && node instanceof Statement && !(node instanceof EmptyStatement) && sanalyze && intersected) {
 			if (racevar == null) {
 				runover = true;
 				setProcessnode(node);
