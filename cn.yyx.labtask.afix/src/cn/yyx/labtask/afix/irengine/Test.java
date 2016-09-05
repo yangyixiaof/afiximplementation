@@ -53,13 +53,17 @@ public class Test {
 		listRewrite.insertBefore(newsyn, stmt, null);
 		Document document = new Document(FileUtil.ReadFileByLines(f));
 		TextEdit edits = aw.rewriteAST(document, null);
-		FileUtil.ClearAndWriteToFile(document.get(), f);
 		try {
 			edits.apply(document);
 		} catch (MalformedTreeException e) {
 			e.printStackTrace();
 		} catch (BadLocationException e) {
 			e.printStackTrace();
+		}
+		try {
+			FileUtil.ContentToFile(f, document.get());
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
 		// System.err.println("total length:" + cu.getLength() + ";57,1 position:" + cu.getPosition(57, 1) + ";1,55 position:" + cu.getPosition(1, 55) + ";line:" + cu.getLineNumber(0) + ";position:" + cu.getPosition(3, 0) + ";col:" + cu.getColumnNumber(37));
 	}
