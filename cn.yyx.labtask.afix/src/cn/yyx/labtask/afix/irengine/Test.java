@@ -49,8 +49,14 @@ public class Test {
 		Statement stmt = (Statement) body.statements().get(0);
 		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
 		newsyn.setExpression(ast.newSimpleName("haha"));
+		Block bk = newsyn.getBody();
+		
+		ListRewrite bkListRewrite = aw.getListRewrite(bk, Block.STATEMENTS_PROPERTY);
+		bkListRewrite.insertLast(stmt, null);
+		
 		ListRewrite listRewrite = aw.getListRewrite(body, Block.STATEMENTS_PROPERTY);
 		listRewrite.insertBefore(newsyn, stmt, null);
+		listRewrite.remove(stmt, null);
 		Document document = new Document(FileUtil.ReadFileByLines(f));
 		TextEdit edits = aw.rewriteAST(document, null);
 		try {
