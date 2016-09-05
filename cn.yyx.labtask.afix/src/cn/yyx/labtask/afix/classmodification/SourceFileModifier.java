@@ -184,7 +184,7 @@ public class SourceFileModifier {
 							// insertnode, null);
 							addedlocks.put(lockposition, lockidx);
 							seps[lockidx].getOms()
-									.add(new OneModify(listRewrite, ast, newInvocation, insertnode, true));
+									.add(new OneModify(ib, listRewrite, ast, newInvocation, insertnode, true));
 							PutMapAndValueList(filelocks, fileunique, lockname);
 						} else {
 							int tlidx = addedlocks.get(lockposition);
@@ -242,7 +242,7 @@ public class SourceFileModifier {
 							// insertnode, null);
 							addedunlocks.put(lockposition, lockidx);
 							seps[lockidx].getOms()
-									.add(new OneModify(listRewrite, ast, newInvocation, insertnode, false));
+									.add(new OneModify(ib, listRewrite, ast, newInvocation, insertnode, false));
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
 						} else {
 							int tlidx = addedunlocks.get(lockposition);
@@ -415,7 +415,6 @@ public class SourceFileModifier {
 						throw e;
 					}
 				}
-
 			}
 		}
 	}
