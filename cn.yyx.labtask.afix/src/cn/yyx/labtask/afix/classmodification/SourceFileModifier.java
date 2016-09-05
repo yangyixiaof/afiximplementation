@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -166,7 +165,7 @@ public class SourceFileModifier {
 						ilsv.ProcessInsertNode();
 						ASTNode insertnode = ilsv.getInsertnode();
 						Block ib = ilsv.getInsertblock();
-						ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
+						// ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("lock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
@@ -186,8 +185,9 @@ public class SourceFileModifier {
 							// listRewrite.insertBefore(newStatement,
 							// insertnode, null);
 							addedlocks.put(lockposition, lockidx);
+							// , listRewrite
 							seps[lockidx].getOms()
-									.add(new OneModify(methodblock, ib, listRewrite, ast, newInvocation, insertnode, true));
+									.add(new OneModify(methodblock, ib, ast, aw, newInvocation, insertnode, true));
 							PutMapAndValueList(filelocks, fileunique, lockname);
 						} else {
 							int tlidx = addedlocks.get(lockposition);
@@ -218,7 +218,7 @@ public class SourceFileModifier {
 						ilsv.ProcessInsertNode();
 						ASTNode insertnode = ilsv.getInsertnode();
 						Block ib = ilsv.getInsertblock();
-						ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
+						// ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
 						MethodInvocation newInvocation = ast.newMethodInvocation();
 						newInvocation.setName(ast.newSimpleName("unlock"));
 						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
@@ -244,8 +244,9 @@ public class SourceFileModifier {
 							// listRewrite.insertBefore(newStatement,
 							// insertnode, null);
 							addedunlocks.put(lockposition, lockidx);
+							// , listRewrite
 							seps[lockidx].getOms()
-									.add(new OneModify(methodblock, ib, listRewrite, ast, newInvocation, insertnode, false));
+									.add(new OneModify(methodblock, ib, ast, aw, newInvocation, insertnode, false));
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
 						} else {
 							int tlidx = addedunlocks.get(lockposition);
@@ -430,6 +431,7 @@ public class SourceFileModifier {
 			OneModify omt = sitr.next();
 			
 		}
+		
 		sstart.clear();
 		send.clear();
 	}

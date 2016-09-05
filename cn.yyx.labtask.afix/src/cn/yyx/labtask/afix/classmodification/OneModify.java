@@ -4,35 +4,38 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 public class OneModify implements Comparable<OneModify> {
 	
 	private Block md = null;
 	private Block ib = null;
-	private ListRewrite listRewrite = null;
+	// private ListRewrite listRewrite = null;
 	private AST ast = null;
+	private ASTRewrite aw = null;
 	private MethodInvocation newInvocation = null;
 	private ASTNode insertnode = null;
 	private boolean isinsertbefore = false;
 	
-	public OneModify(Block md, Block ib, ListRewrite listRewrite, AST ast, MethodInvocation newInvocation, ASTNode insertnode, boolean isinsertbefore) {
+	// ListRewrite listRewrite, 
+	public OneModify(Block md, Block ib, AST ast, ASTRewrite aw, MethodInvocation newInvocation, ASTNode insertnode, boolean isinsertbefore) {
 		this.setMethodDeclarationBlock(md);
 		this.setIBlock(ib);
-		this.setListRewrite(listRewrite);
+		// this.setListRewrite(listRewrite);
 		this.setAst(ast);
+		this.setASTRewrite(aw);
 		this.setNewStatement(newInvocation);
 		this.setInsertnode(insertnode);
 		this.setIsinsertbefore(isinsertbefore);
 	}
 
-	public ListRewrite getListRewrite() {
+	/*public ListRewrite getListRewrite() {
 		return listRewrite;
 	}
 
 	public void setListRewrite(ListRewrite listRewrite) {
 		this.listRewrite = listRewrite;
-	}
+	}*/
 
 	public MethodInvocation getNewInvocation() {
 		return newInvocation;
@@ -94,6 +97,14 @@ public class OneModify implements Comparable<OneModify> {
 		} else {
 			return new Integer(insertnode.getStartPosition()+insertnode.getLength()-1);
 		}
+	}
+
+	public ASTRewrite getASTRewrite() {
+		return aw;
+	}
+
+	public void setASTRewrite(ASTRewrite aw) {
+		this.aw = aw;
 	}
 	
 }
