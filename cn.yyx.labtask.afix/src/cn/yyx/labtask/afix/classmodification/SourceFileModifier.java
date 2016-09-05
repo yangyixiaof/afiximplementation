@@ -399,11 +399,41 @@ public class SourceFileModifier {
 		{
 			Block bk = bitr.next();
 			LinkedList<OneModify> omlist = SortOneModifyList(bom.get(bk));
-			
-			
+			AnalysisRewrite(omlist);
 		}
 	}
 	
+	// TODO
+	List<OneModify> sstart = new LinkedList<OneModify>();
+	List<OneModify> send = new LinkedList<OneModify>();
+	private void AnalysisRewrite(LinkedList<OneModify> omlist) {
+		
+		
+		
+	}
+	
+	private void GenerateRewrite()
+	{
+		if (sstart.size() == 0 || send.size() == 0)
+		{
+			System.err.println("Wrong mechanism of lock and unlock.");
+			System.exit(1);
+		}
+		
+		List<OneModify> sall = new LinkedList<OneModify>();
+		sall.addAll(sstart);
+		sall.addAll(send);
+		Iterator<OneModify> sitr = sall.iterator();
+		OneModify om1 = sitr.next();
+		while (sitr.hasNext())
+		{
+			OneModify omt = sitr.next();
+			
+		}
+		sstart.clear();
+		send.clear();
+	}
+
 	private LinkedList<OneModify> SortOneModifyList(LinkedList<OneModify> omlist)
 	{
 		LinkedList<OneModify> omres = new LinkedList<OneModify>();
@@ -445,6 +475,7 @@ public class SourceFileModifier {
 	}
 	
 	// TODO two places need to be changed.
+	// TODO this is the first place.
 	// private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord) {
 	//	Iterator<IntegerWrapper> itr = iteraterecord.iterator();
 	//	while (itr.hasNext()) {
@@ -478,6 +509,7 @@ public class SourceFileModifier {
 	//	}
 	// }
 	
+	// TODO this is the second place.
 	private void GenerateAFixEntries(CompilationUnit cu, TreeMap<String, Boolean> lks, String fabpath, boolean islock) {
 		Set<String> ks = lks.keySet();
 		Iterator<String> itr = ks.iterator();
