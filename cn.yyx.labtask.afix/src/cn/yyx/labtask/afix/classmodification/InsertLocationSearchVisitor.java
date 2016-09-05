@@ -219,9 +219,14 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 			this.insertnode = synnode;
 		}
 		ASTNode temp = this.insertnode.getParent();
-		while (!(temp instanceof Block)) {
-			temp = temp.getParent();
+		if (!(temp instanceof Block))
+		{
+			System.err.println("What the fuck, the parent of insertnode is not kind of Blcoks?");
+			System.exit(1);
 		}
+		// while (!(temp instanceof Block)) {
+		//	temp = temp.getParent();
+		// }
 		this.insertblock = (Block) temp;
 	}
 

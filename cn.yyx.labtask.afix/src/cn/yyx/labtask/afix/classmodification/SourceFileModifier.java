@@ -385,7 +385,7 @@ public class SourceFileModifier {
 		}
 		return minlockidx;
 	}
-
+	// TODO two places need to be changed.
 	private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord) {
 		Iterator<IntegerWrapper> itr = iteraterecord.iterator();
 		while (itr.hasNext()) {
@@ -401,17 +401,17 @@ public class SourceFileModifier {
 				newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
 				Statement newStatement = ast.newExpressionStatement(newInvocation);
 				if (om.isIsinsertbefore()) {
-					// try {
-					listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
-					// } catch (Exception e) {
-					// System.err.println("insert before node:" + om.getInsertnode());
-					// throw e;
-					// }
+					try {
+						listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
+					} catch (Exception e) {
+						System.err.println("ERROR: insert before node:" + om.getInsertnode());
+						throw e;
+					}
 				} else {
 					try {
 						listRewrite.insertAfter(newStatement, om.getInsertnode(), null);
 					} catch (Exception e) {
-						System.err.println("insert after node:" + om.getInsertnode());
+						System.err.println("ERROR: insert after node:" + om.getInsertnode());
 						throw e;
 					}
 				}
