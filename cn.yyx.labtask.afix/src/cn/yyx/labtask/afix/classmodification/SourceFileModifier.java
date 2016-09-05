@@ -1,9 +1,13 @@
 package cn.yyx.labtask.afix.classmodification;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -19,7 +23,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -184,7 +187,7 @@ public class SourceFileModifier {
 							// insertnode, null);
 							addedlocks.put(lockposition, lockidx);
 							seps[lockidx].getOms()
-									.add(new OneModify(ib, listRewrite, ast, newInvocation, insertnode, true));
+									.add(new OneModify(methodblock, ib, listRewrite, ast, newInvocation, insertnode, true));
 							PutMapAndValueList(filelocks, fileunique, lockname);
 						} else {
 							int tlidx = addedlocks.get(lockposition);
@@ -242,7 +245,7 @@ public class SourceFileModifier {
 							// insertnode, null);
 							addedunlocks.put(lockposition, lockidx);
 							seps[lockidx].getOms()
-									.add(new OneModify(ib, listRewrite, ast, newInvocation, insertnode, false));
+									.add(new OneModify(methodblock, ib, listRewrite, ast, newInvocation, insertnode, false));
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
 						} else {
 							int tlidx = addedunlocks.get(lockposition);
@@ -385,8 +388,43 @@ public class SourceFileModifier {
 		}
 		return minlockidx;
 	}
-	// TODO two places need to be changed.
+	
+	Map<Block, LinkedList<OneModify>> bom = new HashMap<Block, LinkedList<OneModify>>();
+	
 	private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord) {
+		InitialBom(iteraterecord);
+		Set<Block> bkeys = bom.keySet();
+		Iterator<Block> bitr = bkeys.iterator();
+		while (bitr.hasNext())
+		{
+			Block bk = bitr.next();
+			LinkedList<OneModify> omlist = SortOneModifyList(bom.get(bk));
+			
+			
+		}
+	}
+	
+	private LinkedList<OneModify> SortOneModifyList(LinkedList<OneModify> omlist)
+	{
+		LinkedList<OneModify> omres = new LinkedList<OneModify>();
+		Queue<OneModify> omque = new PriorityQueue<OneModify>();
+		Iterator<OneModify> omitr = omlist.iterator();
+		while (omitr.hasNext())
+		{
+			OneModify om = omitr.next();
+			omque.add(om);
+		}
+		Iterator<OneModify> qitr = omque.iterator();
+		while (qitr.hasNext())
+		{
+			OneModify om = qitr.next();
+			omres.add(om);
+		}
+		return omres;
+	}
+	
+	private void InitialBom(Set<IntegerWrapper> iteraterecord)
+	{
 		Iterator<IntegerWrapper> itr = iteraterecord.iterator();
 		while (itr.hasNext()) {
 			IntegerWrapper iw = itr.next();
@@ -395,30 +433,51 @@ public class SourceFileModifier {
 			Iterator<OneModify> omitr = oms.iterator();
 			while (omitr.hasNext()) {
 				OneModify om = omitr.next();
-				ListRewrite listRewrite = om.getListRewrite();
-				AST ast = om.getAst();
-				MethodInvocation newInvocation = om.getNewInvocation();
-				newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
-				Statement newStatement = ast.newExpressionStatement(newInvocation);
-				if (om.isIsinsertbefore()) {
-					try {
-						listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
-					} catch (Exception e) {
-						System.err.println("ERROR: insert before node:" + om.getInsertnode());
-						throw e;
-					}
-				} else {
-					try {
-						listRewrite.insertAfter(newStatement, om.getInsertnode(), null);
-					} catch (Exception e) {
-						System.err.println("ERROR: insert after node:" + om.getInsertnode());
-						throw e;
-					}
+				LinkedList<OneModify> omlist = bom.get(om.getIBlock());
+				if (omlist == null)
+				{
+					omlist = new LinkedList<OneModify>();
+					bom.put(om.getMethodDeclarationBlock(), omlist);
 				}
+				omlist.add(om);
 			}
 		}
 	}
-
+	
+	// TODO two places need to be changed.
+	// private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord) {
+	//	Iterator<IntegerWrapper> itr = iteraterecord.iterator();
+	//	while (itr.hasNext()) {
+	//		IntegerWrapper iw = itr.next();
+	//		ModifyContent mc = iw.getMc();
+	//		List<OneModify> oms = mc.getOms();
+	//		Iterator<OneModify> omitr = oms.iterator();
+	//		while (omitr.hasNext()) {
+	//			OneModify om = omitr.next();
+	//			ListRewrite listRewrite = om.getListRewrite();
+	//			AST ast = om.getAst();
+	//			MethodInvocation newInvocation = om.getNewInvocation();
+	//			newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
+	//			Statement newStatement = ast.newExpressionStatement(newInvocation);
+	//			if (om.isIsinsertbefore()) {
+	//				try {
+	//					listRewrite.insertBefore(newStatement, om.getInsertnode(), null);
+	//				} catch (Exception e) {
+	//					System.err.println("ERROR: insert before node:" + om.getInsertnode());
+	//					throw e;
+	//				}
+	//			} else {
+	//				try {
+	//					listRewrite.insertAfter(newStatement, om.getInsertnode(), null);
+	//				} catch (Exception e) {
+	//					System.err.println("ERROR: insert after node:" + om.getInsertnode());
+	//					throw e;
+	//				}
+	//			}
+	//		}
+	//	}
+	// }
+	
 	private void GenerateAFixEntries(CompilationUnit cu, TreeMap<String, Boolean> lks, String fabpath, boolean islock) {
 		Set<String> ks = lks.keySet();
 		Iterator<String> itr = ks.iterator();
