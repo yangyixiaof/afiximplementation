@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -405,15 +406,16 @@ public class SourceFileModifier {
 	}
 	
 	// TODO
-	List<OneModify> sstart = new LinkedList<OneModify>();
-	List<OneModify> send = new LinkedList<OneModify>();
 	private void AnalysisRewrite(LinkedList<OneModify> omlist) {
+		List<OneModify> sstart = new LinkedList<OneModify>();
+		List<OneModify> send = new LinkedList<OneModify>();
 		
 		
 		
+		GenerateRewrite(sstart, send);
 	}
 	
-	private void GenerateRewrite()
+	private void GenerateRewrite(List<OneModify> sstart, List<OneModify> send)
 	{
 		if (sstart.size() == 0 || send.size() == 0)
 		{
@@ -425,11 +427,22 @@ public class SourceFileModifier {
 		sall.addAll(sstart);
 		sall.addAll(send);
 		Iterator<OneModify> sitr = sall.iterator();
+		
 		OneModify om1 = sitr.next();
+		
+		Block firstbk = om1.getIBlock();
+		ASTNode firstins = om1.getInsertnode();
+		
+		Block secondbk = null;
+		ASTNode secondins = null;
+		
 		while (sitr.hasNext())
 		{
 			OneModify omt = sitr.next();
+			Block tempsecondbk = omt.getIBlock();
+			ASTNode tempsecondins = omt.getInsertnode();
 			
+			// TODO
 		}
 		
 		sstart.clear();
