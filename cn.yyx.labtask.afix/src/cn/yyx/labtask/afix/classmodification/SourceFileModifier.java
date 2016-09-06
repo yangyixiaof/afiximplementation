@@ -557,6 +557,7 @@ public class SourceFileModifier {
 		// firstbk firstins secondbk secondins
 		@SuppressWarnings("unchecked")
 		List<Statement> stmts = firstbk.statements();
+		stmts = SortStatementsByPositions(stmts);
 		List<Statement> trimedstmts = new LinkedList<Statement>();
 		Iterator<Statement> itr = stmts.iterator();
 		boolean start = false;
@@ -601,6 +602,24 @@ public class SourceFileModifier {
 		firstbklistRewrite.insertBefore(newsyn, firstins, null);
 	}
 	
+	private List<Statement> SortStatementsByPositions(List<Statement> stmts) {
+		List<Statement> result = new LinkedList<Statement>();
+		Queue<StatementSort> pque = new PriorityQueue<StatementSort>();
+		Iterator<Statement> sitr = stmts.iterator();
+		while (sitr.hasNext())
+		{
+			Statement stmt = sitr.next();
+			StatementSort ss = new StatementSort(stmt);
+			pque.add(ss);
+		}
+		while (!pque.isEmpty())
+		{
+			StatementSort ss = pque.poll();
+			result.add(ss.getStatement());
+		}
+		return result;
+	}
+
 	private boolean JudgeFirstIsAtLeastSameOrHigherLevelOfSecondLevel(final Block firstbk, final Block secondbk, final Block methoddeclare)
 	{
 		ASTNode temp = secondbk;
@@ -629,10 +648,9 @@ public class SourceFileModifier {
 			OneModify om = omitr.next();
 			omque.add(om);
 		}
-		Iterator<OneModify> qitr = omque.iterator();
-		while (qitr.hasNext())
+		while (!omque.isEmpty())
 		{
-			OneModify om = qitr.next();
+			OneModify om = omque.poll();
 			omres.add(om);
 		}
 		return omres;
