@@ -651,7 +651,7 @@ public class SourceFileModifier {
 				if (lidx == -1) {
 					lidx = lockfullnamelocation.indexOf('\\');
 				}
-				AFixFactory.AddEntry(new AFixEntity(lockname, islock ? "lock" : "unlock",
+				AFixFactory.AddEntry(new AFixEntity(lockname, islock ? "synchronization" : "synchronization", // "lock" : "unlock"
 						lockfullnamelocation.substring(lidx + 1), lockfullnamelocation));
 			}
 		}

@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jface.text.Document;
 
 import cn.yyx.labtask.afix.commonutil.FileUtil;
@@ -25,14 +25,10 @@ public class ASTHelper {
 		List<Integer> ils = new LinkedList<Integer>();
 		compilationUnit.accept(new ASTVisitor() {
 			@Override
-			public boolean visit(MethodInvocation node) {
-				if (node.getName().toString().equals("lock"))
+			public boolean visit(SynchronizedStatement node) {
+				if (node.getExpression().toString().equals(lockname))
 				{
-					String nexs = node.getExpression().toString();
-					if (nexs.equals("cn.yyx.labtask.afix.LockPool." + lockname))
-					{
-						ils.add(GetASTNodeLineNumber(compilationUnit, node));
-					}
+					ils.add(GetASTNodeLineNumber(compilationUnit, node));
 				}
 				return super.visit(node);
 			}
@@ -42,20 +38,20 @@ public class ASTHelper {
 
 	public static List<Integer> GetUnLockASTNodeLineNumber(CompilationUnit compilationUnit, String lockname) {
 		List<Integer> ils = new LinkedList<Integer>();
-		compilationUnit.accept(new ASTVisitor() {
-			@Override
-			public boolean visit(MethodInvocation node) {
-				if (node.getName().toString().equals("unlock"))
-				{
-					String nexs = node.getExpression().toString();
-					if (nexs.equals("cn.yyx.labtask.afix.LockPool." + lockname))
-					{
-						ils.add(GetASTNodeLineNumber(compilationUnit, node));
-					}
-				}
-				return super.visit(node);
-			}
-		});
+		// compilationUnit.accept(new ASTVisitor() {
+		//	@Override
+		//	public boolean visit(MethodInvocation node) {
+		//		if (node.getName().toString().equals("unlock"))
+		//		{
+		//			String nexs = node.getExpression().toString();
+		//			if (nexs.equals("cn.yyx.labtask.afix.LockPool." + lockname))
+		//			{
+		//				ils.add(GetASTNodeLineNumber(compilationUnit, node));
+		//			}
+		//		}
+		//		return super.visit(node);
+		//	}
+		// });
 		return ils;
 	}
 	
