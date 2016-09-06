@@ -24,7 +24,9 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -401,21 +403,21 @@ public class SourceFileModifier {
 		{
 			Block bk = bitr.next();
 			LinkedList<OneModify> omlist = SortOneModifyList(bom.get(bk));
-			AnalysisRewrite(omlist);
+			AnalysisRewrite(minlockidx, omlist);
 		}
 	}
 	
 	// TODO
-	private void AnalysisRewrite(LinkedList<OneModify> omlist) {
+	private void AnalysisRewrite(int minlockidx, LinkedList<OneModify> omlist) {
 		List<OneModify> sstart = new LinkedList<OneModify>();
 		List<OneModify> send = new LinkedList<OneModify>();
 		
 		
 		
-		GenerateRewrite(sstart, send);
+		GenerateRewrite(minlockidx, sstart, send);
 	}
 	
-	private void GenerateRewrite(List<OneModify> sstart, List<OneModify> send)
+	private void GenerateRewrite(int minlockidx, List<OneModify> sstart, List<OneModify> send)
 	{
 		if (sstart.size() == 0 || send.size() == 0)
 		{
@@ -442,13 +444,103 @@ public class SourceFileModifier {
 			Block tempsecondbk = omt.getIBlock();
 			ASTNode tempsecondins = omt.getInsertnode();
 			
-			// TODO
+			while (!JudgeFirstIsAtLeastSameOrHigherLevelOfSecondLevel(firstbk, tempsecondbk, om1.getMethodDeclarationBlock()))
+			{
+				ASTNode temp = firstbk.getParent();
+				firstins = firstins.getParent();
+				while (!(temp instanceof Block))
+				{
+					temp = firstbk.getParent();
+					firstins = firstins.getParent();
+				}
+				firstbk = (Block) temp;
+			}
+			
+			ASTNode temp = tempsecondbk;
+			while (temp != firstbk)
+			{
+				temp = temp.getParent();
+				tempsecondins = tempsecondins.getParent();
+			}
+			tempsecondbk = (Block) temp;
+			secondbk = tempsecondbk;
+			secondins = tempsecondins;
+		}
+		
+		if (firstbk != secondbk)
+		{
+			System.err.println("What the fuck, firstbk != secondbk???");
+			System.exit(1);
 		}
 		
 		sstart.clear();
 		send.clear();
+		
+		// generate rewrite by first and second.
+		// firstbk firstins secondbk secondins
+		@SuppressWarnings("unchecked")
+		List<Statement> stmts = firstbk.statements();
+		List<Statement> trimedstmts = new LinkedList<Statement>();
+		Iterator<Statement> itr = stmts.iterator();
+		boolean start = false;
+		boolean end = false;
+		while (itr.hasNext() && !end)
+		{
+			Statement stmt = itr.next();
+			if (stmt == firstins)
+			{
+				start = true;
+			}
+			if (start)
+			{
+				trimedstmts.add(stmt);	
+			}
+			if (stmt == secondins)
+			{
+				end = true;
+			}
+		}
+		if (!end)
+		{
+			System.err.println("What the fuck, no end?");
+			System.exit(1);
+		}
+		AST ast = om1.getAst();
+		ASTRewrite aw = ASTRewrite.create(ast);
+		
+		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
+		newsyn.setExpression(ast.newSimpleName("haha"));
+		Block bk = newsyn.getBody();
+		ListRewrite firstbklistRewrite = aw.getListRewrite(firstbk, Block.STATEMENTS_PROPERTY);
+		ListRewrite bkListRewrite = aw.getListRewrite(bk, Block.STATEMENTS_PROPERTY);
+		Iterator<Statement> titr = trimedstmts.iterator();
+		while (titr.hasNext())
+		{
+			Statement stmt = titr.next();
+			bkListRewrite.insertLast(stmt, null);
+			firstbklistRewrite.remove(stmt, null);
+		}
+		firstbklistRewrite.insertBefore(newsyn, firstins, null);
 	}
-
+	
+	private boolean JudgeFirstIsAtLeastSameOrHigherLevelOfSecondLevel(final Block firstbk, final Block secondbk, final Block methoddeclare)
+	{
+		ASTNode temp = secondbk;
+		while (temp != methoddeclare)
+		{
+			if (firstbk == temp)
+			{
+				return true;
+			}
+			temp = temp.getParent();
+		}
+		if (firstbk == temp)
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	private LinkedList<OneModify> SortOneModifyList(LinkedList<OneModify> omlist)
 	{
 		LinkedList<OneModify> omres = new LinkedList<OneModify>();
