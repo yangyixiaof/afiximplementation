@@ -26,7 +26,7 @@ public class ASTHelper {
 		compilationUnit.accept(new ASTVisitor() {
 			@Override
 			public boolean visit(SynchronizedStatement node) {
-				if (node.getExpression().toString().equals(lockname))
+				if (node.getExpression().toString().trim().equals("cn.yyx.labtask.afix.LockPool."+lockname))
 				{
 					ils.add(GetASTNodeLineNumber(compilationUnit, node));
 				}

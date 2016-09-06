@@ -540,7 +540,7 @@ public class SourceFileModifier {
 		ASTRewrite aw = om1.getASTRewrite();
 		
 		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
-		newsyn.setExpression(ast.newSimpleName("haha"));
+		newsyn.setExpression(ast.newSimpleName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
 		Block bk = newsyn.getBody();
 		ListRewrite firstbklistRewrite = aw.getListRewrite(firstbk, Block.STATEMENTS_PROPERTY);
 		ListRewrite bkListRewrite = aw.getListRewrite(bk, Block.STATEMENTS_PROPERTY);
