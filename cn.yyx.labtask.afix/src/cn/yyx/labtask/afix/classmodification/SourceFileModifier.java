@@ -188,7 +188,7 @@ public class SourceFileModifier {
 							// listRewrite.insertBefore(newStatement,
 							// insertnode, null);
 							addedlocks.put(lockposition, lockidx);
-							// , listRewrite
+							// ,listRewrite
 							seps[lockidx].getOms()
 									.add(new OneModify(methodblock, ib, ast, aw, newInvocation, insertnode, true));
 							PutMapAndValueList(filelocks, fileunique, lockname);
@@ -247,7 +247,7 @@ public class SourceFileModifier {
 							// listRewrite.insertBefore(newStatement,
 							// insertnode, null);
 							addedunlocks.put(lockposition, lockidx);
-							// , listRewrite
+							// listRewrite, aw
 							seps[lockidx].getOms()
 									.add(new OneModify(methodblock, ib, ast, aw, newInvocation, insertnode, false));
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
@@ -407,24 +407,42 @@ public class SourceFileModifier {
 		}
 	}
 	
-	// TODO
 	private void AnalysisRewrite(int minlockidx, LinkedList<OneModify> omlist) {
 		List<OneModify> sstart = new LinkedList<OneModify>();
 		List<OneModify> send = new LinkedList<OneModify>();
 		
-		
-		
+		boolean beforeisinsertbefore = true;
+		Iterator<OneModify> itr = omlist.iterator();
+		while (itr.hasNext())
+		{
+			OneModify om = itr.next();
+			if (om.isIsinsertbefore()) {
+				if (!beforeisinsertbefore) {
+					GenerateRewrite(minlockidx, sstart, send);
+					sstart.clear();
+					send.clear();
+				}
+				sstart.add(om);
+				beforeisinsertbefore = true;
+			} else {
+				send.add(om);
+				beforeisinsertbefore = false;
+			}
+		}
 		GenerateRewrite(minlockidx, sstart, send);
 	}
 	
-	private void GenerateRewrite(int minlockidx, List<OneModify> sstart, List<OneModify> send)
+	private void GenerateRewrite(final int minlockidx, final List<OneModify> sstart, final List<OneModify> send)
 	{
-		if (sstart.size() == 0 || send.size() == 0)
+		if ((sstart.size() == 0 && send.size() != 0) || (sstart.size() != 0 && send.size() == 0))
 		{
 			System.err.println("Wrong mechanism of lock and unlock.");
 			System.exit(1);
 		}
-		
+		if (sstart.size() == 0 && send.size() == 0)
+		{
+			return;
+		}
 		List<OneModify> sall = new LinkedList<OneModify>();
 		sall.addAll(sstart);
 		sall.addAll(send);
@@ -472,9 +490,6 @@ public class SourceFileModifier {
 			System.err.println("What the fuck, firstbk != secondbk???");
 			System.exit(1);
 		}
-		
-		sstart.clear();
-		send.clear();
 		
 		// generate rewrite by first and second.
 		// firstbk firstins secondbk secondins
