@@ -631,7 +631,7 @@ public class SourceFileModifier {
 	//	}
 	// }
 	
-	// TODO this is the second place.
+	// this is the second place.
 	private void GenerateAFixEntries(CompilationUnit cu, TreeMap<String, Boolean> lks, String fabpath, boolean islock) {
 		Set<String> ks = lks.keySet();
 		Iterator<String> itr = ks.iterator();
