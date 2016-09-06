@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -294,8 +296,22 @@ public class SourceFileModifier {
 			Document document = docs.get(fabpath);
 			TextEdit edits = aw.rewriteAST(document, null);
 			edits.apply(document);
+			
+			String code = document.get();
+			CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(null);
+			TextEdit textEdit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, code, 0, code.length(), 0, null);
+			Document doc = new Document(code);
+			try {
+				textEdit.apply(doc);
+				// System.out.println(doc.get());
+			} catch (MalformedTreeException e) {
+				e.printStackTrace();
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+			
 			File df = new File(fabpath);
-			FileUtil.ClearAndWriteToFile(document.get(), df);
+			FileUtil.ClearAndWriteToFile(doc.get(), df); // document
 			CompilationUnit dcu = ASTHelper.GetCompilationUnit(df);
 
 			{
