@@ -3,6 +3,8 @@ package cn.yyx.labtask.afix.irengine;
 import java.io.File;
 
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -39,8 +41,17 @@ public class Test {
 	}
 	
 	public static void main(String[] args) {
-		File f = new File("SourceBackDir/IRGenerator.java");
+		File f = new File("SourceBackDir/Ha.java");
 		CompilationUnit cu = ASTHelper.GetCompilationUnit(f);
+		
+		cu.accept(new ASTVisitor() {
+			@Override
+			public void preVisit(ASTNode node) {
+				System.out.println("node cls:" + node.getClass() + ";node cnt:" + node.toString());
+				super.preVisit(node);
+			}
+		});
+		
 		AST ast = cu.getAST();
 		ASTRewrite aw = ASTRewrite.create(ast);
 		TypeDeclaration td = (TypeDeclaration) cu.types().get(0);

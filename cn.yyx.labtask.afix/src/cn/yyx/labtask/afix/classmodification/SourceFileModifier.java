@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -173,9 +174,9 @@ public class SourceFileModifier {
 						ASTNode insertnode = ilsv.getInsertnode();
 						Block ib = ilsv.getInsertblock();
 						// ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
-						MethodInvocation newInvocation = ast.newMethodInvocation();
-						newInvocation.setName(ast.newSimpleName("lock"));
-						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
+						MethodInvocation newInvocation = null; // ast.newMethodInvocation();
+						// newInvocation.setName(ast.newSimpleName("lock"));
+						// newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
 						// Statement newStatement =
 						// ast.newExpressionStatement(newInvocation);
 
@@ -226,9 +227,9 @@ public class SourceFileModifier {
 						ASTNode insertnode = ilsv.getInsertnode();
 						Block ib = ilsv.getInsertblock();
 						// ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
-						MethodInvocation newInvocation = ast.newMethodInvocation();
-						newInvocation.setName(ast.newSimpleName("unlock"));
-						newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
+						MethodInvocation newInvocation = null;// ast.newMethodInvocation();
+						// newInvocation.setName(ast.newSimpleName("unlock"));
+						// newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
 						// Statement newStatement =
 						// ast.newExpressionStatement(newInvocation);
 						
@@ -585,8 +586,8 @@ public class SourceFileModifier {
 		ASTRewrite aw = om1.getASTRewrite();
 		
 		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
-		// TODO
-		newsyn.setExpression(ast.newSimpleName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
+		QualifiedName qlock = ast.newQualifiedName(ast.newQualifiedName(ast.newQualifiedName(ast.newQualifiedName(ast.newQualifiedName(ast.newSimpleName("cn"), ast.newSimpleName("yyx")), ast.newSimpleName("labtask")), ast.newSimpleName("afix")), ast.newSimpleName("LockPool")), ast.newSimpleName("lock"+minlockidx));
+		newsyn.setExpression(qlock);
 		Block bk = newsyn.getBody();
 		ListRewrite firstbklistRewrite = aw.getListRewrite(firstbk, Block.STATEMENTS_PROPERTY);
 		ListRewrite bkListRewrite = aw.getListRewrite(bk, Block.STATEMENTS_PROPERTY);
