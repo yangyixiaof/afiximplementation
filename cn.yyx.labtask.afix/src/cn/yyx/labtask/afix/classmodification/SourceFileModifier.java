@@ -581,8 +581,8 @@ public class SourceFileModifier {
 		}
 	}
 	
-	// TODO two places need to be changed.
-	// TODO this is the first place.
+	// two places need to be changed.
+	// this is the first place.
 	// private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord) {
 	//	Iterator<IntegerWrapper> itr = iteraterecord.iterator();
 	//	while (itr.hasNext()) {
