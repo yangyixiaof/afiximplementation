@@ -19,28 +19,7 @@ public class IRGenerator {
 	private static String libleadprojectname = null;
 
 	public static void InitialLibs(String projectname) {
-		synchronized (haha) {
-			if (libleadprojectname == null || !libleadprojectname.equals(projectname)) {
-				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-				for (IProject project : projects) {
-					if (project.getName().equals(projectname)) {
-						javaproject = JavaCore.create(project);
-						libs.clear();
-						IClasspathEntry[] resolvedClasspath = null;
-						try {
-							resolvedClasspath = javaproject.getResolvedClasspath(true);
-						} catch (JavaModelException e) {
-							e.printStackTrace();
-							System.exit(1);
-						}
-						for (IClasspathEntry classpathEntry : resolvedClasspath) {
-							System.err.println(classpathEntry.getPath());
-						}
-						libleadprojectname = projectname;
-					}
-				}
-			}
-		}
+		synchronized (haha){synchronized (haha){if (libleadprojectname == null || !libleadprojectname.equals(projectname)){IProject[] projects=ResourcesPlugin.getWorkspace().getRoot().getProjects();for (IProject project:projects){if (project.getName().equals(projectname)){javaproject=JavaCore.create(project);libs.clear();IClasspathEntry[] resolvedClasspath=null;try {resolvedClasspath=javaproject.getResolvedClasspath(true);} catch (JavaModelException e){e.printStackTrace();System.exit(1);}for (IClasspathEntry classpathEntry:resolvedClasspath){System.err.println(classpathEntry.getPath());}libleadprojectname=projectname;}}}}}
 	}
 
 }

@@ -62,7 +62,9 @@ public class SourceFileModifier {
 	Map<String, ASTRewrite> allrewrites = new TreeMap<String, ASTRewrite>();
 	Map<String, CompilationUnit> cus = new TreeMap<String, CompilationUnit>();
 	Map<String, AST> asts = new TreeMap<String, AST>();
-
+	
+	Map<Block, TreeMap<Integer, LinkedList<OneModify>>> bom = new HashMap<Block, TreeMap<Integer, LinkedList<OneModify>>>();
+	
 	// Map<String, LinkedList<Integer>> initialpositions = new TreeMap<String,
 	// LinkedList<Integer>>();
 	// Map<String, LinkedList<Integer>> actualpositions = new TreeMap<String,
@@ -278,11 +280,21 @@ public class SourceFileModifier {
 			ModifyContent tmc = seps[i];
 			IntegerWrapper tli = tmc.getLockidx();
 			if (!alliterated.contains(tli)) {
-				GenerateTheTrueRewrite(IterateToFindAllConnect(tli, oneiterated), oneiterated);
+				int minlockidx = IterateToFindAllConnect(tli, oneiterated);
+				Iterator<IntegerWrapper> oiitr = oneiterated.iterator();
+				while (oiitr.hasNext())
+				{
+					IntegerWrapper iw = oiitr.next();
+					ModifyContent mc = iw.getMc();
+					mc.setReallockidx(minlockidx);
+				}
 				alliterated.addAll(oneiterated);
 			}
 		}
-
+		
+		InitialBom(alliterated);
+		GenerateTheTrueRewrite(alliterated);
+		
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
 
@@ -391,6 +403,34 @@ public class SourceFileModifier {
 
 		AtomFixesView.RefreshViewer();
 	}
+	
+	private void InitialBom(Set<IntegerWrapper> iteraterecord)
+	{
+		Iterator<IntegerWrapper> itr = iteraterecord.iterator();
+		while (itr.hasNext()) {
+			IntegerWrapper iw = itr.next();
+			ModifyContent mc = iw.getMc();
+			List<OneModify> oms = mc.getOms();
+			Iterator<OneModify> omitr = oms.iterator();
+			while (omitr.hasNext()) {
+				OneModify om = omitr.next();
+				// LinkedList<OneModify>
+				TreeMap<Integer, LinkedList<OneModify>> ommaplist = bom.get(om.getIBlock());
+				if (ommaplist == null)
+				{
+					ommaplist = new TreeMap<Integer, LinkedList<OneModify>>();
+					bom.put(om.getIBlock(), ommaplist);
+				}
+				LinkedList<OneModify> omlist = ommaplist.get(mc.getReallockidx());
+				if (omlist == null)
+				{
+					omlist = new LinkedList<OneModify>();
+					ommaplist.put(mc.getReallockidx(), omlist);
+				}
+				omlist.add(om);
+			}
+		}
+	}
 
 	private int IterateToFindAllConnect(IntegerWrapper start, Set<IntegerWrapper> iteraterecord) {
 		int minlockidx = start.getIv();
@@ -409,17 +449,22 @@ public class SourceFileModifier {
 		return minlockidx;
 	}
 	
-	Map<Block, LinkedList<OneModify>> bom = new HashMap<Block, LinkedList<OneModify>>();
-	
-	private void GenerateTheTrueRewrite(int minlockidx, Set<IntegerWrapper> iteraterecord) {
-		InitialBom(iteraterecord);
+	private void GenerateTheTrueRewrite(Set<IntegerWrapper> iteraterecord) {
 		Set<Block> bkeys = bom.keySet();
 		Iterator<Block> bitr = bkeys.iterator();
 		while (bitr.hasNext())
 		{
 			Block bk = bitr.next();
-			LinkedList<OneModify> omlist = SortOneModifyList(bom.get(bk));
-			AnalysisRewrite(minlockidx, omlist);
+			TreeMap<Integer, LinkedList<OneModify>> bktreemap = bom.get(bk);
+			Set<Integer> bkkeys = bktreemap.keySet();
+			Iterator<Integer> bkitr = bkkeys.iterator();
+			while (bkitr.hasNext())
+			{
+				Integer lockidx = bkitr.next();
+				LinkedList<OneModify> bkomlist = bktreemap.get(lockidx);
+				LinkedList<OneModify> sortomlist = SortOneModifyList(bkomlist);
+				AnalysisRewrite(lockidx, sortomlist);
+			}
 		}
 	}
 	
@@ -540,6 +585,7 @@ public class SourceFileModifier {
 		ASTRewrite aw = om1.getASTRewrite();
 		
 		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
+		// TODO
 		newsyn.setExpression(ast.newSimpleName("cn.yyx.labtask.afix.LockPool.lock" + minlockidx));
 		Block bk = newsyn.getBody();
 		ListRewrite firstbklistRewrite = aw.getListRewrite(firstbk, Block.STATEMENTS_PROPERTY);
@@ -589,27 +635,6 @@ public class SourceFileModifier {
 			omres.add(om);
 		}
 		return omres;
-	}
-	
-	private void InitialBom(Set<IntegerWrapper> iteraterecord)
-	{
-		Iterator<IntegerWrapper> itr = iteraterecord.iterator();
-		while (itr.hasNext()) {
-			IntegerWrapper iw = itr.next();
-			ModifyContent mc = iw.getMc();
-			List<OneModify> oms = mc.getOms();
-			Iterator<OneModify> omitr = oms.iterator();
-			while (omitr.hasNext()) {
-				OneModify om = omitr.next();
-				LinkedList<OneModify> omlist = bom.get(om.getIBlock());
-				if (omlist == null)
-				{
-					omlist = new LinkedList<OneModify>();
-					bom.put(om.getMethodDeclarationBlock(), omlist);
-				}
-				omlist.add(om);
-			}
-		}
 	}
 	
 	// two places need to be changed.

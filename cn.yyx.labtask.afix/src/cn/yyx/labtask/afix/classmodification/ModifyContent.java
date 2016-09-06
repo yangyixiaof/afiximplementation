@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ModifyContent implements Comparable<ModifyContent> {
 	
+	private int reallockidx = -1;
 	private IntegerWrapper lockidx = null;
 	private List<OneModify> oms = new LinkedList<OneModify>();
 	
@@ -28,6 +29,18 @@ public class ModifyContent implements Comparable<ModifyContent> {
 	@Override
 	public int compareTo(ModifyContent o) {
 		return lockidx.compareTo(o.lockidx);
+	}
+
+	public int getReallockidx() {
+		if (reallockidx == -1)
+		{
+			return lockidx.getIv();
+		}
+		return reallockidx;
+	}
+
+	public void setReallockidx(int reallockidx) {
+		this.reallockidx = reallockidx;
 	}
 	
 }
