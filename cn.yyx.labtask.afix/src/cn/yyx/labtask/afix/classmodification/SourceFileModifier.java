@@ -247,7 +247,7 @@ public class SourceFileModifier {
 							// listRewrite.insertBefore(newStatement,
 							// insertnode, null);
 							addedunlocks.put(lockposition, lockidx);
-							// listRewrite, aw
+							// listRewrite,
 							seps[lockidx].getOms()
 									.add(new OneModify(methodblock, ib, ast, aw, newInvocation, insertnode, false));
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
@@ -521,7 +521,7 @@ public class SourceFileModifier {
 			System.exit(1);
 		}
 		AST ast = om1.getAst();
-		ASTRewrite aw = ASTRewrite.create(ast);
+		ASTRewrite aw = om1.getASTRewrite();
 		
 		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
 		newsyn.setExpression(ast.newSimpleName("haha"));
