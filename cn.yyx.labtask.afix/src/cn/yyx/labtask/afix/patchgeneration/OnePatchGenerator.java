@@ -196,18 +196,18 @@ public class OnePatchGenerator {
 		}
 		
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
-		pset.add(pbk.getISSABasicBlock());
-		pset.add(cbk.getISSABasicBlock());
+		// pset.add(pbk.getISSABasicBlock());
+		// pset.add(cbk.getISSABasicBlock());
 		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
-			Map<ISSABasicBlock, Iterator<ISSABasicBlock>> visited = new HashMap<ISSABasicBlock, Iterator<ISSABasicBlock>>();
-			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset, cbk.getISSABasicBlock(), visited);
+			// Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
+			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset); // cbk.getISSABasicBlock(), , visited
 		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
-		cset.add(pbk.getISSABasicBlock());
-		cset.add(cbk.getISSABasicBlock());
+		// cset.add(pbk.getISSABasicBlock());
+		// cset.add(cbk.getISSABasicBlock());
 		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
-			Map<ISSABasicBlock, Iterator<ISSABasicBlock>> visited = new HashMap<ISSABasicBlock, Iterator<ISSABasicBlock>>();
-			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset, pbk.getISSABasicBlock(), visited);
+			// Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
+			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset); // pbk.getISSABasicBlock(), , visited
 		}
 		cset.retainAll(pset);
 		Set<ISSABasicBlock> protectednodes = cset;
@@ -226,34 +226,18 @@ public class OnePatchGenerator {
 		return ops;
 	}
 	
-	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
-			final ISSABasicBlock dest, Map<ISSABasicBlock, Iterator<ISSABasicBlock>> visited) {
-		Iterator<ISSABasicBlock> nowbkitr = null;
-		if (visited.containsKey(nowbk)) {
-			// pset already includes the source and the dest.
-			if (pset.contains(nowbk)) {
-				return true;
-			}
-			nowbkitr = visited.get(nowbk);
-			if (!nowbkitr.hasNext())
-			{
-				return false;
-			}
-		} else {
-			nowbkitr = GetBlocks(nowbk, cfg, forward);
-			visited.put(nowbk, nowbkitr);
+	private void GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset) {
+		if (pset.contains(nowbk))
+		{
+			return;
 		}
-		boolean allres = false;
+		pset.add(nowbk);
+		Iterator<ISSABasicBlock> nowbkitr = GetBlocks(nowbk, cfg, forward);
 		while (nowbkitr.hasNext()) {
 			ISSABasicBlock ibb = nowbkitr.next();
 			// eliminate self cycle
-			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest, visited);
-			allres = allres || istodest;
-			if (istodest) {
-				pset.add(ibb);
-			}
+			GetSearchSet(ibb, cfg, forward, pset);
 		}
-		return allres;
 	}
 	
 	/*private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
