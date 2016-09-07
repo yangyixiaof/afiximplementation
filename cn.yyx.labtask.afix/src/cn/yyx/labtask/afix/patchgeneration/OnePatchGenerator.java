@@ -135,7 +135,7 @@ public class OnePatchGenerator {
 		
 		// printing.
 		/*String pcmsig = this.p.getSig();
-		if (pcmsig.equals("pingpong.BuggedProgram.pingPong()V"))
+		if (pcmsig.equals("critical.Section.run()V"))
 		{
 			try {
 				cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), GetMethodIR(pcmsig));
@@ -199,14 +199,14 @@ public class OnePatchGenerator {
 		pset.add(pbk.getISSABasicBlock());
 		pset.add(cbk.getISSABasicBlock());
 		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
-			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
+			Map<ISSABasicBlock, Iterator<ISSABasicBlock>> visited = new HashMap<ISSABasicBlock, Iterator<ISSABasicBlock>>();
 			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset, cbk.getISSABasicBlock(), visited);
 		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
 		cset.add(pbk.getISSABasicBlock());
 		cset.add(cbk.getISSABasicBlock());
 		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
-			Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
+			Map<ISSABasicBlock, Iterator<ISSABasicBlock>> visited = new HashMap<ISSABasicBlock, Iterator<ISSABasicBlock>>();
 			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset, pbk.getISSABasicBlock(), visited);
 		}
 		cset.retainAll(pset);
@@ -227,22 +227,26 @@ public class OnePatchGenerator {
 	}
 	
 	private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
-			final ISSABasicBlock dest, Set<ISSABasicBlock> visited) {
-		visited.add(nowbk);
-		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
+			final ISSABasicBlock dest, Map<ISSABasicBlock, Iterator<ISSABasicBlock>> visited) {
+		Iterator<ISSABasicBlock> nowbkitr = null;
+		if (visited.containsKey(nowbk)) {
+			// pset already includes the source and the dest.
+			if (pset.contains(nowbk)) {
+				return true;
+			}
+			nowbkitr = visited.get(nowbk);
+			if (!nowbkitr.hasNext())
+			{
+				return false;
+			}
+		} else {
+			nowbkitr = GetBlocks(nowbk, cfg, forward);
+			visited.put(nowbk, nowbkitr);
+		}
 		boolean allres = false;
-		while (itr.hasNext()) {
-			ISSABasicBlock ibb = itr.next();
+		while (nowbkitr.hasNext()) {
+			ISSABasicBlock ibb = nowbkitr.next();
 			// eliminate self cycle
-			if (visited.contains(ibb)) {
-				continue;
-			}
-			if (ibb.equals(dest)) {
-				return true;
-			}
-			if (pset.contains(ibb)) {
-				return true;
-			}
 			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest, visited);
 			allres = allres || istodest;
 			if (istodest) {
@@ -251,7 +255,31 @@ public class OnePatchGenerator {
 		}
 		return allres;
 	}
-
+	
+	/*private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
+			final ISSABasicBlock dest, Set<ISSABasicBlock> visited) {
+		if (visited.contains(nowbk)) {
+			// pset already includes the source and the dest.
+			if (pset.contains(nowbk)) {
+				return true;
+			}
+			return false;
+		}
+		visited.add(nowbk);
+		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
+		boolean allres = false;
+		while (itr.hasNext()) {
+			ISSABasicBlock ibb = itr.next();
+			// eliminate self cycle
+			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest, visited);
+			allres = allres || istodest;
+			if (istodest) {
+				pset.add(ibb);
+			}
+		}
+		return allres;
+	}*/
+	
 	private Iterator<ISSABasicBlock> GetBlocks(ISSABasicBlock pbk, SSACFG cfg, boolean forward) {
 		if (forward) {
 			return cfg.getSuccNodes(pbk);
