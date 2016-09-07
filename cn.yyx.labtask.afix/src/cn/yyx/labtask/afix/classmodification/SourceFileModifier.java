@@ -401,7 +401,7 @@ public class SourceFileModifier {
 		buffer.append("}\n");
 		ICompilationUnit cu = pack.createCompilationUnit("LockPool.java", buffer.toString(), true, null);
 		assert cu != null;
-
+		
 		AtomFixesView.RefreshViewer();
 	}
 	
@@ -432,7 +432,7 @@ public class SourceFileModifier {
 			}
 		}
 	}
-
+	
 	private int IterateToFindAllConnect(IntegerWrapper start, Set<IntegerWrapper> iteraterecord) {
 		int minlockidx = start.getIv();
 		iteraterecord.add(start);
