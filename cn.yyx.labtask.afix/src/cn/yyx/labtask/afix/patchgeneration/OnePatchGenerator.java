@@ -198,22 +198,22 @@ public class OnePatchGenerator {
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		// pset.add(pbk.getISSABasicBlock());
 		// pset.add(cbk.getISSABasicBlock());
-		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
+		boolean pcsame = pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock());
+		if (!pcsame) {
 			// Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset); // cbk.getISSABasicBlock(), , visited
 		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
 		// cset.add(pbk.getISSABasicBlock());
 		// cset.add(cbk.getISSABasicBlock());
-		if (!pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock())) {
+		if (!pcsame) {
 			// Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset); // pbk.getISSABasicBlock(), , visited
 		}
-		if (pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock()))
-		{
-			cset.add(cbk.getISSABasicBlock());
-		} else {
+		if (!pcsame) {
 			cset.retainAll(pset);
+		} else {
+			cset.add(cbk.getISSABasicBlock());
 		}
 		Set<ISSABasicBlock> protectednodes = cset;
 		
