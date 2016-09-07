@@ -135,7 +135,7 @@ public class OnePatchGenerator {
 		
 		// printing.
 		/*String pcmsig = this.p.getSig();
-		if (pcmsig.equals("critical.Section.run()V"))
+		if (pcmsig.equals("account.Account.checkResult(I)V"))
 		{
 			try {
 				cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), GetMethodIR(pcmsig));
@@ -209,7 +209,12 @@ public class OnePatchGenerator {
 			// Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
 			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset); // pbk.getISSABasicBlock(), , visited
 		}
-		cset.retainAll(pset);
+		if (pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock()))
+		{
+			cset.add(cbk.getISSABasicBlock());
+		} else {
+			cset.retainAll(pset);
+		}
 		Set<ISSABasicBlock> protectednodes = cset;
 		
 		Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
