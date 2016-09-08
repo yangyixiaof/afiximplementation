@@ -9,6 +9,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface RvListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link RvParser#oneRaceValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterOneRaceValue(RvParser.OneRaceValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RvParser#oneRaceValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitOneRaceValue(RvParser.OneRaceValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RvParser#oneRaceReadPart}.
 	 * @param ctx the parse tree
 	 */

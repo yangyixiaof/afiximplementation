@@ -17,6 +17,18 @@ public class RvBaseListener implements RvListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOneRaceValue(RvParser.OneRaceValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOneRaceValue(RvParser.OneRaceValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOneRaceReadPart(RvParser.OneRaceReadPartContext ctx) { }
 	/**
 	 * {@inheritDoc}

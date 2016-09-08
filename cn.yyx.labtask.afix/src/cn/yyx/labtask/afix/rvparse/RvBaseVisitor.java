@@ -18,6 +18,13 @@ public class RvBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements RvV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitOneRaceValue(RvParser.OneRaceValueContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitOneRaceReadPart(RvParser.OneRaceReadPartContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

@@ -12,6 +12,12 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface RvVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link RvParser#oneRaceValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOneRaceValue(RvParser.OneRaceValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link RvParser#oneRaceReadPart}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

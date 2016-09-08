@@ -1,8 +1,11 @@
 // Define a grammar called Hello
 grammar Rv;
 
-oneRaceReadPart  : '<' classDeclare ':' returnType methodSig '>' '|' idOrNumber '=' (ID)? '<' classDeclare ':' variableType variable '>' '|' lineNumber;
-oneRaceWritePart : '<' classDeclare ':' returnType methodSig '>' '|' (ID)? '<' classDeclare ':' variableType variable '>' '=' idOrNumber '|' lineNumber;
+oneRaceValue : ID ('<' classDeclare ':' variableType variable '>')?
+	| '<' classDeclare ':' variableType variable '>';
+
+oneRaceReadPart  : '<' classDeclare ':' returnType methodSig '>' '|' idOrNumber '=' oneRaceValue '|' lineNumber;
+oneRaceWritePart : '<' classDeclare ':' returnType methodSig '>' '|' oneRaceValue '=' idOrNumber '|' lineNumber;
 
 oneRacePart : oneRaceReadPart | oneRaceWritePart;
 

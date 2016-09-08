@@ -10,7 +10,10 @@ public class ErrorLocation {
 	{
 		this.setSig(sig);
 		this.setLine(line);
-		this.setRacevar(racevar);
+		if (!racevar.equals("null"))
+		{
+			this.setRacevar(racevar);
+		}
 	}
 
 	public String getSig() {

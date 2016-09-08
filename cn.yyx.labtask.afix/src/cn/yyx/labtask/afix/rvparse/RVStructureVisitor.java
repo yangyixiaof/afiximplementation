@@ -1,7 +1,6 @@
 package cn.yyx.labtask.afix.rvparse;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import org.eclipse.jdt.core.Signature;
@@ -21,8 +20,8 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 	@Override
 	public Integer visitOneRaceReadPart(RvParser.OneRaceReadPartContext ctx) {
 		Integer res = visitChildren(ctx);
-		List<ClassDeclareContext> cls = ctx.classDeclare();
-		String where = cls.get(0).getText();
+		ClassDeclareContext cls = ctx.classDeclare();
+		String where = cls.getText();
 		
 		// System.err.println("where:"+where);
 		
@@ -51,8 +50,8 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		
 		// System.err.println("msig:"+msig);
 		
-		String vartype = ctx.variableType().getText();
-		String var = ctx.variable().getText();
+		String vartype = ctx.oneRaceValue().variableType() == null ? "null" : ctx.oneRaceValue().variableType().getText();
+		String var = ctx.oneRaceValue().variable() == null ? "null" : ctx.oneRaceValue().variable().getText();
 		String line = ctx.lineNumber().getText();
 		String key = where + "." + msig + "#" + vartype + "#" + var + "#" + line;
 		usedobj.add(key);
@@ -62,8 +61,8 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 	@Override
 	public Integer visitOneRaceWritePart(RvParser.OneRaceWritePartContext ctx) {
 		Integer res = visitChildren(ctx);
-		List<ClassDeclareContext> cls = ctx.classDeclare();
-		String where = cls.get(0).getText();
+		ClassDeclareContext cls = ctx.classDeclare();
+		String where = cls.getText();
 		
 		// System.err.println("where:"+where);
 		
@@ -92,8 +91,8 @@ public class RVStructureVisitor extends RvBaseVisitor<Integer> {
 		
 		// System.err.println("msig:"+msig);
 		
-		String vartype = ctx.variableType().getText();
-		String var = ctx.variable().getText();
+		String vartype = ctx.oneRaceValue().variableType() == null ? "null" : ctx.oneRaceValue().variableType().getText();
+		String var = ctx.oneRaceValue().variable() == null ? "null" : ctx.oneRaceValue().variable().getText();
 		String line = ctx.lineNumber().getText();
 		String key = where + "." + msig + "#" + vartype + "#" + var + "#" + line;
 		usedobj.add(key);
