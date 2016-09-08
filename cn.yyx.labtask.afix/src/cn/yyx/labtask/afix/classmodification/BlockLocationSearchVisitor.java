@@ -48,7 +48,7 @@ public class BlockLocationSearchVisitor extends ASTVisitor{
 		{
 			Type tp = node.getReturnType2();
 			List<SingleVariableDeclaration> params = node.parameters();
-			if (so.IsInRightMethod(tp, params))
+			if (so.IsInRightMethod(node.getName().toString(), tp, params))
 			{
 				result = node.getBody();
 			}

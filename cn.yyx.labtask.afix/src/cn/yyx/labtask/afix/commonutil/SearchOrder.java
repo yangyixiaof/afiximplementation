@@ -133,7 +133,7 @@ public class SearchOrder {
 		return false;
 	}
 
-	public boolean IsInRightMethod(Type tp, List<SingleVariableDeclaration> params) {
+	public boolean IsInRightMethod(String mname, Type tp, List<SingleVariableDeclaration> params) {
 		
 		// testing
 		System.out.println("tp:"+tp+";methodreturntype:"+methodreturntype+";params size:"+params.size()+";methodparam:"+methodparam.size());
@@ -156,7 +156,10 @@ public class SearchOrder {
 					return false;
 				}
 			}
-			return true;
+			if (mname.equals(this.methodname))
+			{
+				return true;
+			}
 		}
 		return false;
 	}
