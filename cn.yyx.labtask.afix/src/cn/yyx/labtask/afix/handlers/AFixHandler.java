@@ -139,7 +139,10 @@ public class AFixHandler extends AbstractHandler {
 		DeleteOneWholeRace("Account_Account", "account.Account");
 		DeleteOneWholeRace("Critical_Critical", "critical.Critical");
 		DeleteOneWholeRace("Pingpong_PingPong", "pingpong.PingPong");
-
+		DeleteOneWholeRace("Benchmarks", "benchmarks.JGFMolDynBenchSizeA");
+		DeleteOneWholeRace("Benchmarks", "benchmarks.JGFMonteCarloBenchSizeA");
+		DeleteOneWholeRace("Benchmarks", "benchmarks.JGFRayTracerBenchSizeA");
+		
 		return null;
 	}
 
