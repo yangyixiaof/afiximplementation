@@ -40,6 +40,24 @@ public class FixHandler {
 		System.err.println("OneErrorInfo List size:" + totalidx);
 		// System.exit(1);
 		
+		if (totalidx == 0)
+		{
+			monitor.subTask("No race, waiting to exit: 3...");
+			monitor.worked(30);
+			
+			Thread.sleep(1000);
+			
+			monitor.subTask("No race, waiting to exit: 2...");
+			monitor.worked(30);
+			
+			Thread.sleep(500);
+			
+			monitor.subTask("No race, waiting to exit: 1...");
+			monitor.worked(30);
+			
+			Thread.sleep(500);
+		}
+		
 		// 90% work here.
 		monitor.subTask("Start generating all patches, all size:" + totalidx + ".");
 		if (monitor.isCanceled())

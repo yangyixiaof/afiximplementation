@@ -178,6 +178,7 @@ public class AFixHandler extends AbstractHandler {
 					newchilds[i] = childs[i];
 				}
 				newchilds[childs.length] = new HandlerTreeNode(new HandlerStringTask(content, projectname, mainclass));
+				htn.setChildren(newchilds);
 			}
 		} else {
 			HandlerTreeNode nhtn1st = new HandlerTreeNode(new HandlerStringTask(content, projectname, projectname));
