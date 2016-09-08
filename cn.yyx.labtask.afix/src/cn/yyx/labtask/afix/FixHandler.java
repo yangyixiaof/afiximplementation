@@ -56,6 +56,7 @@ public class FixHandler {
 			monitor.worked(30);
 			
 			Thread.sleep(500);
+			return;
 		}
 		
 		// 90% work here.
