@@ -523,6 +523,7 @@ public class SourceFileModifier {
 				om = send.get(0);
 			}
 			System.err.println("methoddecblock:" + om.getMethodDeclarationBlock() + ";insertnode:" + om.getInsertnode());
+			System.err.println("is insert before:" + om.isIsinsertbefore());
 			new Exception().printStackTrace();
 			System.exit(1);
 		}
