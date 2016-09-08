@@ -135,7 +135,7 @@ public class OnePatchGenerator {
 		
 		// printing.
 		/*String pcmsig = this.p.getSig();
-		if (pcmsig.equals("account.Account.checkResult(I)V"))
+		if (pcmsig.equals("benchmarks.moldyn.TournamentBarrier.DoBarrier(I)V"))
 		{
 			try {
 				cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), GetMethodIR(pcmsig));
