@@ -522,7 +522,7 @@ public class SourceFileModifier {
 			{
 				om = send.get(0);
 			}
-			System.err.println("methoddecblock:" + om.getMethodDeclarationBlock() + ";insertposition:" + om.ComputeInsertNodePosition());
+			System.err.println("methoddecblock:" + om.getMethodDeclarationBlock() + ";insertnode:" + om.getInsertnode());
 			new Exception().printStackTrace();
 			System.exit(1);
 		}
