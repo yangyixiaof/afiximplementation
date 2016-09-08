@@ -124,7 +124,7 @@ public class TypeUtil {
 			}
 			return true;
 		}
-		System.err.println("Uncognized Type node:" + type + ";type class:" + (type != null ? type.getClass() : null) + ".");
+		System.err.println("Uncognized Type node:" + type + ";type class:" + (type != null ? type.getClass() : null) + ";compare type:" + comptype);
 		new Exception().printStackTrace(System.err);
 		System.exit(1);
 		return false;
