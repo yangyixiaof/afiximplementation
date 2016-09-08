@@ -506,14 +506,25 @@ public class SourceFileModifier {
 	
 	private void GenerateRewrite(final int minlockidx, final List<OneModify> sstart, final List<OneModify> send)
 	{
-		if ((sstart.size() == 0 && send.size() != 0) || (sstart.size() != 0 && send.size() == 0))
-		{
-			System.err.println("Wrong mechanism of lock and unlock.");
-			System.exit(1);
-		}
 		if (sstart.size() == 0 && send.size() == 0)
 		{
 			return;
+		}
+		if ((sstart.size() == 0 && send.size() != 0) || (sstart.size() != 0 && send.size() == 0))
+		{
+			System.err.println("Wrong mechanism of lock and unlock:" + ";start size:" + sstart.size() + ";end size:" + send.size() + ".");
+			OneModify om = null;
+			if (sstart.size() > 0)
+			{
+				om = sstart.get(0);
+			}
+			if (send.size() > 0)
+			{
+				om = send.get(0);
+			}
+			System.err.println("methoddecblock:" + om.getMethodDeclarationBlock() + ";insertposition:" + om.ComputeInsertNodePosition());
+			new Exception().printStackTrace();
+			System.exit(1);
 		}
 		List<OneModify> sall = new LinkedList<OneModify>();
 		sall.addAll(sstart);
