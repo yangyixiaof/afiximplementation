@@ -99,10 +99,10 @@ public class SourceFileModifier {
 
 	public void HandleExclusivePatchesManager(ExclusivePatchesManager epm) throws InvalidClassFileException,
 			JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
-
+		
 		ModifyContent[] seps = new ModifyContent[epm.getSize() + 1];
 		seps[0] = new ModifyContent(new IntegerWrapper(-1));
-
+		
 		Iterator<SameLockExclusivePatches> itr = epm.Iterator();
 		int lockidx = 0;
 		while (itr.hasNext()) {
@@ -170,6 +170,16 @@ public class SourceFileModifier {
 						InsertLocationSearchVisitor ilsv = new InsertLocationSearchVisitor(cu, ip.getRacevar(), ip.getLineNumber(), true,
 								methodblock);
 						methodblock.accept(ilsv);
+						
+						// testing
+						if (ilsv.getProcessnode() == null)
+						{
+							System.err.println("methodblock:" + methodblock);
+							System.err.println("search order method sig:" + so.getMethodsig());
+							System.err.println("search order itself:" + so);
+							System.exit(1);
+						}
+						
 						ilsv.ProcessInsertNode();
 						ASTNode insertnode = ilsv.getInsertnode();
 						Block ib = ilsv.getInsertblock();

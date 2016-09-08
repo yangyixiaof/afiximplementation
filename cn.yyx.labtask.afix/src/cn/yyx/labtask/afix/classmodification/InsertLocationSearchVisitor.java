@@ -211,6 +211,10 @@ public class InsertLocationSearchVisitor extends ASTVisitor {
 	private void setProcessnode(ASTNode processnode) {
 		this.processnode = processnode;
 	}
+	
+	public ASTNode getProcessnode() {
+		return this.processnode;
+	}
 
 	public void ProcessInsertNode() {
 		this.insertnode = this.processnode;

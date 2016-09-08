@@ -20,16 +20,20 @@ public class SearchOrder {
 	
 	private ArrayList<String> classlist = new ArrayList<String>();
 	private String methodreturntype = null;
+	private String methodname = null;
 	private ArrayList<String> methodparam = new ArrayList<String>();
+	private String methodsig = null;
 	
 	Map<TypeDeclaration, Boolean> classidxincreased = new HashMap<TypeDeclaration, Boolean>();
 	int classidx = 0;
 	boolean isrightclass = false;
 	
 	public SearchOrder(String msig) {
+		this.setMethodsig(msig);
 		int ll = msig.indexOf('(');
 		String type = msig.substring(0, ll);
 		int rd = type.lastIndexOf('.');
+		this.setMethodname(type.substring(rd+1));
 		type = type.substring(0, rd);
 		String[] tps = type.split("\\$");
 		int tp0dx = tps[0].lastIndexOf('.');
@@ -155,6 +159,27 @@ public class SearchOrder {
 			return true;
 		}
 		return false;
+	}
+
+	public String getMethodsig() {
+		return methodsig;
+	}
+
+	public void setMethodsig(String methodsig) {
+		this.methodsig = methodsig;
+	}
+	
+	@Override
+	public String toString() {
+		return "methodreturntype:" + methodreturntype + ";methodname:" + methodname + ";methodparam:" + methodparam;
+	}
+
+	public String getMethodname() {
+		return methodname;
+	}
+
+	public void setMethodname(String methodname) {
+		this.methodname = methodname;
 	}
 	
 }
