@@ -22,6 +22,15 @@ public class TypeUtil {
 	
 	@SuppressWarnings("unchecked")
 	public static boolean TypeComparable(ASTNode type, final String comptype){
+		if (type == null)
+		{
+			String cmp = "void";
+			if (cmp.equals(comptype.trim()))
+			{
+				return true;
+			}
+			return false;
+		}
 		if (type instanceof PrimitiveType) {
 			String code = ((PrimitiveType) type).toString().trim();
 			if (comptype.contains(code))
