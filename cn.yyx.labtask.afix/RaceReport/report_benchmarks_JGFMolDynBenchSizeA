@@ -1,0 +1,19 @@
+
+------------------ maximal-branch (z3): benchmarks.JGFMolDynBenchSizeA -------------------
+
+Race: <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$z3 = $r2[$i13]|65 - <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$r3[i0] = z0|76
+Race: <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$z4 = $r4[0]|78 - <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$r3[i0] = z0|76
+Race: <benchmarks.moldyn.particle: void domove(double,int)>|$d4 = $r2[i0]|736 - <benchmarks.moldyn.mdRunner: void run0()>|$r99[$i150] = 0.0|576
+Race: <benchmarks.moldyn.particle: void domove(double,int)>|$d35 = $r8[i0]|747 - <benchmarks.moldyn.mdRunner: void run0()>|$r99[$i150] = 0.0|576
+Trace Size: 241917
+Total #Threads: 2
+Total #SharedVariables: 12
+Total #Shared Read-Writes: 1827
+Total #Local Read-Writes: 167395
+Total #Initial Writes: 694
+Total #Synchronizations: 64
+Total #Branches: 71937
+Total #Property Events: 0
+Total #Potential Violations: 11
+Total #Real Violations: 4
+Total Time: 2518ms

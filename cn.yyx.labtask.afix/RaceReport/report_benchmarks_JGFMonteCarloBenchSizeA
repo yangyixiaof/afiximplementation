@@ -1,0 +1,16 @@
+
+------------------ maximal-branch (z3): benchmarks.JGFMonteCarloBenchSizeA -------------------
+
+Trace Size: 11735053
+Total #Threads: 2
+Total #SharedVariables: 0
+Total #Shared Read-Writes: 0
+Total #Local Read-Writes: 6563103
+Total #Initial Writes: 590096
+Total #Synchronizations: 285260
+Total #Branches: 4296594
+Total #Property Events: 0
+Total #Potential Violations: 0
+Total #Real Violations: 0
+Total Time: 21737ms
+

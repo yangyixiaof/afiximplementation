@@ -64,6 +64,12 @@ public class AFixHandler extends AbstractHandler {
 				"critical.Critical");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "Pingpong_PingPong",
 				"pingpong.PingPong");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFMolDynBenchSizeA"), "Benchmarks",
+				"benchmarks.JGFMolDynBenchSizeA");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFMonteCarloBenchSizeA"), "Benchmarks",
+				"benchmarks.JGFMonteCarloBenchSizeA");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFRayTracerBenchSizeA"), "Benchmarks",
+				"benchmarks.JGFRayTracerBenchSizeA");
 		
 		System.err.println("Whole race size:" + hantasks1st.size());
 		

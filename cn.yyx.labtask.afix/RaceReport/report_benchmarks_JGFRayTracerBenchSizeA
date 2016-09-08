@@ -1,0 +1,20 @@
+
+------------------ maximal-branch (z3): benchmarks.JGFRayTracerBenchSizeA -------------------
+
+Race: <benchmarks.raytracer.TournamentBarrier: void DoBarrier(int)>|$z4 = $r4[0]|78 - <benchmarks.raytracer.TournamentBarrier: void DoBarrier(int)>|$r3[i0] = z0|76
+Race: <benchmarks.raytracer.TournamentBarrier: void DoBarrier(int)>|$z3 = $r2[$i13]|65 - <benchmarks.raytracer.TournamentBarrier: void DoBarrier(int)>|$r3[i0] = z0|76
+Race: <benchmarks.raytracer.RayTracerRunner: void run0()>|$l9 = <benchmarks.raytracer.JGFRayTracerBench: long checksum1>|205 - <benchmarks.raytracer.RayTracerRunner: void run()>|<benchmarks.raytracer.JGFRayTracerBench: long checksum1> = $l11|176
+Race: <benchmarks.raytracer.RayTracerRunner: void run0()>|<benchmarks.raytracer.JGFRayTracerBench: long checksum1> = $l11|205 - <benchmarks.raytracer.RayTracerRunner: void run()>|<benchmarks.raytracer.JGFRayTracerBench: long checksum1> = $l11|176
+Race: <benchmarks.raytracer.RayTracerRunner: void run()>|$l9 = <benchmarks.raytracer.JGFRayTracerBench: long checksum1>|176 - <benchmarks.raytracer.RayTracerRunner: void run0()>|<benchmarks.raytracer.JGFRayTracerBench: long checksum1> = $l11|205
+Trace Size: 20833
+Total #Threads: 2
+Total #SharedVariables: 3
+Total #Shared Read-Writes: 47
+Total #Local Read-Writes: 11928
+Total #Initial Writes: 3705
+Total #Synchronizations: 674
+Total #Branches: 4479
+Total #Property Events: 0
+Total #Potential Violations: 5
+Total #Real Violations: 5
+Total Time: 1041ms
