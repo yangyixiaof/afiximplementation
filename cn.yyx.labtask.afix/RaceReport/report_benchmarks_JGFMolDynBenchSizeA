@@ -3,8 +3,8 @@
 
 Race: <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$z3 = $r2[$i13]|65 - <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$r3[i0] = z0|76
 Race: <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$z4 = $r4[0]|78 - <benchmarks.moldyn.TournamentBarrier: void DoBarrier(int)>|$r3[i0] = z0|76
-Race: <benchmarks.moldyn.particle: void domove(double,int)>|$d4 = $r2[i0]|736 - <benchmarks.moldyn.mdRunner: void run0()>|$r99[$i150] = 0.0|576
-Race: <benchmarks.moldyn.particle: void domove(double,int)>|$d35 = $r8[i0]|747 - <benchmarks.moldyn.mdRunner: void run0()>|$r99[$i150] = 0.0|576
+//Race: <benchmarks.moldyn.particle: void domove(double,int)>|$d4 = $r2[i0]|736 - <benchmarks.moldyn.mdRunner: void run0()>|$r99[$i150] = 0.0|576
+//Race: <benchmarks.moldyn.particle: void domove(double,int)>|$d35 = $r8[i0]|747 - <benchmarks.moldyn.mdRunner: void run0()>|$r99[$i150] = 0.0|576
 Trace Size: 241917
 Total #Threads: 2
 Total #SharedVariables: 12
