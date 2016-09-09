@@ -27,8 +27,8 @@ public class OnePatch implements Mergeable {
 	Set<ISSABasicBlock> protectednodes = null;
 	IR ir = null;
 	SSACFG cfg = null;
-	List<InsertPosition> insertbeginidxs = null;
-	List<InsertPosition> insertendidxs = null;
+	// List<InsertPosition> insertbeginidxs = null;
+	// List<InsertPosition> insertendidxs = null;
 	List<InsertPosition> insertsourcebeginidxs = null;
 	List<InsertPosition> insertsourceendidxs = null;
 	
@@ -63,15 +63,15 @@ public class OnePatch implements Mergeable {
 		{
 			System.out.println("just test.");
 		}*/
-		if (insertbeginidxs == null)
+		if (insertsourcebeginidxs == null)
 		{
 			// Integer
-			insertbeginidxs = new LinkedList<InsertPosition>();
-			insertendidxs = new LinkedList<InsertPosition>();
+			// insertbeginidxs = new LinkedList<InsertPosition>();
+			// insertendidxs = new LinkedList<InsertPosition>();
 			insertsourcebeginidxs = new LinkedList<InsertPosition>();
 			insertsourceendidxs = new LinkedList<InsertPosition>();
 			BasicBlock ent = cfg.entry();
-			//TODO this two methods must be reconsidered.
+			//  these two situations should not happen.
 			if (protectednodes.contains(ent))
 			{
 				// GetBasicBlockBeforePosition(ent, ir), 
@@ -87,7 +87,40 @@ public class OnePatch implements Mergeable {
 			Set<ISSABasicBlock> blockprelock = new HashSet<ISSABasicBlock>();
 			Set<ISSABasicBlock> blockafterunlock = new HashSet<ISSABasicBlock>();
 			IterateBlockToAddLockAndUnlock(ent, cfg, protectednodes, visited, blockprelock, blockafterunlock, ir, ent, ext);
+			
+			UniquePositions(insertsourcebeginidxs);
+			UniquePositions(insertsourceendidxs);
 		}
+	}
+	
+	private void UniquePositions(List<InsertPosition> insertidxs) {
+		List<InsertPosition> tidxs = new LinkedList<InsertPosition>();
+		Iterator<InsertPosition> itr = insertidxs.iterator();
+		while (itr.hasNext())
+		{
+			InsertPosition ip = itr.next();
+			Iterator<InsertPosition> inneritr = insertidxs.iterator();
+			boolean findsame = false;
+			while (inneritr.hasNext())
+			{
+				InsertPosition innerip = inneritr.next();
+				if (innerip == ip)
+				{
+					break;
+				}
+				if (innerip.toString().equals(ip.toString()))
+				{
+					findsame = true;
+					break;
+				}
+			}
+			if (!findsame)
+			{
+				tidxs.add(ip);
+			}
+		}
+		insertidxs.clear();
+		insertidxs.addAll(tidxs);
 	}
 	
 	// ISSABasicBlock
@@ -216,11 +249,11 @@ public class OnePatch implements Mergeable {
 	}
 	
 	// Integer
-	public Iterator<InsertPosition> GetInsertPosEndIterator() throws InvalidClassFileException
-	{
-		// CheckGenerateLockUnlockSolutions();
-		return insertendidxs.iterator();
-	}
+	// public Iterator<InsertPosition> GetInsertPosEndIterator() throws InvalidClassFileException
+	// {
+	//	CheckGenerateLockUnlockSolutions();
+	//	return insertendidxs.iterator();
+	// }
 	
 	// Integer
 	public Iterator<InsertPosition> GetInsertPosEndSourceIterator() throws InvalidClassFileException
@@ -230,11 +263,11 @@ public class OnePatch implements Mergeable {
 	}
 	
 	// Integer
-	public Iterator<InsertPosition> GetInsertPosBeginIterator() throws InvalidClassFileException
-	{
-		// CheckGenerateLockUnlockSolutions();
-		return insertbeginidxs.iterator();
-	}
+	// public Iterator<InsertPosition> GetInsertPosBeginIterator() throws InvalidClassFileException
+	// {
+	//	CheckGenerateLockUnlockSolutions();
+	//	return insertbeginidxs.iterator();
+	// }
 	
 	// Integer
 	public Iterator<InsertPosition> GetInsertPosBeginSourceIterator() throws InvalidClassFileException
