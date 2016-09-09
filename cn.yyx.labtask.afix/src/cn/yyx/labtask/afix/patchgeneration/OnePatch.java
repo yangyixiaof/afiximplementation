@@ -71,6 +71,7 @@ public class OnePatch implements Mergeable {
 			insertsourcebeginidxs = new LinkedList<InsertPosition>();
 			insertsourceendidxs = new LinkedList<InsertPosition>();
 			BasicBlock ent = cfg.entry();
+			//TODO this two methods must be reconsidered.
 			if (protectednodes.contains(ent))
 			{
 				// GetBasicBlockBeforePosition(ent, ir), 

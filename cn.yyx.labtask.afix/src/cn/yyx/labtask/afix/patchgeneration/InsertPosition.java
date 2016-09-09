@@ -26,4 +26,9 @@ public class InsertPosition {
 		this.racevar = racevar;
 	}
 	
+	@Override
+	public String toString() {
+		return "position:" + position + ";racevar:" + racevar;
+	}
+	
 }

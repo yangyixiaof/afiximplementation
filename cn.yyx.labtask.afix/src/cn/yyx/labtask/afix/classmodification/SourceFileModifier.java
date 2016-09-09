@@ -151,7 +151,7 @@ public class SourceFileModifier {
 					new Exception("methodblock null, the system will exit.").printStackTrace();
 					System.exit(1);
 				}
-
+				
 				{
 					// Integer
 					Iterator<InsertPosition> sbitr = op.GetInsertPosBeginSourceIterator();
@@ -209,7 +209,10 @@ public class SourceFileModifier {
 							PutMapAndValueList(filelocks, fileunique, lockname);
 						} else {
 							int tlidx = addedlocks.get(lockposition);
-							seps[tlidx].getLockidx().AddConnectedIntegerWrapper(seps[lockidx].getLockidx(), true);
+							if (seps[tlidx].getLockidx() != seps[lockidx].getLockidx())
+							{
+								seps[tlidx].getLockidx().AddConnectedIntegerWrapper(seps[lockidx].getLockidx(), true);
+							}
 						}
 						// PutMapAndValueList(lockmap, lockname, newStatement);
 						// int lineNumber =
@@ -237,7 +240,8 @@ public class SourceFileModifier {
 						ASTNode insertnode = ilsv.getInsertnode();
 						Block ib = ilsv.getInsertblock();
 						// ListRewrite listRewrite = aw.getListRewrite(ib, Block.STATEMENTS_PROPERTY);
-						MethodInvocation newInvocation = null;// ast.newMethodInvocation();
+						MethodInvocation newInvocation = 
+								null;// ast.newMethodInvocation();
 						// newInvocation.setName(ast.newSimpleName("unlock"));
 						// newInvocation.setExpression(ast.newName("cn.yyx.labtask.afix.LockPool." + lockname));
 						// Statement newStatement =
@@ -268,7 +272,10 @@ public class SourceFileModifier {
 							PutMapAndValueList(fileunlocks, fileunique, lockname);
 						} else {
 							int tlidx = addedunlocks.get(lockposition);
-							seps[tlidx].getLockidx().AddConnectedIntegerWrapper(seps[lockidx].getLockidx(), true);
+							if (seps[tlidx].getLockidx() != seps[lockidx].getLockidx())
+							{
+								seps[tlidx].getLockidx().AddConnectedIntegerWrapper(seps[lockidx].getLockidx(), true);
+							}
 						}
 						// PutMapAndValueList(unlockmap, lockname,
 						// newStatement);
@@ -426,11 +433,11 @@ public class SourceFileModifier {
 			while (omitr.hasNext()) {
 				OneModify om = omitr.next();
 				// LinkedList<OneModify>
-				TreeMap<Integer, LinkedList<OneModify>> ommaplist = bom.get(om.getIBlock());
+				TreeMap<Integer, LinkedList<OneModify>> ommaplist = bom.get(om.getMethodDeclarationBlock());
 				if (ommaplist == null)
 				{
 					ommaplist = new TreeMap<Integer, LinkedList<OneModify>>();
-					bom.put(om.getIBlock(), ommaplist);
+					bom.put(om.getMethodDeclarationBlock(), ommaplist);
 				}
 				LinkedList<OneModify> omlist = ommaplist.get(mc.getReallockidx());
 				if (omlist == null)
