@@ -41,6 +41,7 @@ public class SimpleCallGraph {
 		Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha);
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		
+		@SuppressWarnings("rawtypes")
 		com.ibm.wala.ipa.callgraph.CallGraphBuilder builder = Util.makeZeroCFABuilder(options, new AnalysisCache(), cha,
 				scope);
 		CallGraph cg = builder.makeCallGraph(options, null);

@@ -53,6 +53,7 @@ public class JDTFrontEnd {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private AbstractAnalysisEngine makeAnalysisEngine(final String[] mainClassDescriptors) {
 		AbstractAnalysisEngine engine = null;
 		try {
@@ -82,6 +83,7 @@ public class JDTFrontEnd {
 	
 	private void BuildCallGraph() throws IllegalArgumentException, CancelException, IOException
 	{
+		@SuppressWarnings("rawtypes")
 		AbstractAnalysisEngine engine = makeAnalysisEngine(mainClassDescriptors);
 		setCallGraph(engine.buildDefaultCallGraph());
 		if (getCallGraph() == null)

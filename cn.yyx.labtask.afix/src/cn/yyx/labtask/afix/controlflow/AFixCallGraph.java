@@ -192,6 +192,7 @@ public class AFixCallGraph {
 		// //
 		// build the call graph
 		// //
+		@SuppressWarnings("rawtypes")
 		com.ibm.wala.ipa.callgraph.CallGraphBuilder builder = Util.makeZeroCFABuilder(options, new AnalysisCache(), cha,
 				scope);
 		CallGraph cg = builder.makeCallGraph(options, null);
