@@ -27,6 +27,9 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
+import org.eclipse.jdt.core.dom.TextElement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
@@ -619,18 +622,59 @@ public class SourceFileModifier {
 		QualifiedName qlock = ast.newQualifiedName(ast.newQualifiedName(ast.newQualifiedName(ast.newQualifiedName(ast.newQualifiedName(ast.newSimpleName("cn"), ast.newSimpleName("yyx")), ast.newSimpleName("labtask")), ast.newSimpleName("afix")), ast.newSimpleName("LockPool")), ast.newSimpleName("lock"+minlockidx));
 		newsyn.setExpression(qlock);
 		Block bk = newsyn.getBody();
+		Statement firststmt = null;
 		ListRewrite firstbklistRewrite = aw.getListRewrite(firstbk, Block.STATEMENTS_PROPERTY);
 		ListRewrite bkListRewrite = aw.getListRewrite(bk, Block.STATEMENTS_PROPERTY);
 		Iterator<Statement> titr = trimedstmts.iterator();
 		while (titr.hasNext())
 		{
 			Statement stmt = titr.next();
-			bkListRewrite.insertLast(stmt, null);
+			if (firststmt == null)
+			{
+				firststmt = stmt;
+			}
+			if (stmt instanceof VariableDeclarationStatement)
+			{
+				ChangeToAssignmentStatementAndAddDeclaration(ast, bkListRewrite, (VariableDeclarationStatement)stmt, firstbklistRewrite, firststmt);
+			} else {
+				bkListRewrite.insertLast(stmt, null);
+			}
 			firstbklistRewrite.remove(stmt, null);
 		}
 		firstbklistRewrite.insertBefore(newsyn, firstins, null);
 	}
 	
+	private void ChangeToAssignmentStatementAndAddDeclaration(AST ast, ListRewrite bkListRewrite, VariableDeclarationStatement stmt, ListRewrite firstbklistRewrite, Statement firststmt) {
+		@SuppressWarnings("unchecked")
+		List<VariableDeclarationFragment> frags = stmt.fragments();
+		Iterator<VariableDeclarationFragment> itr = frags.iterator();
+		String content = stmt.getType().toString() + " ";
+		while (itr.hasNext())
+		{
+			VariableDeclarationFragment vdf = itr.next();
+			content += vdf.getName().toString();
+			if (itr.hasNext())
+			{
+				content += ",";
+			}
+		}
+		TextElement declare = ast.newTextElement();
+		declare.setText(content+";");
+		firstbklistRewrite.insertBefore(declare, firststmt, null);
+		
+		Iterator<VariableDeclarationFragment> titr = frags.iterator();
+		while (titr.hasNext())
+		{
+			VariableDeclarationFragment vdf = titr.next();
+			if (vdf.getInitializer() != null)
+			{
+				TextElement tempdeclare = ast.newTextElement();
+				tempdeclare.setText(vdf.toString()+";");
+				bkListRewrite.insertLast(tempdeclare, null);
+			}
+		}
+	}
+
 	private List<Statement> SortStatementsByPositions(List<Statement> stmts) {
 		List<Statement> result = new LinkedList<Statement>();
 		Queue<StatementSort> pque = new PriorityQueue<StatementSort>();
