@@ -165,7 +165,13 @@ public class FixHandler {
 		monitor.worked(2);
 		
 		monitor.subTask("Build call graph.");
-		JDTFrontEnd jdtfe = new JDTFrontEnd(ijp, mainclass);
+		JDTFrontEnd jdtfe = null;
+		try {
+			jdtfe = new JDTFrontEnd(ijp, mainclass);
+		} catch (Exception e) {
+			System.err.println("ijp:" + ijp + ";mainclass:" + mainclass);
+			throw e;
+		}
 		CallGraph jdtcg = jdtfe.getCallGraph();
 		if (monitor.isCanceled())
 		{
