@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
+import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
@@ -58,16 +59,25 @@ public class Test {
 		MethodDeclaration md = td.getMethods()[0];
 		Block body = md.getBody();
 		Statement stmt = (Statement) body.statements().get(0);
-		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
+		
+		TextElement siso1 = ast.newTextElement();
+		siso1.setText("System.out.println(\"hello1\");");
+		TextElement siso2 = ast.newTextElement();
+		siso2.setText("System.out.println(\"hello2\");");
+		
+		ListRewrite listRewrite = aw.getListRewrite(body, Block.STATEMENTS_PROPERTY);
+		listRewrite.insertBefore(siso1, stmt, null);
+		listRewrite.insertBefore(siso2, stmt, null);
+		
+		/* SynchronizedStatement newsyn = ast.newSynchronizedStatement();
 		newsyn.setExpression(ast.newSimpleName("haha"));
 		Block bk = newsyn.getBody();
-		
 		ListRewrite bkListRewrite = aw.getListRewrite(bk, Block.STATEMENTS_PROPERTY);
 		bkListRewrite.insertLast(stmt, null);
 		
-		ListRewrite listRewrite = aw.getListRewrite(body, Block.STATEMENTS_PROPERTY);
 		listRewrite.insertBefore(newsyn, stmt, null);
-		listRewrite.remove(stmt, null);
+		listRewrite.remove(stmt, null);*/
+		
 		Document document = new Document(FileUtil.ReadFileByLines(f));
 		TextEdit edits = aw.rewriteAST(document, null);
 		try {
