@@ -66,17 +66,19 @@ public class Test {
 		siso2.setText("System.out.println(\"hello2\");");
 		
 		ListRewrite listRewrite = aw.getListRewrite(body, Block.STATEMENTS_PROPERTY);
+		
+		listRewrite.remove(stmt, null);
+		
 		listRewrite.insertBefore(siso1, stmt, null);
 		listRewrite.insertBefore(siso2, stmt, null);
 		
-		/* SynchronizedStatement newsyn = ast.newSynchronizedStatement();
+		SynchronizedStatement newsyn = ast.newSynchronizedStatement();
 		newsyn.setExpression(ast.newSimpleName("haha"));
 		Block bk = newsyn.getBody();
 		ListRewrite bkListRewrite = aw.getListRewrite(bk, Block.STATEMENTS_PROPERTY);
 		bkListRewrite.insertLast(stmt, null);
 		
 		listRewrite.insertBefore(newsyn, stmt, null);
-		listRewrite.remove(stmt, null);*/
 		
 		Document document = new Document(FileUtil.ReadFileByLines(f));
 		TextEdit edits = aw.rewriteAST(document, null);
