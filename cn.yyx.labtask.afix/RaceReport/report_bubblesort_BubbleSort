@@ -1,0 +1,24 @@
+
+------------------ maximal-branch (z3): bubblesort.BubbleSort -------------------
+
+Race: <bubblesort.OneBubble: void run()>|$i8 = $r4[$i7]|51 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r5[i0] = $i3|63
+Race: <bubblesort.OneBubble: void run()>|$i6 = $r3[i3]|51 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r5[i0] = $i3|63
+Race: <bubblesort.OneBubble: void run()>|$i8 = $r4[$i7]|51 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r7[$i4] = i1|64
+Race: <bubblesort.OneBubble: void run()>|$i6 = $r3[i3]|51 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r7[$i4] = i1|64
+Race: <bubblesort.BubbleSortImpl: void PrintArray()>|$i5 = $r8[i3]|99 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r7[$i4] = i1|64
+Race: <bubblesort.BubbleSortImpl: void PrintArray()>|$i5 = $r8[i3]|99 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r5[i0] = $i3|63
+Race: <bubblesort.Reporter: java.lang.String IndicateBug(int[])>|$i4 = r1[i0]|126 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r7[$i4] = i1|64
+Race: <bubblesort.Reporter: java.lang.String IndicateBug(int[])>|$i4 = r1[i0]|126 - <bubblesort.OneBubble: void SwapConsecutives(int)>|$r5[i0] = $i3|63
+Trace Size: 11602
+Total #Threads: 26
+Total #SharedVariables: 25
+Total #Shared Read-Writes: 1838
+Total #Local Read-Writes: 3943
+Total #Initial Writes: 137
+Total #Synchronizations: 505
+Total #Branches: 5179
+Total #Property Events: 0
+Total #Potential Violations: 13
+Total #Real Violations: 8
+Total Time: 2429ms
+

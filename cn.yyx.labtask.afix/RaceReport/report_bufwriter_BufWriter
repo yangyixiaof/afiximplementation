@@ -1,0 +1,18 @@
+
+------------------ maximal-branch (z3): bufwriter.BufWriter -------------------
+
+Race: <bufwriter.Checker: void run()>|$z0 = <bufwriter.Checker: boolean flag>|26 - <bufwriter.Checker: void stopChecker()>|<bufwriter.Checker: boolean flag> = 0|17
+Race: <bufwriter.SyncWriter: void run()>|$z0 = r0.<bufwriter.SyncWriter: boolean flag>|27 - <bufwriter.SyncWriter: void stopWriter()>|r0.<bufwriter.SyncWriter: boolean flag> = 0|18
+Trace Size: 588
+Total #Threads: 5
+Total #SharedVariables: 9
+Total #Shared Read-Writes: 132
+Total #Local Read-Writes: 196
+Total #Initial Writes: 16
+Total #Synchronizations: 54
+Total #Branches: 190
+Total #Property Events: 0
+Total #Potential Violations: 24
+Total #Real Violations: 2
+Total Time: 2571ms
+

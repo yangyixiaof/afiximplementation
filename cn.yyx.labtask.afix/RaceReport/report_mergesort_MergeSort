@@ -1,0 +1,19 @@
+
+------------------ maximal-branch (z3): mergesort.MergeSort -------------------
+
+Race: <mergesort.MSort: void DecreaseThreadCounter()>|$i0 = <mergesort.MSort: int m_iCurrentThreadsAlive>|41 - <mergesort.MSort: void DecreaseThreadCounter()>|<mergesort.MSort: int m_iCurrentThreadsAlive> = $i1|41
+Race: <mergesort.MSort: void DecreaseThreadCounter()>|<mergesort.MSort: int m_iCurrentThreadsAlive> = $i1|41 - <mergesort.MSort: void DecreaseThreadCounter()>|<mergesort.MSort: int m_iCurrentThreadsAlive> = $i1|41
+Race: <mergesort.MSort: int AvailableThreadsState()>|$i1 = <mergesort.MSort: int m_iCurrentThreadsAlive>|48 - <mergesort.MSort: void DecreaseThreadCounter()>|<mergesort.MSort: int m_iCurrentThreadsAlive> = $i1|41
+Trace Size: 1078
+Total #Threads: 5
+Total #SharedVariables: 64
+Total #Shared Read-Writes: 142
+Total #Local Read-Writes: 419
+Total #Initial Writes: 16
+Total #Synchronizations: 22
+Total #Branches: 479
+Total #Property Events: 0
+Total #Potential Violations: 3
+Total #Real Violations: 3
+Total Time: 1299ms
+

@@ -52,24 +52,34 @@ public class AFixHandler extends AbstractHandler {
 		ElementTreeSelectionDialog d = new ElementTreeSelectionDialog(window.getShell(), new LabelProvider(),
 				new TreeNodeContentProvider());
 
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"), "Demo_Authenticate",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Authenticate"), "demo",
 				"demo.Authenticate");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"), "Demo_Example2",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example2"), "demo",
 				"demo.Example2");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"), "Demo_Example",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_demo_Example"), "demo",
 				"demo.Example");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"), "Account_Account",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_account_Account"), "account",
 				"account.Account");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"), "Critical_Critical",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_critical_Critical"), "critical",
 				"critical.Critical");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "Pingpong_PingPong",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"), "pingpong",
 				"pingpong.PingPong");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFMolDynBenchSizeA"), "Benchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFMolDynBenchSizeA"), "benchmarks",
 				"benchmarks.JGFMolDynBenchSizeA");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFMonteCarloBenchSizeA"), "Benchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFMonteCarloBenchSizeA"), "benchmarks",
 				"benchmarks.JGFMonteCarloBenchSizeA");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFRayTracerBenchSizeA"), "Benchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_benchmarks_JGFRayTracerBenchSizeA"), "benchmarks",
 				"benchmarks.JGFRayTracerBenchSizeA");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_airlinetickets_Airlinetickets"), "airlinetickets",
+				"airlinetickets.Airlinetickets");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_boundedbuffer_BoundedBuffer"), "boundedbuffer",
+				"boundedbuffer.BoundedBuffer");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_bubblesort_BubbleSort"), "bubblesort",
+				"bubblesort.BubbleSort");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_bufwriter_BufWriter"), "bufwriter",
+				"bufwriter.BufWriter");
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_mergesort_MergeSort"), "mergesort",
+				"mergesort.MergeSort");
 		
 		System.err.println("Whole race size:" + hantasks1st.size());
 		
@@ -139,10 +149,14 @@ public class AFixHandler extends AbstractHandler {
 		DeleteOneWholeRace("Account_Account", "account.Account");
 		DeleteOneWholeRace("Critical_Critical", "critical.Critical");
 		DeleteOneWholeRace("Pingpong_PingPong", "pingpong.PingPong");
-		DeleteOneWholeRace("Benchmarks", "benchmarks.JGFMolDynBenchSizeA");
-		DeleteOneWholeRace("Benchmarks", "benchmarks.JGFMonteCarloBenchSizeA");
-		DeleteOneWholeRace("Benchmarks", "benchmarks.JGFRayTracerBenchSizeA");
-		
+		DeleteOneWholeRace("benchmarks", "benchmarks.JGFMolDynBenchSizeA");
+		DeleteOneWholeRace("benchmarks", "benchmarks.JGFMonteCarloBenchSizeA");
+		DeleteOneWholeRace("benchmarks", "benchmarks.JGFRayTracerBenchSizeA");
+		DeleteOneWholeRace("airlinetickets", "airlinetickets.Airlinetickets");
+		DeleteOneWholeRace("boundedbuffer", "boundedbuffer.BoundedBuffer");
+		DeleteOneWholeRace("bubblesort", "bubblesort.BubbleSort");
+		DeleteOneWholeRace("bufwriter", "bufwriter.BufWriter");
+		DeleteOneWholeRace("mergesort", "mergesort.MergeSort");
 		return null;
 	}
 
