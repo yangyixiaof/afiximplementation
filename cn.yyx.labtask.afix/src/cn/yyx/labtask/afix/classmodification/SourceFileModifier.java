@@ -150,7 +150,7 @@ public class SourceFileModifier {
 				Block methodblock = blvisitor.getResult();
 
 				if (methodblock == null) {
-					System.out.println("methodblock:" + methodblock);
+					System.out.println("methodblock:" + methodblock + ";search order:" + so + "search order class list:" + so.getClasslist());
 					new Exception("methodblock null, the system will exit.").printStackTrace();
 					System.exit(1);
 				}
