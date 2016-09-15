@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -26,7 +27,7 @@ public class SearchOrder {
 	
 	Map<TypeDeclaration, Boolean> classidxincreased = new HashMap<TypeDeclaration, Boolean>();
 	int classidx = 0;
-	boolean isrightclass = false;
+	Stack<Boolean> isrightclass = new Stack<Boolean>();
 	
 	public SearchOrder(String msig) {
 		this.setMethodsig(msig);
@@ -96,7 +97,7 @@ public class SearchOrder {
 		// testing
 		System.out.println("rawclass:"+rawclass+";classidx:"+classidx+";classlistsize:"+classlist.size());
 		
-		isrightclass = false;
+		boolean tempisrightclass = false;
 		if (classidx >= classlist.size())
 		{
 			return false;
@@ -110,10 +111,10 @@ public class SearchOrder {
 		{
 			classidx++;
 			classidxincreased.put(node, true);
-			isrightclass = true;
-			return true;
+			tempisrightclass = true;
 		}
-		return false;
+		isrightclass.push(tempisrightclass);
+		return tempisrightclass;
 	}
 	
 	public void DeHandleCurrentClass(TypeDeclaration node)
@@ -122,11 +123,11 @@ public class SearchOrder {
 		{
 			classidx--;
 		}
-		isrightclass = false;
+		isrightclass.pop();
 	}
 
 	public boolean IsInRightClass() {
-		if ((classidx == classlist.size()) && isrightclass)
+		if ((classidx == classlist.size()) && isrightclass.peek())
 		{
 			return true;
 		}
