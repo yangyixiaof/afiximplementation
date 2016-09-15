@@ -23,6 +23,7 @@ public class ASTHelper {
 
 	public static List<Integer> GetLockASTNodeLineNumber(CompilationUnit compilationUnit, String lockname) {
 		List<Integer> ils = new LinkedList<Integer>();
+		ils.clear();
 		compilationUnit.accept(new ASTVisitor() {
 			@Override
 			public boolean visit(SynchronizedStatement node) {
@@ -30,7 +31,7 @@ public class ASTHelper {
 				{
 					ils.add(GetASTNodeLineNumber(compilationUnit, node));
 				}
-				return super.visit(node);
+				return false;
 			}
 		});
 		return ils;

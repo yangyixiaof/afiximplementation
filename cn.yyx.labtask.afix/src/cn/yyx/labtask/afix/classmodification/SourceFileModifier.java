@@ -318,9 +318,10 @@ public class SourceFileModifier {
 		
 		// testing
 		System.out.println("allrewrites size:" + allrewrites.size());
-
+		
+		// clear AFixFactory
 		AFixFactory.CLear();
-
+		
 		Set<String> keys = allrewrites.keySet();
 		Iterator<String> kitr = keys.iterator();
 		while (kitr.hasNext()) {
@@ -346,30 +347,32 @@ public class SourceFileModifier {
 			File df = new File(fabpath);
 			FileUtil.ClearAndWriteToFile(doc.get(), df); // document
 			CompilationUnit dcu = ASTHelper.GetCompilationUnit(df);
-
+			
 			{
-				Set<String> lkeys = filelocks.keySet();
-				Iterator<String> litr = lkeys.iterator();
-				while (litr.hasNext()) {
-					String fpath = litr.next();
-					TreeMap<String, Boolean> fls = filelocks.get(fpath);
-					GenerateAFixEntries(dcu, fls, fpath, true);
+				TreeMap<String, Boolean> fls = filelocks.get(fabpath);
+				GenerateAFixEntries(dcu, fls, fabpath, true);
+				// Set<String> lkeys = filelocks.keySet();
+				// Iterator<String> litr = lkeys.iterator();
+				// while (litr.hasNext()) {
+				//	String fpath = litr.next();
+				//	TreeMap<String, Boolean> fls = filelocks.get(fpath);
+				//	GenerateAFixEntries(dcu, fls, fpath, true);
 					// LinkedList<ASTNode> ll = lockmap.get(lockname);
 					// GenerateAFixEntries(lockname, dcu, ll, fabpath, true);
 					// LinkedList<ASTNode> ul = unlockmap.get(lockname);
 					// GenerateAFixEntries(lockname, dcu, ul, fabpath, false);
-				}
+				// }
 			}
 
-			{
-				Set<String> ukeys = fileunlocks.keySet();
-				Iterator<String> uitr = ukeys.iterator();
-				while (uitr.hasNext()) {
-					String fpath = uitr.next();
-					TreeMap<String, Boolean> fls = fileunlocks.get(fpath);
-					GenerateAFixEntries(dcu, fls, fpath, false);
-				}
-			}
+			/*{
+			*	Set<String> ukeys = fileunlocks.keySet();
+			*	Iterator<String> uitr = ukeys.iterator();
+			*	while (uitr.hasNext()) {
+			*		String fpath = uitr.next();
+			*		TreeMap<String, Boolean> fls = fileunlocks.get(fpath);
+			*		GenerateAFixEntries(dcu, fls, fpath, false);
+			*	}
+			}*/
 
 			// LinkedList<Integer> inip = initialpositions.get(fabpath);
 			// LinkedList<Integer> ap = actualpositions.get(fabpath);
@@ -790,13 +793,13 @@ public class SourceFileModifier {
 		}
 	}
 
-	private void PutMapAndValueList(Map<String, TreeMap<String, Boolean>> kmap, String lockname, String kname) {
-		TreeMap<String, Boolean> kl = kmap.get(lockname);
+	private void PutMapAndValueList(Map<String, TreeMap<String, Boolean>> kmap, String keyname, String innerkeyname) {
+		TreeMap<String, Boolean> kl = kmap.get(keyname);
 		if (kl == null) {
 			kl = new TreeMap<String, Boolean>();
-			kmap.put(lockname, kl);
+			kmap.put(keyname, kl);
 		}
-		kl.put(kname, true);
+		kl.put(innerkeyname, true);
 	}
 
 	/*
