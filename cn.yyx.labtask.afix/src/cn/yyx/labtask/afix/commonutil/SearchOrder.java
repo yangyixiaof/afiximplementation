@@ -98,20 +98,16 @@ public class SearchOrder {
 		System.out.println("rawclass:"+rawclass+";classidx:"+classidx+";classlistsize:"+classlist.size());
 		
 		boolean tempisrightclass = false;
-		if (classidx >= classlist.size())
-		{
-			return false;
-		}
-		String classname = classlist.get(classidx);
-		
-		// testing
-		System.out.println("classname:"+classname+";rawclass:"+rawclass+".");
-		
-		if (classname.endsWith(rawclass))
-		{
-			classidx++;
-			classidxincreased.put(node, true);
-			tempisrightclass = true;
+		if (classidx < classlist.size()) {
+			String classname = classlist.get(classidx);
+			// testing
+			System.out.println("classname:"+classname+";rawclass:"+rawclass+".");
+			if (classname.endsWith(rawclass))
+			{
+				classidx++;
+				classidxincreased.put(node, true);
+				tempisrightclass = true;
+			}
 		}
 		isrightclass.push(tempisrightclass);
 		return tempisrightclass;
