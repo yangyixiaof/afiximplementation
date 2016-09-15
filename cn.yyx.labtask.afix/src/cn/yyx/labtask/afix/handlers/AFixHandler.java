@@ -143,12 +143,12 @@ public class AFixHandler extends AbstractHandler {
 		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"),
 		// "Pingpong_PingPong", "pingpong.PingPong", monitor);
 
-		DeleteOneWholeRace("Demo_Authenticate", "demo.Authenticate");
-		DeleteOneWholeRace("Demo_Example2", "demo.Example2");
-		DeleteOneWholeRace("Demo_Example", "demo.Example");
-		DeleteOneWholeRace("Account_Account", "account.Account");
-		DeleteOneWholeRace("Critical_Critical", "critical.Critical");
-		DeleteOneWholeRace("Pingpong_PingPong", "pingpong.PingPong");
+		DeleteOneWholeRace("demo", "demo.Authenticate");
+		DeleteOneWholeRace("demo", "demo.Example2");
+		DeleteOneWholeRace("demo", "demo.Example");
+		DeleteOneWholeRace("account", "account.Account");
+		DeleteOneWholeRace("critical", "critical.Critical");
+		DeleteOneWholeRace("pingpong", "pingpong.PingPong");
 		DeleteOneWholeRace("benchmarks", "benchmarks.JGFMolDynBenchSizeA");
 		DeleteOneWholeRace("benchmarks", "benchmarks.JGFMonteCarloBenchSizeA");
 		DeleteOneWholeRace("benchmarks", "benchmarks.JGFRayTracerBenchSizeA");
