@@ -112,7 +112,7 @@ public class SearchOrder {
 			String classname = classlist.get(classidx);
 			// testing
 			System.out.println("classname:"+classname+";rawclass:"+rawclass+".");
-			if (classname.endsWith(rawclass) || (rawclass == null && StringAnalysis.IsInteger(classname)))
+			if (rawclass != null && classname.endsWith(rawclass) || (rawclass == null && StringAnalysis.IsInteger(classname)))
 			{
 				classidx++;
 				classidxincreased.put(node, true);
