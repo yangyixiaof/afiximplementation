@@ -20,6 +20,11 @@ public class ASTHelper {
 		int linenumber = compilationUnit.getLineNumber(compilationUnit.getExtendedStartPosition(astnode));
 		return linenumber;
 	}
+	
+	public static int GetASTNodeEndLineNumber(CompilationUnit compilationUnit, ASTNode astnode) {
+		int linenumber = compilationUnit.getLineNumber(compilationUnit.getExtendedStartPosition(astnode) + compilationUnit.getExtendedLength(astnode));
+		return linenumber;
+	}
 
 	public static List<Integer> GetLockASTNodeLineNumber(CompilationUnit compilationUnit, String lockname) {
 		List<Integer> ils = new LinkedList<Integer>();

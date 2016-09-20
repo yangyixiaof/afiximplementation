@@ -143,9 +143,9 @@ public class SourceFileModifier {
 				// pil = new LinkedList<Boolean>();
 				// positionislock.put(fileunique, pil);
 				// }
-
-				SearchOrder so = new SearchOrder(msig);
-				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so);
+				
+				SearchOrder so = new SearchOrder(msig, (op.GetInsertPosBeginSourceIterator().hasNext() ? op.GetInsertPosBeginSourceIterator().next().getLineNumber() : op.GetInsertPosEndSourceIterator().next().getLineNumber()));
+				BlockLocationSearchVisitor blvisitor = new BlockLocationSearchVisitor(so, cu);
 				cu.accept(blvisitor);
 				Block methodblock = blvisitor.getResult();
 

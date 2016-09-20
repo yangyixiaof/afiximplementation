@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -16,6 +18,7 @@ import com.ibm.wala.types.TypeName;
 import com.ibm.wala.util.strings.StringStuff;
 
 import attrib4j.bcel.DescriptorUtil;
+import cn.yyx.labtask.afix.classmodification.ASTHelper;
 
 public class SearchOrder {
 	
@@ -25,11 +28,14 @@ public class SearchOrder {
 	private ArrayList<String> methodparam = new ArrayList<String>();
 	private String methodsig = null;
 	
-	Map<TypeDeclaration, Boolean> classidxincreased = new HashMap<TypeDeclaration, Boolean>();
+	Map<ASTNode, Boolean> classidxincreased = new HashMap<ASTNode, Boolean>();
 	int classidx = 0;
 	Stack<Boolean> isrightclass = new Stack<Boolean>();
 	
-	public SearchOrder(String msig) {
+	int line = -1;
+	
+	public SearchOrder(String msig, int line) {
+		this.line = line;
 		this.setMethodsig(msig);
 		int ll = msig.indexOf('(');
 		String type = msig.substring(0, ll);
@@ -92,8 +98,12 @@ public class SearchOrder {
 		this.methodparam = methodparam;
 	}
 
-	public boolean HandleCurrentClass(TypeDeclaration node) {
-		String rawclass = node.getName().toString();
+	public boolean HandleCurrentClass(ASTNode node) {
+		String rawclass = null;
+		if (node instanceof TypeDeclaration)
+		{
+			rawclass = ((TypeDeclaration)node).getName().toString();
+		}
 		// testing
 		System.out.println("rawclass:"+rawclass+";classidx:"+classidx+";classlistsize:"+classlist.size());
 		
@@ -102,7 +112,7 @@ public class SearchOrder {
 			String classname = classlist.get(classidx);
 			// testing
 			System.out.println("classname:"+classname+";rawclass:"+rawclass+".");
-			if (classname.endsWith(rawclass))
+			if (classname.endsWith(rawclass) || (rawclass == null && StringAnalysis.IsInteger(classname)))
 			{
 				classidx++;
 				classidxincreased.put(node, true);
@@ -113,7 +123,7 @@ public class SearchOrder {
 		return tempisrightclass;
 	}
 	
-	public void DeHandleCurrentClass(TypeDeclaration node)
+	public void DeHandleCurrentClass(ASTNode node)
 	{
 		if (classidxincreased.get(node) != null && classidxincreased.get(node) == true)
 		{
@@ -122,8 +132,8 @@ public class SearchOrder {
 		isrightclass.pop();
 	}
 
-	public boolean IsInRightClass() {
-		if ((classidx == classlist.size()) && isrightclass.peek())
+	public boolean IsInRightClass(ASTNode node, CompilationUnit cu) {
+		if ((classidx == classlist.size()) && isrightclass.peek() && line >= ASTHelper.GetASTNodeLineNumber(cu, node) && line <= ASTHelper.GetASTNodeEndLineNumber(cu, node))
 		{
 			return true;
 		}

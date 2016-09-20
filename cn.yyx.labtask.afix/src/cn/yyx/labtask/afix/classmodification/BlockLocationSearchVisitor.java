@@ -3,7 +3,9 @@ package cn.yyx.labtask.afix.classmodification;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -15,9 +17,11 @@ public class BlockLocationSearchVisitor extends ASTVisitor{
 	
 	SearchOrder so = null;
 	private Block result = null;
+	CompilationUnit cu = null;
 	
-	public BlockLocationSearchVisitor(SearchOrder so) {
+	public BlockLocationSearchVisitor(SearchOrder so, CompilationUnit cu) {
 		this.so = so;
+		this.cu = cu;
 	}
 
 	public Block getResult() {
@@ -40,11 +44,23 @@ public class BlockLocationSearchVisitor extends ASTVisitor{
 		super.endVisit(node);
 	}
 	
+	@Override
+	public boolean visit(AnonymousClassDeclaration node) {
+		boolean ctn = so.HandleCurrentClass(node);
+		return ctn && super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(AnonymousClassDeclaration node) {
+		so.DeHandleCurrentClass(node);
+		super.endVisit(node);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		boolean ctn = true;
-		if (so.IsInRightClass())
+		if (so.IsInRightClass(node, cu))
 		{
 			Type tp = node.getReturnType2();
 			List<SingleVariableDeclaration> params = node.parameters();
