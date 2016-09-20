@@ -303,25 +303,25 @@ public class OnePatchGenerator {
 
 		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
 
-		// StringBuilder sb = new StringBuilder("");
-		// Iterator<CGNode> cgitr = callGraph.iterator();
-		// while (cgitr.hasNext())
-		// {
-		// CGNode cgn = cgitr.next();
-		// sb.append(cgn.toString());
-		// System.err.println("CGNode:" + cgn);
-		// }
-		// try {
-		// File tf = new File("test_info.txt");
-		// if (!tf.exists())
-		// {
-		// tf.createNewFile();
-		// }
-		// FileUtil.ContentToFile(tf, sb.toString());
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// System.exit(1);
+//		StringBuilder sb = new StringBuilder("");
+//		Iterator<CGNode> cgitr = callGraph.iterator();
+//		while (cgitr.hasNext())
+//		{
+//		CGNode cgn = cgitr.next();
+//		sb.append(cgn.toString());
+//		System.err.println("CGNode:" + cgn);
+//		}
+//		try {
+//		File tf = new File("test_info.txt");
+//		if (!tf.exists())
+//		{
+//		tf.createNewFile();
+//		}
+//		FileUtil.ContentToFile(tf, sb.toString());
+//		} catch (Exception e) {
+//		e.printStackTrace();
+//		}
+//		System.exit(1);
 		
 		CGNode node = null;
 		
