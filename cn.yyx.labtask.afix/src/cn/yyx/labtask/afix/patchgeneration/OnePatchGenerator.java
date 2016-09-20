@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ public class OnePatchGenerator {
 
 	// IClassHierarchy cha = null;
 	CallGraph callGraph = null;
-	
+
 	// String appJar = null;
 	ErrorTrace pct = null;
 	ErrorTrace rt = null;
@@ -132,38 +134,36 @@ public class OnePatchGenerator {
 	 * @throws InvalidClassFileException
 	 */
 	public SameLockExclusivePatches GeneratePatch() throws InvalidClassFileException {
-		
+
 		// printing.
-		/*String pcmsig = this.p.getSig();
-		if (pcmsig.equals("benchmarks.moldyn.TournamentBarrier.DoBarrier(I)V"))
-		{
-			try {
-				cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.getClassHierarchy(), GetMethodIR(pcmsig));
-			} catch (com.ibm.wala.util.WalaException e) {
-				e.printStackTrace();
-			}
-			System.exit(1);
-		}*/
-		
+		/*
+		 * String pcmsig = this.p.getSig(); if
+		 * (pcmsig.equals("benchmarks.moldyn.TournamentBarrier.DoBarrier(I)V"))
+		 * { try { cn.yyx.labtask.afix.controlflow.PrintUtil.PrintIR(callGraph.
+		 * getClassHierarchy(), GetMethodIR(pcmsig)); } catch
+		 * (com.ibm.wala.util.WalaException e) { e.printStackTrace(); }
+		 * System.exit(1); }
+		 */
+
 		ops = new SameLockExclusivePatches();
-		
+
 		if (!overlap) {
 			// handle this.r
 			String rracevar = this.r.getRacevar();
 			String methodSig = this.r.getSig();
 			int ridx = this.r.getLine();
 			IR ir = GetMethodIR(methodSig);
-			
+
 			// how to set ssablockinfo needs to be thought carefully.
-			
+
 			SSACFG cfg = ir.getControlFlowGraph();
 			// ISSABasicBlock
-			AFixBlock rbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(rracevar, ridx, ir, SearchUtil.UpAndDownDirection);
+			AFixBlock rbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(rracevar, ridx, ir,
+					SearchUtil.UpAndDownDirection);
 			Set<ISSABasicBlock> protectednodes = new HashSet<ISSABasicBlock>();
 			protectednodes.add(rbk.getISSABasicBlock());
 			Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
-			if (rbk.getAFixSSABlockExtraInfo() != null)
-			{
+			if (rbk.getAFixSSABlockExtraInfo() != null) {
 				SSABlockUtil.SetSSABlockInfo(ssablockinfo, rbk.getISSABasicBlock(), rbk.getAFixSSABlockExtraInfo());
 			}
 			OnePatch op = new OnePatch(rt, this.r.getSig(), protectednodes, ir, cfg, ssablockinfo);
@@ -185,30 +185,35 @@ public class OnePatchGenerator {
 		if (methodSig.equals("demo.Example2.main([Ljava/lang/String;)V")) {
 			System.out.println("haha haha.");
 		}
-		
+
 		// ISSABasicBlock
-		AFixBlock pbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(pracevar, pidx, ir, SearchUtil.UpDirection);
-		AFixBlock cbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(cracevar, cidx, ir, SearchUtil.DownDirection);
+		AFixBlock pbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(pracevar, pidx, ir,
+				SearchUtil.UpDirection);
+		AFixBlock cbk = SearchUtil.GetAFixBlockAccordingToLineNumberInSourcecode(cracevar, cidx, ir,
+				SearchUtil.DownDirection);
 
 		if (pbk.getISSABasicBlock() == null || cbk.getISSABasicBlock() == null) {
 			System.out.println(
 					"pmethodSig:" + methodSig + ";cmethodSig:" + this.r.getSig() + ";pbk:" + pbk + ";cbk:" + cbk);
 		}
-		
+
 		Set<ISSABasicBlock> pset = new HashSet<ISSABasicBlock>();
 		// pset.add(pbk.getISSABasicBlock());
 		// pset.add(cbk.getISSABasicBlock());
 		boolean pcsame = pbk.getISSABasicBlock().equals(cbk.getISSABasicBlock());
 		if (!pcsame) {
 			// Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
-			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset); // cbk.getISSABasicBlock(), , visited
+			GetSearchSet(pbk.getISSABasicBlock(), cfg, true, pset); // cbk.getISSABasicBlock(),
+																	// , visited
 		}
 		Set<ISSABasicBlock> cset = new HashSet<ISSABasicBlock>();
 		// cset.add(pbk.getISSABasicBlock());
 		// cset.add(cbk.getISSABasicBlock());
 		if (!pcsame) {
 			// Set<ISSABasicBlock> visited = new HashSet<ISSABasicBlock>();
-			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset); // pbk.getISSABasicBlock(), , visited
+			GetSearchSet(cbk.getISSABasicBlock(), cfg, false, cset); // pbk.getISSABasicBlock(),
+																		// ,
+																		// visited
 		}
 		if (!pcsame) {
 			cset.retainAll(pset);
@@ -216,24 +221,21 @@ public class OnePatchGenerator {
 			cset.add(cbk.getISSABasicBlock());
 		}
 		Set<ISSABasicBlock> protectednodes = cset;
-		
+
 		Map<ISSABasicBlock, AFixSSABlockExtraInfo> ssablockinfo = new HashMap<ISSABasicBlock, AFixSSABlockExtraInfo>();
-		if (pbk.getAFixSSABlockExtraInfo() != null)
-		{
+		if (pbk.getAFixSSABlockExtraInfo() != null) {
 			SSABlockUtil.SetSSABlockInfo(ssablockinfo, pbk.getISSABasicBlock(), pbk.getAFixSSABlockExtraInfo());
 		}
-		if (cbk.getAFixSSABlockExtraInfo() != null)
-		{
+		if (cbk.getAFixSSABlockExtraInfo() != null) {
 			SSABlockUtil.SetSSABlockInfo(ssablockinfo, cbk.getISSABasicBlock(), cbk.getAFixSSABlockExtraInfo());
 		}
 		OnePatch op = new OnePatch(pct, methodSig, protectednodes, ir, cfg, ssablockinfo);
 		ops.AddPatches(op);
 		return ops;
 	}
-	
+
 	private void GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset) {
-		if (pset.contains(nowbk))
-		{
+		if (pset.contains(nowbk)) {
 			return;
 		}
 		pset.add(nowbk);
@@ -244,31 +246,20 @@ public class OnePatchGenerator {
 			GetSearchSet(ibb, cfg, forward, pset);
 		}
 	}
-	
-	/*private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final boolean forward, Set<ISSABasicBlock> pset,
-			final ISSABasicBlock dest, Set<ISSABasicBlock> visited) {
-		if (visited.contains(nowbk)) {
-			// pset already includes the source and the dest.
-			if (pset.contains(nowbk)) {
-				return true;
-			}
-			return false;
-		}
-		visited.add(nowbk);
-		Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward);
-		boolean allres = false;
-		while (itr.hasNext()) {
-			ISSABasicBlock ibb = itr.next();
-			// eliminate self cycle
-			boolean istodest = GetSearchSet(ibb, cfg, forward, pset, dest, visited);
-			allres = allres || istodest;
-			if (istodest) {
-				pset.add(ibb);
-			}
-		}
-		return allres;
-	}*/
-	
+
+	/*
+	 * private boolean GetSearchSet(ISSABasicBlock nowbk, SSACFG cfg, final
+	 * boolean forward, Set<ISSABasicBlock> pset, final ISSABasicBlock dest,
+	 * Set<ISSABasicBlock> visited) { if (visited.contains(nowbk)) { // pset
+	 * already includes the source and the dest. if (pset.contains(nowbk)) {
+	 * return true; } return false; } visited.add(nowbk);
+	 * Iterator<ISSABasicBlock> itr = GetBlocks(nowbk, cfg, forward); boolean
+	 * allres = false; while (itr.hasNext()) { ISSABasicBlock ibb = itr.next();
+	 * // eliminate self cycle boolean istodest = GetSearchSet(ibb, cfg,
+	 * forward, pset, dest, visited); allres = allres || istodest; if (istodest)
+	 * { pset.add(ibb); } } return allres; }
+	 */
+
 	private Iterator<ISSABasicBlock> GetBlocks(ISSABasicBlock pbk, SSACFG cfg, boolean forward) {
 		if (forward) {
 			return cfg.getSuccNodes(pbk);
@@ -303,35 +294,66 @@ public class OnePatchGenerator {
 
 		MethodReference mref = IRTests.descriptorToMethodRef(descriptor, callGraph.getClassHierarchy());
 
-//		StringBuilder sb = new StringBuilder("");
-//		Iterator<CGNode> cgitr = callGraph.iterator();
-//		while (cgitr.hasNext())
-//		{
-//		CGNode cgn = cgitr.next();
-//		sb.append(cgn.toString());
-//		System.err.println("CGNode:" + cgn);
-//		}
-//		try {
-//		File tf = new File("test_info.txt");
-//		if (!tf.exists())
-//		{
-//		tf.createNewFile();
-//		}
-//		FileUtil.ContentToFile(tf, sb.toString());
-//		} catch (Exception e) {
-//		e.printStackTrace();
-//		}
-//		System.exit(1);
-		
+		// StringBuilder sb = new StringBuilder("");
+		// Iterator<CGNode> cgitr = callGraph.iterator();
+		// while (cgitr.hasNext())
+		// {
+		// CGNode cgn = cgitr.next();
+		// sb.append(cgn.toString() + "\n");
+		// System.err.println("CGNode:" + cgn);
+		// }
+		// try {
+		// File tf = new File("test_info.txt");
+		// if (!tf.exists())
+		// {
+		// tf.createNewFile();
+		// }
+		// FileUtil.ContentToFile(tf, sb.toString());
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// System.exit(1);
+
 		CGNode node = null;
-		
+
 		try {
 			node = callGraph.getNodes(mref).iterator().next();
 		} catch (Exception e) {
-			System.err.println("methodSig:" + methodSig + ";descriptor:" + descriptor + ";mref:" + mref);
-			throw e;
+			System.err.println(
+					"special case:" + "methodSig:" + methodSig + ";descriptor:" + descriptor + ";mref:" + mref);
+			// special case:methodSig:atomicity.TestAtomicity1$1.run()V;descriptor:Source#atomicity/TestAtomicity1$1#run#()V;mref:< Source, Latomicity/TestAtomicity1$1, run()V >
+			String[] parts = descriptor.split("#");
+			String[] psd = parts[1].split("\\$");
+			for (int i=1;i<psd.length;i++)
+			{
+				psd[i] = "$" + psd[i];
+			}
+			String method = parts[2] + parts[3];
+			List<String> slist = new LinkedList<String>();
+			for (int i=0;i<psd.length;i++)
+			{
+				slist.add(psd[i]);
+			}
+			boolean handled = false;
+			slist.add(method);
+			Iterator<CGNode> citr = callGraph.iterator();
+			while (citr.hasNext())
+			{
+				CGNode tempnode = citr.next();
+				String str = tempnode.toString();
+				if (CGNodeSatisfied(str, slist))
+				{
+					handled = true;
+					node = tempnode;
+					break;
+				}
+			}
+			if (!handled)
+			{
+				throw e;
+			}
 		}
-		
+
 		// System.err.println(node);
 		// System.exit(1);
 
@@ -350,7 +372,24 @@ public class OnePatchGenerator {
 		// options.getSSAOptions());
 		// return ir;
 	}
-
+	
+	private boolean CGNodeSatisfied(String str, List<String> slist)
+	{
+		int prepos = -1;
+		Iterator<String> sitr = slist.iterator();
+		while (sitr.hasNext())
+		{
+			String tstr = sitr.next();
+			int pos = str.indexOf(tstr, prepos+1);
+			if (pos < 0)
+			{
+				return false;
+			}
+			prepos = pos;
+		}
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param methodSig
