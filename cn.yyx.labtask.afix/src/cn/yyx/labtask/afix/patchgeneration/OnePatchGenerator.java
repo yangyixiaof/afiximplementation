@@ -322,9 +322,16 @@ public class OnePatchGenerator {
 		// e.printStackTrace();
 		// }
 		// System.exit(1);
-
-		CGNode node = callGraph.getNodes(mref).iterator().next();
-
+		
+		CGNode node = null;
+		
+		try {
+			node = callGraph.getNodes(mref).iterator().next();
+		} catch (Exception e) {
+			System.err.println("methodSig:" + methodSig + ";descriptor:" + descriptor + ";mref:" + mref);
+			throw e;
+		}
+		
 		// System.err.println(node);
 		// System.exit(1);
 
