@@ -1,0 +1,18 @@
+
+------------------ maximal-branch (z3): atomicity.TestAtomicity6 -------------------
+
+Race: <atomicity.TestAtomicity6: void main(java.lang.String[])>|$i0 = <atomicity.TestAtomicity6: int x>|51 - <atomicity.TestAtomicity6$1: void run()>|<atomicity.TestAtomicity6: int x> = $i1|44
+Race: <atomicity.TestAtomicity6: void main(java.lang.String[])>|<atomicity.TestAtomicity6: int x> = $i1|51 - <atomicity.TestAtomicity6$1: void run()>|<atomicity.TestAtomicity6: int x> = $i1|44
+Race: <atomicity.TestAtomicity6$1: void run()>|$i0 = <atomicity.TestAtomicity6: int x>|44 - <atomicity.TestAtomicity6: void main(java.lang.String[])>|<atomicity.TestAtomicity6: int x> = $i1|51
+Trace Size: 22
+Total #Threads: 2
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 4
+Total #Local Read-Writes: 3
+Total #Initial Writes: 4
+Total #Synchronizations: 8
+Total #Branches: 3
+Total #Property Events: 0
+Total #Potential Violations: 3
+Total #Real Violations: 3
+Total Time: 1009ms

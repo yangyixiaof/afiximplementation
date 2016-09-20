@@ -1,0 +1,21 @@
+
+------------------ maximal-branch (z3): atomicity.TestAtomicity12 -------------------
+
+Race: <atomicity.TestAtomicity12: void h()>|$i0 = <atomicity.TestAtomicity12: int x>|62 - <atomicity.TestAtomicity12$1: void run()>|<atomicity.TestAtomicity12: int x> = $i1|42
+Race: <atomicity.TestAtomicity12: void h()>|<atomicity.TestAtomicity12: int x> = $i1|62 - <atomicity.TestAtomicity12$1: void run()>|<atomicity.TestAtomicity12: int x> = $i1|42
+Race: <atomicity.TestAtomicity12: void h()>|$i2 = <atomicity.TestAtomicity12: int x>|63 - <atomicity.TestAtomicity12$1: void run()>|<atomicity.TestAtomicity12: int x> = $i1|42
+Race: <atomicity.TestAtomicity12: void h()>|<atomicity.TestAtomicity12: int x> = $i3|63 - <atomicity.TestAtomicity12$1: void run()>|<atomicity.TestAtomicity12: int x> = $i1|42
+Race: <atomicity.TestAtomicity12$1: void run()>|$i0 = <atomicity.TestAtomicity12: int x>|42 - <atomicity.TestAtomicity12: void h()>|<atomicity.TestAtomicity12: int x> = $i1|62
+Race: <atomicity.TestAtomicity12$1: void run()>|$i0 = <atomicity.TestAtomicity12: int x>|42 - <atomicity.TestAtomicity12: void h()>|<atomicity.TestAtomicity12: int x> = $i3|63
+Trace Size: 11
+Total #Threads: 2
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 7
+Total #Local Read-Writes: 0
+Total #Initial Writes: 2
+Total #Synchronizations: 2
+Total #Branches: 0
+Total #Property Events: 0
+Total #Potential Violations: 6
+Total #Real Violations: 6
+Total Time: 1022ms

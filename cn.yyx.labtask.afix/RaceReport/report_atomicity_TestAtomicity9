@@ -1,0 +1,30 @@
+
+------------------ maximal-branch (z3): atomicity.TestAtomicity9 -------------------
+
+Race: <atomicity.TestAtomicity9: void main(java.lang.String[])>|i2 = <atomicity.TestAtomicity9: int c>|74 - <atomicity.TestAtomicity9$2: void run()>|<atomicity.TestAtomicity9: int c> = $i1|52
+Race: <atomicity.TestAtomicity9: void main(java.lang.String[])>|i1 = <atomicity.TestAtomicity9: int b>|73 - <atomicity.TestAtomicity9$1: void run()>|<atomicity.TestAtomicity9: int b> = $i3|45
+Race: <atomicity.TestAtomicity9: void main(java.lang.String[])>|i0 = <atomicity.TestAtomicity9: int a>|72 - <atomicity.TestAtomicity9$1: void run()>|<atomicity.TestAtomicity9: int a> = $i1|44
+Race: <atomicity.TestAtomicity9: void main(java.lang.String[])>|i6 = <atomicity.TestAtomicity9: int e>|83 - <atomicity.TestAtomicity9$3: void run()>|<atomicity.TestAtomicity9: int e> = $i3|61
+Race: <atomicity.TestAtomicity9$1: void run()>|$i6 = <atomicity.TestAtomicity9: int g>|47 - <atomicity.TestAtomicity9$2: void run()>|<atomicity.TestAtomicity9: int g> = $i5|54
+Race: <atomicity.TestAtomicity9$1: void run()>|<atomicity.TestAtomicity9: int g> = $i7|47 - <atomicity.TestAtomicity9$2: void run()>|<atomicity.TestAtomicity9: int g> = $i5|54
+Race: <atomicity.TestAtomicity9$2: void run()>|$i4 = <atomicity.TestAtomicity9: int g>|54 - <atomicity.TestAtomicity9$1: void run()>|<atomicity.TestAtomicity9: int g> = $i7|47
+Race: <atomicity.TestAtomicity9: void main(java.lang.String[])>|i4 = <atomicity.TestAtomicity9: int i>|80 - <atomicity.TestAtomicity9$3: void run()>|<atomicity.TestAtomicity9: int i> = $i7|63
+Race: <atomicity.TestAtomicity9$2: void run()>|$i6 = <atomicity.TestAtomicity9: int h>|55 - <atomicity.TestAtomicity9$3: void run()>|<atomicity.TestAtomicity9: int h> = $i5|62
+Race: <atomicity.TestAtomicity9$2: void run()>|<atomicity.TestAtomicity9: int h> = $i7|55 - <atomicity.TestAtomicity9$3: void run()>|<atomicity.TestAtomicity9: int h> = $i5|62
+Race: <atomicity.TestAtomicity9$3: void run()>|$i4 = <atomicity.TestAtomicity9: int h>|62 - <atomicity.TestAtomicity9$2: void run()>|<atomicity.TestAtomicity9: int h> = $i7|55
+Race: <atomicity.TestAtomicity9: void main(java.lang.String[])>|i3 = <atomicity.TestAtomicity9: int f>|79 - <atomicity.TestAtomicity9$1: void run()>|<atomicity.TestAtomicity9: int f> = $i5|46
+Race: <atomicity.TestAtomicity9$2: void run()>|$i2 = <atomicity.TestAtomicity9: int d>|53 - <atomicity.TestAtomicity9$3: void run()>|<atomicity.TestAtomicity9: int d> = $i1|60
+Race: <atomicity.TestAtomicity9$2: void run()>|<atomicity.TestAtomicity9: int d> = $i3|53 - <atomicity.TestAtomicity9$3: void run()>|<atomicity.TestAtomicity9: int d> = $i1|60
+Race: <atomicity.TestAtomicity9$3: void run()>|$i0 = <atomicity.TestAtomicity9: int d>|60 - <atomicity.TestAtomicity9$2: void run()>|<atomicity.TestAtomicity9: int d> = $i3|53
+Trace Size: 61
+Total #Threads: 4
+Total #SharedVariables: 9
+Total #Shared Read-Writes: 31
+Total #Local Read-Writes: 3
+Total #Initial Writes: 12
+Total #Synchronizations: 12
+Total #Branches: 3
+Total #Property Events: 0
+Total #Potential Violations: 16
+Total #Real Violations: 15
+Total Time: 1316ms

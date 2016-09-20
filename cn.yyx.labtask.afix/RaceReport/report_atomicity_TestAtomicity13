@@ -1,0 +1,23 @@
+
+------------------ maximal-branch (z3): atomicity.TestAtomicity13 -------------------
+
+Race: <atomicity.TestAtomicity13$2: void run()>|$i0 = <atomicity.TestAtomicity13: int y>|46 - <atomicity.TestAtomicity13: void f()>|<atomicity.TestAtomicity13: int y> = 42|60
+Race: <atomicity.TestAtomicity13$2: void run()>|<atomicity.TestAtomicity13: int y> = $i1|46 - <atomicity.TestAtomicity13: void f()>|<atomicity.TestAtomicity13: int y> = 42|60
+Race: <atomicity.TestAtomicity13$1: void run()>|$i0 = <atomicity.TestAtomicity13: int x>|41 - <atomicity.TestAtomicity13: void g()>|<atomicity.TestAtomicity13: int x> = $i1|64
+Race: <atomicity.TestAtomicity13$1: void run()>|<atomicity.TestAtomicity13: int x> = $i1|41 - <atomicity.TestAtomicity13: void g()>|<atomicity.TestAtomicity13: int x> = $i1|64
+Race: <atomicity.TestAtomicity13$1: void run()>|$i0 = <atomicity.TestAtomicity13: int x>|41 - <atomicity.TestAtomicity13: void f()>|<atomicity.TestAtomicity13: int x> = 42|59
+Race: <atomicity.TestAtomicity13$1: void run()>|<atomicity.TestAtomicity13: int x> = $i1|41 - <atomicity.TestAtomicity13: void f()>|<atomicity.TestAtomicity13: int x> = 42|59
+Race: <atomicity.TestAtomicity13: void g()>|$i0 = <atomicity.TestAtomicity13: int x>|64 - <atomicity.TestAtomicity13$1: void run()>|<atomicity.TestAtomicity13: int x> = $i1|41
+Trace Size: 15
+Total #Threads: 3
+Total #SharedVariables: 2
+Total #Shared Read-Writes: 9
+Total #Local Read-Writes: 0
+Total #Initial Writes: 2
+Total #Synchronizations: 4
+Total #Branches: 0
+Total #Property Events: 0
+Total #Potential Violations: 7
+Total #Real Violations: 7
+Total Time: 1180ms
+

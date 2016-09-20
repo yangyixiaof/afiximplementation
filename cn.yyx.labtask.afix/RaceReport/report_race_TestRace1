@@ -1,0 +1,19 @@
+
+------------------ maximal-branch (z3): race.TestRace1 -------------------
+
+Race: <race.TestRace1$1: void run()>|$i0 = <race.TestRace1: int x>|41 - <race.TestRace1$2: void run()>|<race.TestRace1: int x> = $i1|47
+Race: <race.TestRace1$1: void run()>|<race.TestRace1: int x> = $i1|41 - <race.TestRace1$2: void run()>|<race.TestRace1: int x> = $i1|47
+Race: <race.TestRace1$2: void run()>|$i0 = <race.TestRace1: int x>|47 - <race.TestRace1$1: void run()>|<race.TestRace1: int x> = $i1|41
+Trace Size: 12
+Total #Threads: 3
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 5
+Total #Local Read-Writes: 2
+Total #Initial Writes: 1
+Total #Synchronizations: 4
+Total #Branches: 0
+Total #Property Events: 0
+Total #Potential Violations: 3
+Total #Real Violations: 3
+Total Time: 1043ms
+

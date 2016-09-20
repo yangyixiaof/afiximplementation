@@ -1,0 +1,21 @@
+
+------------------ maximal-branch (z3): atomicity.TestAtomicity4 -------------------
+
+Race: <atomicity.TestAtomicity4$1: void run()>|$i0 = <atomicity.TestAtomicity4: int x>|48 - <atomicity.TestAtomicity4: void main(java.lang.String[])>|<atomicity.TestAtomicity4: int x> = $i1|64
+Race: <atomicity.TestAtomicity4$1: void run()>|<atomicity.TestAtomicity4: int x> = $i1|48 - <atomicity.TestAtomicity4: void main(java.lang.String[])>|<atomicity.TestAtomicity4: int x> = $i1|64
+Race: <atomicity.TestAtomicity4$1: void run()>|$i0 = <atomicity.TestAtomicity4: int x>|48 - <atomicity.TestAtomicity4: void main(java.lang.String[])>|<atomicity.TestAtomicity4: int x> = $i3|65
+Race: <atomicity.TestAtomicity4$1: void run()>|<atomicity.TestAtomicity4: int x> = $i1|48 - <atomicity.TestAtomicity4: void main(java.lang.String[])>|<atomicity.TestAtomicity4: int x> = $i3|65
+Race: <atomicity.TestAtomicity4: void main(java.lang.String[])>|$i0 = <atomicity.TestAtomicity4: int x>|64 - <atomicity.TestAtomicity4$1: void run()>|<atomicity.TestAtomicity4: int x> = $i1|48
+Race: <atomicity.TestAtomicity4: void main(java.lang.String[])>|$i2 = <atomicity.TestAtomicity4: int x>|65 - <atomicity.TestAtomicity4$1: void run()>|<atomicity.TestAtomicity4: int x> = $i1|48
+Trace Size: 30
+Total #Threads: 2
+Total #SharedVariables: 2
+Total #Shared Read-Writes: 9
+Total #Local Read-Writes: 4
+Total #Initial Writes: 3
+Total #Synchronizations: 9
+Total #Branches: 5
+Total #Property Events: 0
+Total #Potential Violations: 6
+Total #Real Violations: 6
+Total Time: 1007ms

@@ -1,0 +1,20 @@
+
+------------------ maximal-branch (z3): atomicity.TestAtomicity8 -------------------
+
+Race: <atomicity.TestAtomicity8$1: void run()>|$i2 = <atomicity.TestAtomicity8: int y>|45 - <atomicity.TestAtomicity8$2: void run()>|<atomicity.TestAtomicity8: int y> = $i1|50
+Race: <atomicity.TestAtomicity8$1: void run()>|<atomicity.TestAtomicity8: int y> = $i3|45 - <atomicity.TestAtomicity8$2: void run()>|<atomicity.TestAtomicity8: int y> = $i1|50
+Race: <atomicity.TestAtomicity8$2: void run()>|$i0 = <atomicity.TestAtomicity8: int y>|50 - <atomicity.TestAtomicity8$1: void run()>|<atomicity.TestAtomicity8: int y> = $i3|45
+Race: <atomicity.TestAtomicity8: void main(java.lang.String[])>|i1 = <atomicity.TestAtomicity8: int z>|60 - <atomicity.TestAtomicity8$2: void run()>|<atomicity.TestAtomicity8: int z> = $i3|51
+Race: <atomicity.TestAtomicity8: void main(java.lang.String[])>|i0 = <atomicity.TestAtomicity8: int x>|59 - <atomicity.TestAtomicity8$1: void run()>|<atomicity.TestAtomicity8: int x> = $i1|44
+Trace Size: 22
+Total #Threads: 3
+Total #SharedVariables: 3
+Total #Shared Read-Writes: 10
+Total #Local Read-Writes: 1
+Total #Initial Writes: 4
+Total #Synchronizations: 6
+Total #Branches: 1
+Total #Property Events: 0
+Total #Potential Violations: 5
+Total #Real Violations: 5
+Total Time: 1016ms

@@ -1,0 +1,18 @@
+
+------------------ maximal-branch (z3): race.TestRace12 -------------------
+
+Race: <race.TestRace12: float getX()>|$f0 = <race.TestRace12: float x>|43 - <race.TestRace12: void setX(float)>|<race.TestRace12: float x> = f0|47
+Race: <race.TestRace12: void setX(float)>|<race.TestRace12: float x> = f0|47 - <race.TestRace12: void setX(float)>|<race.TestRace12: float x> = f0|47
+Trace Size: 1009
+Total #Threads: 3
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 602
+Total #Local Read-Writes: 200
+Total #Initial Writes: 3
+Total #Synchronizations: 4
+Total #Branches: 200
+Total #Property Events: 0
+Total #Potential Violations: 2
+Total #Real Violations: 2
+Total Time: 1759ms
+

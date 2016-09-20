@@ -1,0 +1,19 @@
+
+------------------ maximal-branch (z3): atomicity.TestAtomicity14 -------------------
+
+Race: <atomicity.TestAtomicity14$2: void run()>|<atomicity.TestAtomicity14: int e> = 42|49 - <atomicity.TestAtomicity14$1: void run()>|<atomicity.TestAtomicity14: int e> = 42|44
+Race: <atomicity.TestAtomicity14$2: void run()>|<atomicity.TestAtomicity14: int c> = 42|50 - <atomicity.TestAtomicity14$1: void run()>|<atomicity.TestAtomicity14: int c> = 42|41
+Race: <atomicity.TestAtomicity14: void f()>|<atomicity.TestAtomicity14: int d> = 42|62 - <atomicity.TestAtomicity14$1: void run()>|<atomicity.TestAtomicity14: int d> = 42|42
+Race: <atomicity.TestAtomicity14: void f()>|<atomicity.TestAtomicity14: int a> = 42|61 - <atomicity.TestAtomicity14$1: void run()>|<atomicity.TestAtomicity14: int a> = 42|43
+Trace Size: 17
+Total #Threads: 3
+Total #SharedVariables: 4
+Total #Shared Read-Writes: 8
+Total #Local Read-Writes: 0
+Total #Initial Writes: 5
+Total #Synchronizations: 4
+Total #Branches: 0
+Total #Property Events: 0
+Total #Potential Violations: 4
+Total #Real Violations: 4
+Total Time: 1087ms

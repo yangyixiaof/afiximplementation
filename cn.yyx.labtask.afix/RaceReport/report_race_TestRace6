@@ -1,0 +1,19 @@
+
+------------------ maximal-branch (z3): race.TestRace6 -------------------
+
+Race: <race.TestRace6: void main(java.lang.String[])>|$i0 = <race.TestRace6: int x>|50 - <race.TestRace6$1: void run()>|<race.TestRace6: int x> = $i1|44
+Race: <race.TestRace6: void main(java.lang.String[])>|<race.TestRace6: int x> = $i1|50 - <race.TestRace6$1: void run()>|<race.TestRace6: int x> = $i1|44
+Race: <race.TestRace6$1: void run()>|$i0 = <race.TestRace6: int x>|44 - <race.TestRace6: void main(java.lang.String[])>|<race.TestRace6: int x> = $i1|50
+Trace Size: 18
+Total #Threads: 2
+Total #SharedVariables: 1
+Total #Shared Read-Writes: 5
+Total #Local Read-Writes: 2
+Total #Initial Writes: 3
+Total #Synchronizations: 6
+Total #Branches: 2
+Total #Property Events: 0
+Total #Potential Violations: 3
+Total #Real Violations: 3
+Total Time: 1092ms
+
