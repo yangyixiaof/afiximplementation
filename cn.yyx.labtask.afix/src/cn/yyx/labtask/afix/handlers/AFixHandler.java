@@ -91,23 +91,23 @@ public class AFixHandler extends AbstractHandler {
 		//		"atomicity.TestAtomicity3");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity4"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity4");
-		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity5"), "calfuzzerbenchmarks",
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity5"), "calfuzzerbenchmarks",
 		//		"atomicity.TestAtomicity5");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity6"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity6");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity7"), "calfuzzerbenchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity7"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity7");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity8"), "calfuzzerbenchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity8"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity8");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity9"), "calfuzzerbenchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity9"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity9");
-		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity10"), "calfuzzerbenchmarks",
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity10"), "calfuzzerbenchmarks",
 		//		"atomicity.TestAtomicity10");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity11"), "calfuzzerbenchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity11"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity11");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity12"), "calfuzzerbenchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity12"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity12");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity13"), "calfuzzerbenchmarks",
+		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity13"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity13");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity14"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity14");
@@ -123,7 +123,7 @@ public class AFixHandler extends AbstractHandler {
 		//		"race.TestRace5");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace6"), "calfuzzerbenchmarks",
 				"race.TestRace6");
-		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race.TestRace7"), "calfuzzerbenchmarks",
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace7"), "calfuzzerbenchmarks",
 		//		"race.TestRace7");
 		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace8"), "calfuzzerbenchmarks",
 		//		"race.TestRace8");
@@ -205,7 +205,8 @@ public class AFixHandler extends AbstractHandler {
 		// "Critical_Critical", "critical.Critical", monitor);
 		// FixHandler.HandleRaceReport(EclipseHelper.GetContentOfAResource("RaceReport/report_pingpong_PingPong"),
 		// "Pingpong_PingPong", "pingpong.PingPong", monitor);
-
+		
+		// delete rv-predict benchmarks.
 		DeleteOneWholeRace("demo", "demo.Authenticate");
 		DeleteOneWholeRace("demo", "demo.Example2");
 		DeleteOneWholeRace("demo", "demo.Example");
@@ -220,6 +221,39 @@ public class AFixHandler extends AbstractHandler {
 		DeleteOneWholeRace("bubblesort", "bubblesort.BubbleSort");
 		DeleteOneWholeRace("bufwriter", "bufwriter.BufWriter");
 		DeleteOneWholeRace("mergesort", "mergesort.MergeSort");
+		
+		// delete calfuzzer benchmarks.
+		// calfuzzer benchmarks.
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity1");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity2");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity3");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity4");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity5");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity6");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity7");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity8");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity9");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity10");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity11");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity12");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity13");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "atomicity.TestAtomicity14");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace1");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace2");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace3");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace4");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace5");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace6");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace7");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace8");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace9");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace10");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace11");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace12");
+		DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace13");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace14");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace15");
+		// DeleteOneWholeRace("calfuzzerbenchmarks", "race.TestRace16");
 		return null;
 	}
 
