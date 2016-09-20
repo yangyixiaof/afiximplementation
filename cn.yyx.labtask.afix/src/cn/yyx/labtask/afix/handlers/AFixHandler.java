@@ -85,14 +85,14 @@ public class AFixHandler extends AbstractHandler {
 		// calfuzzer benchmarks.
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity1"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity1");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity2"), "calfuzzerbenchmarks",
-				"atomicity.TestAtomicity2");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity3"), "calfuzzerbenchmarks",
-				"atomicity.TestAtomicity3");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity2"), "calfuzzerbenchmarks",
+		//		"atomicity.TestAtomicity2");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity3"), "calfuzzerbenchmarks",
+		//		"atomicity.TestAtomicity3");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity4"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity4");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity5"), "calfuzzerbenchmarks",
-				"atomicity.TestAtomicity5");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity5"), "calfuzzerbenchmarks",
+		//		"atomicity.TestAtomicity5");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity_TestAtomicity6"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity6");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity7"), "calfuzzerbenchmarks",
@@ -101,8 +101,8 @@ public class AFixHandler extends AbstractHandler {
 				"atomicity.TestAtomicity8");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity9"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity9");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity10"), "calfuzzerbenchmarks",
-				"atomicity.TestAtomicity10");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity10"), "calfuzzerbenchmarks",
+		//		"atomicity.TestAtomicity10");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity11"), "calfuzzerbenchmarks",
 				"atomicity.TestAtomicity11");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_atomicity.TestAtomicity12"), "calfuzzerbenchmarks",
@@ -113,22 +113,22 @@ public class AFixHandler extends AbstractHandler {
 				"atomicity.TestAtomicity14");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace1"), "calfuzzerbenchmarks",
 				"race.TestRace1");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace2"), "calfuzzerbenchmarks",
-				"race.TestRace2");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace2"), "calfuzzerbenchmarks",
+		//		"race.TestRace2");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace3"), "calfuzzerbenchmarks",
 				"race.TestRace3");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace4"), "calfuzzerbenchmarks",
 				"race.TestRace4");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace5"), "calfuzzerbenchmarks",
-				"race.TestRace5");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace5"), "calfuzzerbenchmarks",
+		//		"race.TestRace5");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace6"), "calfuzzerbenchmarks",
 				"race.TestRace6");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race.TestRace7"), "calfuzzerbenchmarks",
-				"race.TestRace7");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace8"), "calfuzzerbenchmarks",
-				"race.TestRace8");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace9"), "calfuzzerbenchmarks",
-				"race.TestRace9");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race.TestRace7"), "calfuzzerbenchmarks",
+		//		"race.TestRace7");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace8"), "calfuzzerbenchmarks",
+		//		"race.TestRace8");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace9"), "calfuzzerbenchmarks",
+		//		"race.TestRace9");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace10"), "calfuzzerbenchmarks",
 				"race.TestRace10");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace11"), "calfuzzerbenchmarks",
@@ -137,12 +137,12 @@ public class AFixHandler extends AbstractHandler {
 				"race.TestRace12");
 		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace13"), "calfuzzerbenchmarks",
 				"race.TestRace13");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace14"), "calfuzzerbenchmarks",
-				"race.TestRace14");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace15"), "calfuzzerbenchmarks",
-				"race.TestRace15");
-		AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace16"), "calfuzzerbenchmarks",
-				"race.TestRace16");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace14"), "calfuzzerbenchmarks",
+		//		"race.TestRace14");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace15"), "calfuzzerbenchmarks",
+		//		"race.TestRace15");
+		// AddOneWholeRace(EclipseHelper.GetContentOfAResource("RaceReport/report_race_TestRace16"), "calfuzzerbenchmarks",
+		//		"race.TestRace16");
 		
 		System.err.println("Whole race size:" + hantasks1st.size());
 		
